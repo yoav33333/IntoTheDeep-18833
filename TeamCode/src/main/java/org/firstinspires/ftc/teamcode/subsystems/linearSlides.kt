@@ -11,6 +11,7 @@ import dev.frozenmilk.dairy.core.util.supplier.numeric.EnhancedDoubleSupplier
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Advancing
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import java.lang.annotation.Inherited
 

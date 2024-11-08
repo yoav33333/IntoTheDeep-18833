@@ -11,7 +11,10 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Advancing
+import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.Subsystem
+import kotlinx.coroutines.runInterruptible
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor
 import java.lang.annotation.Inherited
 
@@ -52,7 +55,7 @@ object deposit: Subsystem {
     val openingClawPose = 0.0
     val ArmInPose = 0.0
     val ArmOutPose = 1.0
-
+    val minARGB = 500
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
 
@@ -76,6 +79,40 @@ object deposit: Subsystem {
         openClaw()
         armOut()
     }
+    fun depoPreset(){
+        closeClaw()
+        armOut()
+    }
+    fun checkIfSampleInPlace(): Boolean {
+        return colorSensor.argb() > minARGB
+    }
+    val transferState = Lambda("transferCommand")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{
+            transferPose()
+        }
+        .setFinish(){
+            if (checkIfSampleInPlace()) {
+                closeClaw()
+                return@setFinish true
+            }
+            false
+        }.then(Wait(1.0).then(Lambda("closeClaw").setInit{
+            armOut()
+        }))
+
+    val intakeCommand = Lambda("intakeCommand")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{
+            intakeFromHumanPlayer()
+        }
+        .setFinish{
+            if (checkIfSampleInPlace()) {
+                closeClaw()
+                return@setFinish true
+            }
+            false
+        }
 
 
     override fun postUserInitHook(opMode: Wrapper) {
