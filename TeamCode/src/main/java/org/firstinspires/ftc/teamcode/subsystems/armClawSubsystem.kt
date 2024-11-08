@@ -57,15 +57,28 @@ object armClawSubsystem: Subsystem {
     }
     val armOut = 1.0
     val armIn = 0.0
+    val transfareState = 0.0
+    val intakeState = 0.0
 
     val openClawArm = Lambda("openClawArm")
         .setRequirements(Mercurial)
         .setInit{
             armClawServo.setPositionRaw(armOut)
+            angleClawServo.setPositionResult(intakeState)
         }
+
+    fun openClawArm(){
+        armClawServo.setPositionRaw(armOut)
+        angleClawServo.setPositionResult(intakeState)
+    }
+    fun closeClawArm(){
+        armClawServo.setPositionRaw(armIn)
+        angleClawServo.setPositionResult(transfareState)
+    }
     val closeClawArm = Lambda("closeClawArm")
         .setRequirements(Mercurial)
         .setInit{
             armClawServo.setPositionRaw(armIn)
+            angleClawServo.setPositionResult(transfareState)
         }
 }

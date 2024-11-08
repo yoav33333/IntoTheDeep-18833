@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems
 
 import android.R
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.IMU
@@ -32,25 +33,31 @@ object driveSubsystem: Subsystem{
     @Inherited
     annotation class Attach
     val leftFront: CachingDcMotorEx by OpModeLazyCell {
-        CachingDcMotorEx(FeatureRegistrar.activeOpMode.hardwareMap.get(
+        val m = CachingDcMotorEx(FeatureRegistrar.activeOpMode.hardwareMap.get(
             DcMotorEx::class.java, "lf"
         ))
+        m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        m
     }
     val leftBack: CachingDcMotorEx by OpModeLazyCell {
-        CachingDcMotorEx(FeatureRegistrar.activeOpMode.hardwareMap.get(
+        val m = CachingDcMotorEx(FeatureRegistrar.activeOpMode.hardwareMap.get(
             DcMotorEx::class.java, "lb"
         ))
+        m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        m
     }
 
     val rightBack: CachingDcMotorEx by OpModeLazyCell {
         val m = FeatureRegistrar.activeOpMode.hardwareMap
             .get(DcMotorEx::class.java, "rb")
         m.direction = DcMotorSimple.Direction.REVERSE
+        m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         CachingDcMotorEx(m)
     }
     val rightFront: CachingDcMotorEx by OpModeLazyCell {
         val m = FeatureRegistrar.activeOpMode.hardwareMap
             .get(DcMotorEx::class.java, "rf")
+        m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         m.direction = DcMotorSimple.Direction.REVERSE
         CachingDcMotorEx(m)
     }

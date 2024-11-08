@@ -3,18 +3,17 @@ package org.firstinspires.ftc.teamcode.subsystems
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
-import com.qualcomm.robotcore.hardware.IMU
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 
-class RobotHardware private constructor(hardwareMap: HardwareMap){
-    private lateinit var INSTANCE: RobotHardware
+class robotHardware private constructor(hardwareMap: HardwareMap){
+    private lateinit var INSTANCE: robotHardware
 
-    fun Init(hardwareMap: HardwareMap): RobotHardware{
-        INSTANCE = RobotHardware(hardwareMap)
+    fun Init(hardwareMap: HardwareMap): robotHardware{
+        INSTANCE = robotHardware(hardwareMap)
         return INSTANCE
     }
-    fun getInstance(): RobotHardware{
+    fun getInstance(): robotHardware{
         return INSTANCE
     }
 

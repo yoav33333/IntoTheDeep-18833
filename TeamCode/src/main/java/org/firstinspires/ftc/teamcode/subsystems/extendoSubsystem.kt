@@ -69,12 +69,12 @@ object extendoSubsystem: Subsystem {
     }
 
     val openExtendo = Lambda("openExtendo")
-        .setRequirements(Mercurial)
+//        .setRequirements(Mercurial)
         .setInit{
             openExtendoF()
         }
     val closeExtendo = Lambda("closeClawArm")
-        .setRequirements(Mercurial)
+//        .setRequirements(Mercurial)
         .setInit{
             closeExtendoF()
         }
