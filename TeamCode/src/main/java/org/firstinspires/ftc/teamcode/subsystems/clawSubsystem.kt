@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
 import dev.frozenmilk.dairy.core.FeatureRegistrar
@@ -23,42 +24,42 @@ object clawSubsystem: Subsystem {
     @Inherited
     annotation class Attach
 
-    val leftClawServo: CachingServo by OpModeLazyCell {
+    val clawServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "LeftServo"
+                Servo::class.java, "cs"
             )
         )
+        s.cachingTolerance = 0.001
         s
     }
-    val rightClawServo: CachingServo by OpModeLazyCell {
-        val s = CachingServo(
-            FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "RightServo"
-            )
-        )
-        s
-    }
+
     val clawRotationServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "Axonion"
+                Servo::class.java, "crs"
             )
         )
-        s.setPositionRaw(0.5)
+        s.cachingTolerance = 0.001
+        s.setPosition(0.5)
         s
     }
+
+    val colorDistSensor: ColorRangeSensor by OpModeLazyCell{
+        FeatureRegistrar.activeOpMode.hardwareMap.get(
+            ColorRangeSensor::class.java, "cds"
+        )
+    }
+
     val closeingPose = 1.0
     val openingPose = 0.0
 
     fun closeClaw() {
-        leftClawServo.setPosition(openingPose)
-        rightClawServo.setPosition(closeingPose)
+        clawServo.setPosition(closeingPose)
     }
 
     fun openClaw() {
-        leftClawServo.setPosition(closeingPose)
-        rightClawServo.setPositionRaw(openingPose)
+        clawServo.setPosition(openingPose)
     }
 
 
@@ -66,7 +67,7 @@ object clawSubsystem: Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .addRequirements(clawSubsystem)
         .setInit{
-            if (leftClawServo.position == openingPose) {
+            if (clawServo.position == closeingPose) {
                 openClaw()
             } else {
                 closeClaw()
@@ -76,25 +77,32 @@ object clawSubsystem: Subsystem {
 
     val rotateClaw = Lambda("rotate claw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-//        .addRequirements(clawSubsystem)
-        .setExecute{ clawRotationServo.position  += Mercurial.gamepad2.leftStickX.state*0.007 }
+        .setExecute{ clawRotationServo.position  += Mercurial.gamepad2.leftStickX.state*0.1
+        }
+    val turnLeft = Lambda("turnLeft")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{clawRotationServo.position = 0.0}
 
-    val resetClaw = Lambda("resetClaw")
-//        .addRequirements(clawSubsystem)
+    val turnRight = Lambda("turnRight")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{clawRotationServo.position = 1.0}
+
+
+
+    val resetAngleClaw = Lambda("resetAngleClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{clawRotationServo.position = 0.5}
 
     val openClaw = Lambda("openClaw")
-//        .addRequirements(clawSubsystem)
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ clawSubsystem.openClaw()}
+        .setInit{
+            openClaw()}
     val closeClaw = Lambda("closeClaw")
-//        .addRequirements(clawSubsystem)
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ clawSubsystem.closeClaw()}
+        .setInit{ closeClaw()}
 
     override fun postUserInitHook(opMode: Wrapper) {
         openClaw()
-        resetClaw
+        clawRotationServo.position = 0.5
     }
 }

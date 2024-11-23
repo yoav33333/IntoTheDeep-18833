@@ -86,7 +86,7 @@ object deposit: Subsystem {
     fun checkIfSampleInPlace(): Boolean {
         return colorSensor.argb() > minARGB
     }
-    val transferState = Lambda("transferCommand")
+    val transferCommand = Lambda("transferCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
             transferPose()

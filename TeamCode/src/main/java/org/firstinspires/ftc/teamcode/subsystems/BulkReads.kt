@@ -6,7 +6,6 @@ import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 
-// Kotlin's nice, we get to use an object class
 object BulkReads : Feature {
     // first, we need to set up the dependency
     // this makes a rule that says:
@@ -22,8 +21,6 @@ object BulkReads : Feature {
         modules.forEach { it.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL }
     }
 
-    // now, in each pre phase, we'll clear the bulk cache
-    // we do this in pre, as most calculations and updates happen during post
     override fun preUserInitLoopHook(opMode: Wrapper) {
         modules.forEach { it.clearBulkCache() }
     }

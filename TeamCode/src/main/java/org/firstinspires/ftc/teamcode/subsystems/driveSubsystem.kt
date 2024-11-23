@@ -71,13 +71,13 @@ object driveSubsystem: Subsystem{
     }
 
     fun robotOrientedDrive(x: Double, y: Double, rotate: Double){
-        val denominator =
-            max(abs(R.attr.y.toDouble()) + abs(R.attr.x.toDouble()) + Math.abs(rotate), 1.0)
+        val denominator = 1
+//            max(abs(R.attr.y.toDouble()) + abs(R.attr.x.toDouble()) + Math.abs(rotate), 1.0)
 
-        leftFront.setPowerRaw((y + x + rotate/denominator).pow(2))
-        leftBack.setPowerRaw((y - x + rotate/denominator).pow(2))
-        rightFront.setPowerRaw((y - x - rotate/denominator).pow(2))
-        rightBack.setPowerRaw((y + x - rotate / denominator).pow(2))
+        leftFront.setPowerRaw((y + x + rotate/denominator).pow(3))
+        leftBack.setPowerRaw((y - x + rotate/denominator).pow(3))
+        rightFront.setPowerRaw((- y - x - rotate/denominator).pow(3))
+        rightBack.setPowerRaw((- y + x - rotate / denominator).pow(3))
     }
 
 
