@@ -33,8 +33,6 @@ object BulkReads : Feature {
         modules.forEach { it.clearBulkCache() }
     }
 
-    // cleanup is a guaranteed run post stop
-    // here, we'll drop our references to the modules
     override fun cleanup(opMode: Wrapper) {
         modules = emptyList()
     }

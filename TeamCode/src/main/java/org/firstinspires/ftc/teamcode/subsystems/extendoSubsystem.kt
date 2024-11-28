@@ -32,24 +32,24 @@ object extendoSubsystem: Subsystem {
         )
         s
     }
-//    val extendoServoR: CachingServo by OpModeLazyCell {
-//        val s = CachingServo(
-//            FeatureRegistrar.activeOpMode.hardwareMap.get(
-//                Servo::class.java, "esr"
-//            )
-//        )
+    val extendoServoR: CachingServo by OpModeLazyCell {
+        val s = CachingServo(
+            FeatureRegistrar.activeOpMode.hardwareMap.get(
+                Servo::class.java, "esr"
+            )
+        )
 //        s.direction = Servo.Direction.REVERSE
-//        s
-//    }
+        s
+    }
     val open = 1.0
     val close = 0.0
 
     fun openExtendoF(){
-//        extendoServoR.setPositionResult(open)
+        extendoServoR.setPositionResult(open)
         extendoServoL.setPositionResult(open)
     }
     fun closeExtendoF(){
-//        extendoServoR.setPositionResult(close)
+        extendoServoR.setPositionResult(close)
         extendoServoL.setPositionResult(close)
     }
 

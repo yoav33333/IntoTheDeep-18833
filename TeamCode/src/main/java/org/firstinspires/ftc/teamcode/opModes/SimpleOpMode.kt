@@ -1,22 +1,23 @@
-package org.firstinspires.ftc.teamcode.subsystems
+package org.firstinspires.ftc.teamcode.opModes
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier
-import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
-import dev.frozenmilk.mercurial.commands.Lambda
-import dev.frozenmilk.mercurial.commands.groups.Parallel
-import dev.frozenmilk.mercurial.commands.groups.Sequential
+import dev.frozenmilk.mercurial.bindings.BoundDoubleSupplier
 import dev.frozenmilk.mercurial.commands.util.StateMachine
 import dev.frozenmilk.mercurial.commands.util.Wait
-import dev.frozenmilk.util.cell.RefCell
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
 import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoCloseCommand
 import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoOpenCommand
+import org.firstinspires.ftc.teamcode.subsystems.BulkReads
+import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.driveSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.driveSubsystem.robotOrientedDrive
+import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import kotlin.math.abs
 
 @Mercurial.Attach
@@ -59,9 +60,11 @@ class simpleOpMode : OpMode() {
 //            linearSlides.closeSlides
 //        )
 
+        BoundDoubleSupplier{abs(Mercurial.gamepad1.leftStickX.state)+abs(Mercurial.gamepad1.leftStickY.state)+
+        abs(Mercurial.gamepad1.rightStickX.state)
+        }.conditionalBindState().greaterThan(0.1).bind().whileTrue(driveSubsystem.driveCommand)
 
         Mercurial.gamepad2.x.onTrue(
-
             extendoOpenCommand
         )
             .toggleFalse(extendoCloseCommand)
@@ -76,11 +79,15 @@ override fun loop() {
     telemetry.addData("agl", armClawSubsystem.angleClawServo.position)
     telemetry.addData("clawRotationServo", clawSubsystem.clawRotationServo.position)
     telemetry.addData("x", Mercurial.gamepad2.x.state)
+    telemetry.addData("lx", Mercurial.gamepad1.leftStickX.state)
+    telemetry.addData("ly", Mercurial.gamepad1.leftStickY.state)
+    telemetry.addData("rx", Mercurial.gamepad1.rightStickX.state)
 //    telemetry.addData("", clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM))
 //    telemetry.addData("", extendoCommand.currentExtendoState)
 
     telemetry.update()
 
     }
+
 
 }
