@@ -15,7 +15,8 @@ import dev.frozenmilk.util.cell.RefCell
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
-//import org.firstinspires.ftc.teamcode.subsystems.deposit.transferCommand
+import org.firstinspires.ftc.teamcode.subsystems.deposit.transferCommand
+import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeq
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 //import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 //import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
@@ -61,7 +62,7 @@ object extendoCommand {
     ),
         Wait(0.2),
         armClawSubsystem.closeClawArm,
-//        transferCommand
+        transferSeq
     )
 
 }

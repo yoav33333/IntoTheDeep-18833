@@ -17,6 +17,7 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundDoubleSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
@@ -29,7 +30,7 @@ import kotlin.math.pow
 import kotlin.math.sin
 
 
-object driveSubsystem: Subsystem{
+object driveSubsystem: SDKSubsystem(){
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
     @Target(AnnotationTarget.CLASS)
@@ -37,15 +38,16 @@ object driveSubsystem: Subsystem{
     @MustBeDocumented
     @Inherited
     annotation class Attach
+
     val leftFront: CachingDcMotorEx by OpModeLazyCell {
-        val m = CachingDcMotorEx(FeatureRegistrar.activeOpMode.hardwareMap.get(
+        val m = CachingDcMotorEx(hardwareMap.get(
             DcMotorEx::class.java, "lf"
         ))
         m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         m
     }
     val leftBack: CachingDcMotorEx by OpModeLazyCell {
-        val m = CachingDcMotorEx(FeatureRegistrar.activeOpMode.hardwareMap.get(
+        val m = CachingDcMotorEx(hardwareMap.get(
             DcMotorEx::class.java, "lb"
         ))
         m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -53,21 +55,19 @@ object driveSubsystem: Subsystem{
     }
 
     val rightBack: CachingDcMotorEx by OpModeLazyCell {
-        val m = FeatureRegistrar.activeOpMode.hardwareMap
-            .get(DcMotorEx::class.java, "rb")
+        val m = hardwareMap.get(DcMotorEx::class.java, "rb")
         m.direction = DcMotorSimple.Direction.REVERSE
         m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         CachingDcMotorEx(m)
     }
     val rightFront: CachingDcMotorEx by OpModeLazyCell {
-        val m = FeatureRegistrar.activeOpMode.hardwareMap
-            .get(DcMotorEx::class.java, "rf")
+        val m = hardwareMap.get(DcMotorEx::class.java, "rf")
         m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         m.direction = DcMotorSimple.Direction.REVERSE
         CachingDcMotorEx(m)
     }
     val imu: IMU by OpModeLazyCell{
-        val i = FeatureRegistrar.activeOpMode.hardwareMap.get(IMU::class.java, "imu")
+        val i = hardwareMap.get(IMU::class.java, "imu")
         i.initialize(IMU.Parameters(RevHubOrientationOnRobot(
             RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
             RevHubOrientationOnRobot.UsbFacingDirection.UP
@@ -75,64 +75,27 @@ object driveSubsystem: Subsystem{
         i
     }
 
+
     fun robotOrientedDrive(x: Double, y: Double, rotate: Double){
-        val denominator = 1
-
-        leftFront.setPowerRaw((y + x + rotate/denominator))
-        leftBack.setPowerRaw((y - x + rotate/denominator))
-        rightFront.setPowerRaw((- y - x + rotate/denominator))
-        rightBack.setPowerRaw((- y + x + rotate / denominator))
+        val denominator = abs(x) + abs(y) + abs(rotate)
+        val x = x.pow(2)
+        val y = y.pow(2)
+        val rotate = rotate.pow(2)
+        leftFront.setPowerRaw((y + x + rotate)/denominator)
+        leftBack.setPowerRaw((y - x + rotate)/denominator)
+        rightFront.setPowerRaw((- y - x + rotate)/denominator)
+        rightBack.setPowerRaw((- y + x + rotate) / denominator)
     }
 
-    fun robotOrientedDrive(x: BoundDoubleSupplier, y: BoundDoubleSupplier, rotate: BoundDoubleSupplier){
-        val denominator = 1
-        val lfPower = EnhancedDoubleSupplier{-y.state + x.state + rotate.state}
-        val lbPower = EnhancedDoubleSupplier{-y.state - x.state + rotate.state}
-        val rfPower = EnhancedDoubleSupplier{+y.state - x.state + rotate.state}
-        val rbPower = EnhancedDoubleSupplier{+ y.state + x.state + rotate.state}
-        val lfCommand = Lambda("lfCommand")
-            .setRunStates(Wrapper.OpModeState.ACTIVE)
-            .setExecute{leftFront.setPower(lfPower.state)}
-        BoundDoubleSupplier(lfPower).conditionalBindVelocityRaw().greaterThan(0.001).bind().whileTrue(
-            lfCommand)
 
-        val lbCommand = Lambda("lbCommand")
-            .setRunStates(Wrapper.OpModeState.ACTIVE)
-            .setExecute{ leftBack.setPower(lbPower.state)}
-        BoundDoubleSupplier(lbPower).conditionalBindVelocityRaw().greaterThan(0.001).bind().whileTrue(
-            lbCommand)
-        val rfCommand = Lambda("rfCommand")
-            .setRunStates(Wrapper.OpModeState.ACTIVE)
-            .setExecute{ rightFront.setPower(rfPower.state)}
-        BoundDoubleSupplier(rfPower).conditionalBindVelocityRaw().greaterThan(0.001).bind().whileTrue(
-            rfCommand)
-        val rbCommand = Lambda("rbCommand")
-            .setRunStates(Wrapper.OpModeState.ACTIVE)
-            .setExecute{ rightBack.setPower(rbPower.state)}
-        BoundDoubleSupplier(rbPower).conditionalBindVelocityRaw().greaterThan(0.001).bind().whileTrue(
-            rbCommand)
-//
-//        val lbPower = EnhancedDoubleSupplier{y.state - x.state + rotate.state}
-//        val rfPower = EnhancedDoubleSupplier{-y.state - x.state + rotate.state}
-//        val rbPower = EnhancedDoubleSupplier{- y.state + x.state + rotate.state}
-//        leftFront.setPowerRaw(lfPower.state)
-//        leftBack.setPowerRaw((y - x + rotate/denominator))
-//        rightFront.setPowerRaw((- y - x + rotate/denominator))
-//        rightBack.setPowerRaw((- y + x + rotate / denominator))
-    }
 
     val driveCommand = Lambda("driveCommand")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{
-            robotOrientedDrive(Mercurial.gamepad1.leftStickX.state,
-                Mercurial.gamepad1.leftStickY.state,
-                Mercurial.gamepad1.rightStickX.state)
-        }
         .setExecute{
             robotOrientedDrive(Mercurial.gamepad1.leftStickX.state,
                 Mercurial.gamepad1.leftStickY.state,
                 Mercurial.gamepad1.rightStickX.state)
         }
+        .setFinish{false}
 
     fun fieldOrientedDrive(x: Double, y: Double, rotate: Double){
         x.pow(2)
@@ -169,9 +132,7 @@ object driveSubsystem: Subsystem{
     // or these
     override fun postUserInitLoopHook(opMode: Wrapper) {}
     override fun postUserLoopHook(opMode: Wrapper) {
-//        robotOrientedDrive(Mercurial.gamepad1.leftStickX,
-//            Mercurial.gamepad1.leftStickY,
-//            Mercurial.gamepad1.rightStickX)
+
     }
 
     // and stopping code can go in here

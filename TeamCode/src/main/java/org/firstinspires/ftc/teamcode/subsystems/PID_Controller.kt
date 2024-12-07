@@ -36,7 +36,7 @@ class PID_Controller(val currentPose: EnhancedDoubleSupplier,val targetPose: Enh
     // Controllers
     //
     // ComplexControllers are the Dairy alternative to run modes, allowing for powerful, extensible control loops
-//        doubleControllerTarget = target // we'll use this to control the target
+//        target = target // we'll use this to control the target
     val doubleController = DoubleController(
         // target
         // NaN can be returned for a component if you want to completely ignore it
