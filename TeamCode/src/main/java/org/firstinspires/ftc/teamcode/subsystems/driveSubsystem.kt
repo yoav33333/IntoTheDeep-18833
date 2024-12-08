@@ -132,7 +132,9 @@ object driveSubsystem: SDKSubsystem(){
     // or these
     override fun postUserInitLoopHook(opMode: Wrapper) {}
     override fun postUserLoopHook(opMode: Wrapper) {
-
+        robotOrientedDrive(Mercurial.gamepad1.leftStickX.state,
+            Mercurial.gamepad1.leftStickY.state,
+            Mercurial.gamepad1.rightStickX.state)
     }
 
     // and stopping code can go in here

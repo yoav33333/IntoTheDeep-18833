@@ -37,7 +37,6 @@ class simpleOpMode : OpMode() {
 
     override fun init() {
 
-
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
 
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
@@ -47,7 +46,7 @@ class simpleOpMode : OpMode() {
         }).onTrue(Wait(0.1).then(clawSubsystem.closeClaw))
 
         BoundBooleanSupplier(EnhancedBooleanSupplier{
-            abs(Mercurial.gamepad2.leftStickX.state)>0.4})
+            abs(Mercurial.gamepad2.leftStickX.state)>0.5})
             .whileTrue(clawSubsystem.rotateClaw)
 
 
@@ -60,9 +59,9 @@ class simpleOpMode : OpMode() {
 
         Mercurial.gamepad2.b.onTrue(release)
 
-        BoundDoubleSupplier{abs(Mercurial.gamepad1.leftStickX.state)+abs(Mercurial.gamepad1.leftStickY.state)+
-        abs(Mercurial.gamepad1.rightStickX.state)
-        }.conditionalBindState().greaterThan(0.1).bind().whileTrue(driveSubsystem.driveCommand)
+//        BoundDoubleSupplier{abs(Mercurial.gamepad1.leftStickX.state)+abs(Mercurial.gamepad1.leftStickY.state)+
+//        abs(Mercurial.gamepad1.rightStickX.state)
+//        }.conditionalBindState().greaterThan(0.1).bind().whileTrue(driveSubsystem.driveCommand)
 
         Mercurial.gamepad2.x.toggleTrue(extendoOpenCommand)
             .toggleFalse(extendoCloseCommand)
