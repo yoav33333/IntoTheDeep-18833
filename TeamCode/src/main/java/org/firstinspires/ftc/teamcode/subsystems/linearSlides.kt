@@ -33,7 +33,7 @@ object linearSlides: Subsystem {
     val motorLiftNear: CachingDcMotorEx by OpModeLazyCell {
         val s = CachingDcMotorEx(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                DcMotorEx::class.java, "mln"
+                DcMotorEx::class.java, "l1"
             )
         )
         s.cachingTolerance = 0.01
@@ -42,7 +42,7 @@ object linearSlides: Subsystem {
     val motorLiftMiddle: CachingDcMotorEx by OpModeLazyCell {
         val s = CachingDcMotorEx(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                DcMotorEx::class.java, "mlm"
+                DcMotorEx::class.java, "l2"
             )
         )
         s.cachingTolerance = 0.01
@@ -51,7 +51,7 @@ object linearSlides: Subsystem {
     val motorLiftFar: CachingDcMotorEx by OpModeLazyCell {
         val s = CachingDcMotorEx(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                DcMotorEx::class.java, "mlf"
+                DcMotorEx::class.java, "l3"
             )
         )
         s.cachingTolerance = 0.01
@@ -59,8 +59,8 @@ object linearSlides: Subsystem {
     }
     var Kp = 1.0
     var Kd = 1.0
-    val PDController = PDController(Kp, Kd)
-    val motors = motorGroup(motorLiftNear, motorLiftMiddle, motorLiftFar)
+//    val PDController = PDController(Kp, Kd)
+//    val motors = motorGroup(motorLiftNear, motorLiftMiddle, motorLiftFar)
     val closeingPose = 0.0
     var target = 100.0
 
@@ -103,53 +103,55 @@ object linearSlides: Subsystem {
 //            .plus(DoubleComponent.D(MotionComponents.STATE, 0.0005)) // then D
 //    )
 
-    fun holdPose() {
-        runToPose(motors.getPos().toDouble())
-    }
-    fun runToPose(pose: Double) {
-        motors.setPower(PDController.calculate(motors.getPos().toDouble(), pose))
-        target = pose
-
-    }
-
-    fun closeSlides(){
-        runToPose(closeingPose)
-    }
+//    fun holdPose() {
+//        runToPose(motors.getPos().toDouble())
+//    }
+//    fun runToPose(pose: Double) {
+//        motors.setPower(PDController.calculate(motors.getPos().toDouble(), pose))
+//        target = pose
+//
+//    }
+//
+//    fun closeSlides(){
+//        runToPose(closeingPose)
+//    }
     fun runManually(power: Double){
-        motors.setPower( power )
+        motorLiftNear.setPower( power )
+        motorLiftMiddle.setPower( power )
+        motorLiftFar.setPower( power )
     }
     val manualControl = Lambda("manualControl")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{runManually(Mercurial.gamepad2.rightStickY.state)}
         .setExecute{runManually(Mercurial.gamepad2.rightStickY.state)}
         .setFinish{false}
+//
+//    val holdPose = Lambda("holdSlidesPose")
+//        .setRunStates(Wrapper.OpModeState.ACTIVE)
+//        .setExecute{
+//            holdPose()
+//        }
+//        .setFinish{false}
+//    val closeSlides = Lambda("closeSlides")
+//        .setRunStates(Wrapper.OpModeState.ACTIVE)
+//        .setInit{closeSlides()}
+//        .setExecute{closeSlides()}
+//        .setFinish{ abs(target- motors.getPos())<20}
 
-    val holdPose = Lambda("holdSlidesPose")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setExecute{
-            holdPose()
-        }
-        .setFinish{false}
-    val closeSlides = Lambda("closeSlides")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{closeSlides()}
-        .setExecute{closeSlides()}
-        .setFinish{ abs(target- motors.getPos())<20}
-
-    override fun preUserInitHook(opMode: Wrapper) {
-
-        motors.setRunMode(RunMode.STOP_AND_RESET_ENCODER)
-        motors.setRunMode(RunMode.RUN_WITHOUT_ENCODER)
-        motors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
-    }
-    val telemetry = MultipleTelemetry(FeatureRegistrar.activeOpMode.telemetry, FtcDashboard.getInstance().telemetry)
+//    override fun preUserInitHook(opMode: Wrapper) {
+//
+//        motors.setRunMode(RunMode.STOP_AND_RESET_ENCODER)
+//        motors.setRunMode(RunMode.RUN_WITHOUT_ENCODER)
+//        motors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+//    }
+//    val telemetry = MultipleTelemetry(FeatureRegistrar.activeOpMode.telemetry, FtcDashboard.getInstance().telemetry)
 
 
-    override fun postUserLoopHook(opMode: Wrapper) {
-        telemetry.addData("pose", motors.getPos())
-        telemetry.addData("target", target)
-        telemetry.addData("error", target - motors.getPos())
-        telemetry.update()
-
-    }
+//    override fun postUserLoopHook(opMode: Wrapper) {
+//        telemetry.addData("pose", motors.getPos())
+//        telemetry.addData("target", target)
+//        telemetry.addData("error", target - motors.getPos())
+//        telemetry.update()
+//
+//    }
 }

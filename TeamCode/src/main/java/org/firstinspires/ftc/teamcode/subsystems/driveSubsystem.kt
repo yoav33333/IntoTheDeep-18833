@@ -11,18 +11,13 @@ import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
-import dev.frozenmilk.dairy.core.util.supplier.numeric.EnhancedDoubleSupplier
-import dev.frozenmilk.dairy.core.util.supplier.numeric.EnhancedNumericSupplier
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
-import dev.frozenmilk.mercurial.bindings.BoundDoubleSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import java.lang.annotation.Inherited
-import java.util.function.DoubleSupplier
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.max
@@ -30,7 +25,7 @@ import kotlin.math.pow
 import kotlin.math.sin
 
 
-object driveSubsystem: SDKSubsystem(){
+object driveSubsystem: Subsystem{
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
     @Target(AnnotationTarget.CLASS)
@@ -40,34 +35,34 @@ object driveSubsystem: SDKSubsystem(){
     annotation class Attach
 
     val leftFront: CachingDcMotorEx by OpModeLazyCell {
-        val m = CachingDcMotorEx(hardwareMap.get(
-            DcMotorEx::class.java, "lf"
+        val m = CachingDcMotorEx(FeatureRegistrar.activeOpMode.hardwareMap.get(
+            DcMotorEx::class.java, "dfl"
         ))
         m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         m
     }
     val leftBack: CachingDcMotorEx by OpModeLazyCell {
-        val m = CachingDcMotorEx(hardwareMap.get(
-            DcMotorEx::class.java, "lb"
+        val m = CachingDcMotorEx(FeatureRegistrar.activeOpMode.hardwareMap.get(
+            DcMotorEx::class.java, "drl"
         ))
         m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         m
     }
 
     val rightBack: CachingDcMotorEx by OpModeLazyCell {
-        val m = hardwareMap.get(DcMotorEx::class.java, "rb")
+        val m = FeatureRegistrar.activeOpMode.hardwareMap.get(DcMotorEx::class.java, "drr")
         m.direction = DcMotorSimple.Direction.REVERSE
         m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         CachingDcMotorEx(m)
     }
     val rightFront: CachingDcMotorEx by OpModeLazyCell {
-        val m = hardwareMap.get(DcMotorEx::class.java, "rf")
+        val m = FeatureRegistrar.activeOpMode.hardwareMap.get(DcMotorEx::class.java, "dfr")
         m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         m.direction = DcMotorSimple.Direction.REVERSE
         CachingDcMotorEx(m)
     }
     val imu: IMU by OpModeLazyCell{
-        val i = hardwareMap.get(IMU::class.java, "imu")
+        val i = FeatureRegistrar.activeOpMode.hardwareMap.get(IMU::class.java, "imu")
         i.initialize(IMU.Parameters(RevHubOrientationOnRobot(
             RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
             RevHubOrientationOnRobot.UsbFacingDirection.UP
@@ -77,14 +72,11 @@ object driveSubsystem: SDKSubsystem(){
 
 
     fun robotOrientedDrive(x: Double, y: Double, rotate: Double){
-        val denominator = abs(x) + abs(y) + abs(rotate)
-        val x = x.pow(2)
-        val y = y.pow(2)
-        val rotate = rotate.pow(2)
-        leftFront.setPowerRaw((y + x + rotate)/denominator)
-        leftBack.setPowerRaw((y - x + rotate)/denominator)
-        rightFront.setPowerRaw((- y - x + rotate)/denominator)
-        rightBack.setPowerRaw((- y + x + rotate) / denominator)
+
+        leftFront.setPowerRaw((y + x + rotate))
+        leftBack.setPowerRaw((y - x + rotate))
+        rightFront.setPowerRaw((- y - x + rotate))
+        rightBack.setPowerRaw((- y + x + rotate))
     }
 
 

@@ -17,6 +17,8 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.dairy.pasteurized.Pasteurized
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Sequential
+import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
@@ -42,7 +44,7 @@ object armClawSubsystem: Subsystem {
     val armClawServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "armcs"
+                Servo::class.java, "4 bar s"
             )
         )
         s
@@ -50,37 +52,45 @@ object armClawSubsystem: Subsystem {
     val angleClawServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "aglcs"
+                Servo::class.java, "arm s"
             )
         )
+        s.direction = Servo.Direction.REVERSE
         s
     }
-    val armOut = 0.0
-    val armIn = 0.25
+    val armOut = 0.09
+    val armIn = 1.0
     val transfareState = 0.0
     val intakeState = 1.0
 
-    val openClawArm = Lambda("openClawArm")
+
+    val angleTransfer = Lambda("angleTransfer")
         .setInit{
-            armClawServo.setPositionRaw(armOut)
-            angleClawServo.setPositionResult(intakeState)
+            angleClawServo.setPosition(transfareState)
+        }
+    val angleIntake = Lambda("angleIntake")
+        .setInit{
+            angleClawServo.setPosition(intakeState)
+        }
+    val moveArmOut = Lambda("moveArmOut")
+        .setInit{
+            armClawServo.setPosition(armOut)
+        }
+    val moveArmIn = Lambda("moveArmIn")
+        .setInit{
+            armClawServo.setPosition(armIn)
         }
 
-    fun openClawArm(){
-        armClawServo.setPositionRaw(armOut)
-        angleClawServo.setPositionResult(intakeState)
-    }
-    fun closeClawArm(){
-        armClawServo.setPositionRaw(armIn)
-        angleClawServo.setPositionResult(transfareState)
-    }
-    val closeClawArm = Lambda("closeClawArm")
-        .setInit{
-            armClawServo.setPositionRaw(armIn)
-            angleClawServo.setPositionResult(transfareState)
-        }
+    val openClawArm = Sequential(
+        moveArmOut,
+        Wait(0.2),
+        angleIntake
+    )
+    val closeClawArm = Sequential(
+        angleTransfer,
+        Wait(0.2),
+        moveArmIn
+    )
 
-    override fun preUserInitHook(opMode: Wrapper) {
-        closeClawArm()
-    }
+
 }

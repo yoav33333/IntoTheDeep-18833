@@ -17,7 +17,6 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import java.lang.annotation.Inherited
 
-
 object deposit: SDKSubsystem() {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
@@ -31,7 +30,7 @@ object deposit: SDKSubsystem() {
     val depoClawServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "dcs"
+                Servo::class.java, "small claw"
             )
         )
         s
@@ -39,7 +38,7 @@ object deposit: SDKSubsystem() {
     val depoArmServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "das"
+                Servo::class.java, "flip servo"
             )
         )
         s
@@ -122,10 +121,8 @@ object deposit: SDKSubsystem() {
         }
         .setEnd{closeClaw()}
 
-
     override fun postUserInitHook(opMode: Wrapper) {
         closeClaw()
     }
-
 
 }

@@ -27,7 +27,7 @@ object extendoSubsystem: Subsystem {
     val extendoServoL: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "esl"
+                Servo::class.java, "extendo l s"
             )
         )
         s
@@ -35,22 +35,21 @@ object extendoSubsystem: Subsystem {
     val extendoServoR: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "esr"
+                Servo::class.java, "extendo r s"
             )
         )
-//        s.direction = Servo.Direction.REVERSE
         s
     }
-    val open = 1.0
-    val close = 0.0
+    val open = 0.2
+    val close = 1.0
 
     fun openExtendoF(){
-        extendoServoR.setPositionResult(open)
-        extendoServoL.setPositionResult(open)
+        extendoServoR.setPosition(open)
+        extendoServoL.setPosition(open)
     }
     fun closeExtendoF(){
-        extendoServoR.setPositionResult(close)
-        extendoServoL.setPositionResult(close)
+        extendoServoR.setPosition(close)
+        extendoServoL.setPosition(close)
     }
 
     val openExtendo = Lambda("openExtendo")

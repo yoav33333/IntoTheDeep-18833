@@ -27,7 +27,7 @@ object clawSubsystem: Subsystem {
     val clawServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "cs"
+                Servo::class.java, "claw servo"
             )
         )
         s.cachingTolerance = 0.001
@@ -37,7 +37,7 @@ object clawSubsystem: Subsystem {
     val clawRotationServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
-                Servo::class.java, "crs"
+                Servo::class.java, "rotate servo"
             )
         )
         s.cachingTolerance = 0.001
@@ -47,7 +47,7 @@ object clawSubsystem: Subsystem {
 
     val colorDistSensor: ColorRangeSensor by OpModeLazyCell{
         FeatureRegistrar.activeOpMode.hardwareMap.get(
-            ColorRangeSensor::class.java, "cds"
+            ColorRangeSensor::class.java, "color claw"
         )
     }
 
@@ -65,7 +65,6 @@ object clawSubsystem: Subsystem {
 
     var changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .addRequirements(clawSubsystem)
         .setInit{
             if (clawServo.position == closeingPose) {
                 openClaw()
@@ -81,11 +80,11 @@ object clawSubsystem: Subsystem {
         }
     val turnLeft = Lambda("turnLeft")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{clawRotationServo.position = 0.0}
+        .setInit{clawRotationServo.position = 0.1}
 
     val turnRight = Lambda("turnRight")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{clawRotationServo.position = 1.0}
+        .setInit{clawRotationServo.position = 0.9}
 
 
 
