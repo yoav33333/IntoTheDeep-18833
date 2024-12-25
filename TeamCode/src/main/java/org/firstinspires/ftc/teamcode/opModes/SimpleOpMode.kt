@@ -8,11 +8,15 @@ import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.util.Wait
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
+import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoCloseCommand
 import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoMacro
 import org.firstinspires.ftc.teamcode.subsystems.BulkReads
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.deposit
+import org.firstinspires.ftc.teamcode.subsystems.deposit.depoArmServo
+import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeCommand
+import org.firstinspires.ftc.teamcode.subsystems.deposit.release
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferCommand
 import org.firstinspires.ftc.teamcode.subsystems.driveSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
@@ -32,12 +36,14 @@ import kotlin.math.abs
 class simpleOpMode : OpMode() {
 
     override fun init() {
-
+//        extendoMacro.schedule()
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
-
+        Mercurial.gamepad2.b.onTrue(release)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
-
-        BoundBooleanSupplier(EnhancedBooleanSupplier{clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<35.0})
+        Mercurial.gamepad2.a.onTrue(deposit.intakeCommand)
+        Mercurial.gamepad2.dpadDown.whileTrue(extendoSubsystem.moveManualO)
+        Mercurial.gamepad2.dpadUp.whileTrue(extendoSubsystem.moveManualC)
+        BoundBooleanSupplier(EnhancedBooleanSupplier{clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<35.0 && clawSubsystem.check})
             .onTrue(Wait(0.1).then(clawSubsystem.closeClaw))
 
         BoundBooleanSupplier(EnhancedBooleanSupplier{ Mercurial.gamepad2.leftStickX.state>0.6})
@@ -51,10 +57,10 @@ class simpleOpMode : OpMode() {
 
 //        Mercurial.gamepad2.a.onTrue(linearSlides.closeSlides)
 
-//        Mercurial.gamepad2.b.onTrue(release)
 
 
-
+        Mercurial.gamepad1.b.onTrue(driveSubsystem.gears)
+        Mercurial.gamepad1.x.onTrue(driveSubsystem.gears)
         Mercurial.gamepad2.x.onTrue(extendoMacro)
 
     }
@@ -68,11 +74,15 @@ override fun loop() {
     telemetry.addData("p", armClawSubsystem.armClawServo.position)
     telemetry.addData("ry", Mercurial.gamepad2.rightStickY.state)
     telemetry.addData("time", runtime)
-    telemetry.addData("dis", deposit.colorSensor.getDistance(DistanceUnit.MM))
     telemetry.addData("pos", deposit.depoArmServo.position)
     telemetry.addData("dist", clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM))
     telemetry.addData("v4b", armClawSubsystem.armClawServo.position)
     telemetry.addData("v4b", clawSubsystem.clawRotationServo.position)
+    telemetry.addData("dis dep", deposit.colorSensor.getDistance(DistanceUnit.MM))
+    telemetry.addData("flip servo", depoArmServo.position)
+    telemetry.addData("ex", extendoSubsystem.extendoServoL.position)
+    telemetry.addData("trans", Mercurial.isScheduled(transferCommand))
+    telemetry.addData("trans", Mercurial.isScheduled(intakeCommand))
 
     telemetry.update()
 

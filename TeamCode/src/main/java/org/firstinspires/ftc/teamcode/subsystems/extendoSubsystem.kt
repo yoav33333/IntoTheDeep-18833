@@ -7,6 +7,7 @@ import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
+import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.Subsystem
@@ -51,6 +52,19 @@ object extendoSubsystem: Subsystem {
         extendoServoR.setPosition(close)
         extendoServoL.setPosition(close)
     }
+
+    val moveManualO = Lambda("moveManualO")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setExecute{
+            extendoServoR.setPosition(if(extendoServoR.position<1) extendoServoR.position+0.01 else extendoServoR.position)
+            extendoServoL.setPosition(if(extendoServoL.position<1) extendoServoL.position+0.01 else extendoServoL.position)
+        }
+    val moveManualC = Lambda("moveManualC")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setExecute{
+            extendoServoR.setPosition(if(extendoServoR.position>0.2) extendoServoR.position-0.01 else extendoServoR.position)
+            extendoServoL.setPosition(if(extendoServoL.position>0.2) extendoServoL.position-0.01 else extendoServoL.position)
+        }
 
     val openExtendo = Lambda("openExtendo")
         .setInit{

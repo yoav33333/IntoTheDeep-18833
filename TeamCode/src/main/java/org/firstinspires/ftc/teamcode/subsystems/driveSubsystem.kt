@@ -34,6 +34,12 @@ object driveSubsystem: Subsystem{
     @Inherited
     annotation class Attach
 
+    var x = 0.0
+    var y = 0.0
+    var rotate = 0.0
+    var speed = 1.0
+
+
     val leftFront: CachingDcMotorEx by OpModeLazyCell {
         val m = CachingDcMotorEx(FeatureRegistrar.activeOpMode.hardwareMap.get(
             DcMotorEx::class.java, "dfl"
@@ -71,23 +77,15 @@ object driveSubsystem: Subsystem{
     }
 
 
-    fun robotOrientedDrive(x: Double, y: Double, rotate: Double){
+    fun robotOrientedDrive(x: Double, y: Double, rotate: Double, speed: Double){
 
-        leftFront.setPowerRaw((y + x + rotate))
-        leftBack.setPowerRaw((y - x + rotate))
-        rightFront.setPowerRaw((- y - x + rotate))
-        rightBack.setPowerRaw((- y + x + rotate))
+        leftFront.setPowerRaw((y + x + rotate)*speed)
+        leftBack.setPowerRaw((y - x + rotate)*speed)
+        rightFront.setPowerRaw((- y + x + rotate)*speed)
+        rightBack.setPowerRaw((- y - x + rotate)*speed)
     }
 
 
-
-    val driveCommand = Lambda("driveCommand")
-        .setExecute{
-            robotOrientedDrive(Mercurial.gamepad1.leftStickX.state,
-                Mercurial.gamepad1.leftStickY.state,
-                Mercurial.gamepad1.rightStickX.state)
-        }
-        .setFinish{false}
 
     fun fieldOrientedDrive(x: Double, y: Double, rotate: Double){
         x.pow(2)
@@ -109,33 +107,19 @@ object driveSubsystem: Subsystem{
         rightFront.setPowerRaw((rotY - rotX - rotate) / denominator)
         rightBack.setPowerRaw((rotY + rotX - rotate) / denominator)
     }
+    val gears = Lambda("gears")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{
+            speed += if(Mercurial.gamepad1.b.state&& speed<1)0.25 else 0.0 - if(Mercurial.gamepad1.x.state&& speed>0.25)0.25 else 0.0
+        }
 
-    override fun preUserInitHook(opMode: Wrapper) {
-        // default command should be set up here, not in the constructor
-    }
-    // or here
-    override fun postUserInitHook(opMode: Wrapper) {}
-
-    // and you might put periodic code in these
-    override fun preUserInitLoopHook(opMode: Wrapper) {}
-    override fun preUserLoopHook(opMode: Wrapper) {
-
-    }
-    // or these
-    override fun postUserInitLoopHook(opMode: Wrapper) {}
     override fun postUserLoopHook(opMode: Wrapper) {
-        robotOrientedDrive(Mercurial.gamepad1.leftStickX.state,
-            Mercurial.gamepad1.leftStickY.state,
-            Mercurial.gamepad1.rightStickX.state)
+        x = Mercurial.gamepad1.leftStickX.state
+        y = Mercurial.gamepad1.leftStickY.state
+        rotate = Mercurial.gamepad1.rightStickX.state
+        x+=Mercurial.gamepad1.rightTrigger.state-Mercurial.gamepad1.leftTrigger.state
+        rotate+=if(Mercurial.gamepad1.rightBumper.state)1 else 0 - if(Mercurial.gamepad1.leftBumper.state)1 else 0
+
+        robotOrientedDrive(x, y, rotate, speed)
     }
-
-    // and stopping code can go in here
-    override fun preUserStopHook(opMode: Wrapper) {}
-    // or here
-    override fun postUserStopHook(opMode: Wrapper) {}
-
-    // see the feature dev notes on when to use cleanup vs postStop
-    override fun cleanup(opMode: Wrapper) {}
-
-
 }

@@ -10,7 +10,10 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Sequential
+import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.Subsystem
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import java.lang.annotation.Inherited
 
 
@@ -57,6 +60,9 @@ object clawSubsystem: Subsystem {
     fun closeClaw() {
         clawServo.setPosition(closeingPose)
     }
+    fun closeClawP() {
+        clawServo.setPosition(0.53)
+    }
 
     fun openClaw() {
         clawServo.setPosition(openingPose)
@@ -72,6 +78,14 @@ object clawSubsystem: Subsystem {
                 closeClaw()
             }
         }
+    var check = true
+    val runCs = Lambda("rcs")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ check = true}
+
+    val stopCs = Lambda("scs")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ check = false}
 
 
     val rotateClaw = Lambda("rotate claw")
@@ -80,28 +94,32 @@ object clawSubsystem: Subsystem {
         }
     val turnLeft = Lambda("turnLeft")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{clawRotationServo.position = 0.1}
+        .setInit{clawRotationServo.setPosition(0.1)}
 
     val turnRight = Lambda("turnRight")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{clawRotationServo.position = 0.9}
+        .setInit{clawRotationServo.setPosition(0.9)}
 
 
 
     val resetAngleClaw = Lambda("resetAngleClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{clawRotationServo.position = 0.5}
+        .setInit{clawRotationServo.setPosition(0.5)}
 
     val openClaw = Lambda("openClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
             openClaw()}
+
     val closeClaw = Lambda("closeClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{ closeClaw()}
+    val closeClaw2 = Lambda("closeClaw2")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ closeClawP() }
 
     override fun postUserInitHook(opMode: Wrapper) {
         openClaw()
-        clawRotationServo.position = 0.5
+        clawRotationServo.setPosition(0.5)
     }
 }

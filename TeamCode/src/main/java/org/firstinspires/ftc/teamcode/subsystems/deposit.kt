@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import com.qualcomm.hardware.rev.RevColorSensorV3
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
+import com.qualcomm.robotcore.hardware.ColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
 import dev.frozenmilk.dairy.core.FeatureRegistrar
@@ -15,6 +17,7 @@ import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.teamcode.commands.extendoCommand
 import java.lang.annotation.Inherited
 
 object deposit: SDKSubsystem() {
@@ -43,16 +46,16 @@ object deposit: SDKSubsystem() {
         )
         s
     }
-    val colorSensor: ColorRangeSensor by OpModeLazyCell {
+    val colorSensor: RevColorSensorV3 by OpModeLazyCell {
         val s = FeatureRegistrar.activeOpMode.hardwareMap.get(
-            ColorRangeSensor::class.java, "dsc"
+            RevColorSensorV3::class.java, "dsc"
         )
         s
     }
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
-    val ArmInPose = 0.0
-    val ArmOutPose = 1.0
+    val ArmInPose = 0.05
+    val ArmOutPose = 0.85
 
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
@@ -83,17 +86,35 @@ object deposit: SDKSubsystem() {
     }
 
     fun checkIfSampleInPlace(): Boolean {
-        return colorSensor.getDistance(DistanceUnit.MM)<40
+        if (colorSensor.getDistance(DistanceUnit.MM)<40) {
+            closeClaw()
+            return true
+        }
+        return false
     }
     val release = Lambda("release")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{ openClaw()}
     val armOut = Lambda("armOut")
         .setInit{armOut()}
+    var stop = false
+    val intakeCommand = Lambda("intakeCommand")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{
+
+            intakeFromHumanPlayer()
+            extendoCommand.extendoMacro.cancel()
+        }
+        .setFinish{
+            checkIfSampleInPlace()&& stop
+        }
+        .setEnd{}
+
     val transferCommand = Lambda("transferCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
             transferPose()
+            stop = true
         }
         .setExecute{
             telemetry.addData("active", true)
@@ -101,25 +122,23 @@ object deposit: SDKSubsystem() {
         .setFinish{
             checkIfSampleInPlace()
         }
-        .setEnd{closeClaw()
+        .setEnd{closeClaw()}
 
-        }
     val transferSeq = Sequential(
         transferCommand,
+        Wait(0.2),
         clawSubsystem.openClaw,
-        Wait(0.5),
+        Wait(0.2),
         armOut
         )
-
-    val intakeCommand = Lambda("intakeCommand")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
+    val armIn = Lambda("armIn")
         .setInit{
-            intakeFromHumanPlayer()
+            armIn()
+            stop = true
         }
-        .setFinish{
-            checkIfSampleInPlace()
-        }
-        .setEnd{closeClaw()}
+
+
+
 
     override fun postUserInitHook(opMode: Wrapper) {
         closeClaw()
