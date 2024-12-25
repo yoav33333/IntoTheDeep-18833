@@ -5,6 +5,8 @@ import dev.frozenmilk.dairy.core.Feature
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 
 object BulkReads : Feature {
     // first, we need to set up the dependency
@@ -12,12 +14,13 @@ object BulkReads : Feature {
     // "for this feature to receive updates about an OpMode, it must have @BulkReads.Attach"
     override var dependency: Dependency<*> = SingleAnnotation(Attach::class.java)
 
-    private lateinit var modules: List<LynxModule>
+    lateinit var modules: List<LynxModule>
 
     override fun preUserInitHook(opMode: Wrapper) {
         // collect and store the modules
         modules = opMode.opMode.hardwareMap.getAll(LynxModule::class.java)
         // set them to manual
+
         modules.forEach { it.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL }
     }
 

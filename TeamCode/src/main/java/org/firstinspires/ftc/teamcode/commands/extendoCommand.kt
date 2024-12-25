@@ -19,8 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.deposit.armIn
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferCommand
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeq
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
-//import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
-//import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import java.lang.annotation.Inherited
 
 object extendoCommand : Subsystem{
@@ -39,7 +38,8 @@ object extendoCommand : Subsystem{
         clawSubsystem.resetAngleClaw,
         armClawSubsystem.openClawArm,
         extendoSubsystem.openExtendo,
-        clawSubsystem.openClaw
+        clawSubsystem.openClaw,
+        linearSlides.closeSlides
     ),Wait(0.3),
         clawSubsystem.runCs,
         armIn
@@ -67,6 +67,6 @@ object extendoCommand : Subsystem{
     )
 
     override fun preUserStartHook(opMode: Wrapper) {
-        extendoMacro.schedule()
+        extendoCloseCommand.schedule()
     }
 }

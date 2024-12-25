@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoMacro
 import org.firstinspires.ftc.teamcode.subsystems.BulkReads
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.rotateClawL
+import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.rotateClawR
 import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.deposit.depoArmServo
 import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeCommand
@@ -40,17 +42,15 @@ class simpleOpMode : OpMode() {
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(release)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
-        Mercurial.gamepad2.a.onTrue(deposit.intakeCommand)
+        Mercurial.gamepad2.a.onTrue(intakeCommand)
         Mercurial.gamepad2.dpadDown.whileTrue(extendoSubsystem.moveManualO)
         Mercurial.gamepad2.dpadUp.whileTrue(extendoSubsystem.moveManualC)
-        BoundBooleanSupplier(EnhancedBooleanSupplier{clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<35.0 && clawSubsystem.check})
+        Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
+        Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
+
+        BoundBooleanSupplier(EnhancedBooleanSupplier{clawSubsystem.readSensorDis()<35.0 && clawSubsystem.check})
             .onTrue(Wait(0.1).then(clawSubsystem.closeClaw))
 
-        BoundBooleanSupplier(EnhancedBooleanSupplier{ Mercurial.gamepad2.leftStickX.state>0.6})
-            .whileTrue(clawSubsystem.turnRight)
-
-        BoundBooleanSupplier(EnhancedBooleanSupplier{ Mercurial.gamepad2.leftStickX.state<-0.6})
-            .whileTrue(clawSubsystem.turnLeft)
 
         BoundBooleanSupplier(EnhancedBooleanSupplier{abs(Mercurial.gamepad2.rightStickY.state)>0.1})
             .whileTrue(linearSlides.manualControl)

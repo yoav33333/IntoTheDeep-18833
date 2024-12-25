@@ -59,99 +59,64 @@ object linearSlides: Subsystem {
     }
     var Kp = 1.0
     var Kd = 1.0
-//    val PDController = PDController(Kp, Kd)
-//    val motors = motorGroup(motorLiftNear, motorLiftMiddle, motorLiftFar)
+    val PDController = PDController(Kp, Kd)
     val closeingPose = 0.0
     var target = 100.0
 
-//    val p = 0.0
-//    val i = 0.0
-//    val d = 0.0
 
-//    val doubleController = DoubleController(
-//        // target
-//        // NaN can be returned for a component if you want to completely ignore it
-//        // but usually something else is better: 0.0, NEGATIVE_INFINITY, POSITIVE_INFINITY
-//        // in this case we're only ever going to use state for a calculation
-//        targetSupplier = MotionComponentSupplier {
-//            if (it == MotionComponents.STATE) {
-//                return@MotionComponentSupplier target
-//            }
-//            0.0
-//        },
-//        // state
-//        // we'll use the motor's encoder for feedback
-//        stateSupplier = { motorLiftMiddle.currentPosition.toDouble() },
-//        // tolerance
-//        // when we check if we're finished, this is our default allowable error
-//        // NaN can be returned for a component if you want to completely ignore it
-//        // this cached wrapper will prevent regenerating the outputs, as they aren't dynamic
-//        toleranceEpsilon = CachedMotionComponentSupplier(
-//            MotionComponentSupplier {
-//                return@MotionComponentSupplier when (it) {
-//                    MotionComponents.STATE -> 10.0
-//                    MotionComponents.VELOCITY -> 1.0
-//                    else -> Double.NaN
-//                }
-//            }
-//        ),
-//        // optional, callback
-//        outputConsumer = motors::setPower, // when this controller updates, this callback will be run
-//        // then we build up the calculation:
-//        controllerCalculation = DoubleComponent.P(MotionComponents.STATE, 0.1) // first P
-//            .plus(DoubleComponent.I(MotionComponents.STATE, -0.00003, -0.1, 0.1)) // then I
-//            .plus(DoubleComponent.D(MotionComponents.STATE, 0.0005)) // then D
-//    )
+    fun runToPose(pose: Double) {
+        setPower(PDController.calculate(getPose().toDouble(), pose))
+        target = pose
 
-//    fun holdPose() {
-//        runToPose(motors.getPos().toDouble())
-//    }
-//    fun runToPose(pose: Double) {
-//        motors.setPower(PDController.calculate(motors.getPos().toDouble(), pose))
-//        target = pose
-//
-//    }
-//
-//    fun closeSlides(){
-//        runToPose(closeingPose)
-//    }
-    fun runManually(power: Double){
+    }
+
+    fun closeSlides(){
+        runToPose(closeingPose)
+    }
+    fun setPower(power: Double){
         motorLiftNear.setPower( power )
         motorLiftMiddle.setPower( power )
         motorLiftFar.setPower( power )
     }
+    fun setZeroPowerBehavior(zeroPowerBehavior: DcMotor.ZeroPowerBehavior){
+        motorLiftNear.zeroPowerBehavior = zeroPowerBehavior
+        motorLiftMiddle.zeroPowerBehavior = zeroPowerBehavior
+        motorLiftFar.zeroPowerBehavior = zeroPowerBehavior
+    }
+    fun setRunMode(mode: DcMotor.RunMode){
+        motorLiftNear.mode = mode
+        motorLiftMiddle.mode = mode
+        motorLiftFar.mode = mode
+    }
+    fun getPose() :Int{
+        return motorLiftNear.currentPosition
+    }
     val manualControl = Lambda("manualControl")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{runManually(Mercurial.gamepad2.rightStickY.state)}
-        .setExecute{runManually(Mercurial.gamepad2.rightStickY.state)}
+        .setInit{setPower(Mercurial.gamepad2.rightStickY.state)}
+        .setExecute{setPower(Mercurial.gamepad2.rightStickY.state)}
         .setFinish{false}
-//
-//    val holdPose = Lambda("holdSlidesPose")
-//        .setRunStates(Wrapper.OpModeState.ACTIVE)
-//        .setExecute{
-//            holdPose()
-//        }
-//        .setFinish{false}
-//    val closeSlides = Lambda("closeSlides")
-//        .setRunStates(Wrapper.OpModeState.ACTIVE)
-//        .setInit{closeSlides()}
-//        .setExecute{closeSlides()}
-//        .setFinish{ abs(target- motors.getPos())<20}
 
-//    override fun preUserInitHook(opMode: Wrapper) {
-//
-//        motors.setRunMode(RunMode.STOP_AND_RESET_ENCODER)
-//        motors.setRunMode(RunMode.RUN_WITHOUT_ENCODER)
-//        motors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
-//    }
-//    val telemetry = MultipleTelemetry(FeatureRegistrar.activeOpMode.telemetry, FtcDashboard.getInstance().telemetry)
+    val closeSlides = Lambda("closeSlides")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{closeSlides()}
+        .setExecute{closeSlides()}
+        .setFinish{ abs(target- getPose())<20}
+
+    override fun preUserInitHook(opMode: Wrapper) {
+
+        setRunMode(RunMode.STOP_AND_RESET_ENCODER)
+        setRunMode(RunMode.RUN_WITHOUT_ENCODER)
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+    }
+    val telemetry = MultipleTelemetry(FeatureRegistrar.activeOpMode.telemetry, FtcDashboard.getInstance().telemetry)
 
 
-//    override fun postUserLoopHook(opMode: Wrapper) {
-//        telemetry.addData("pose", motors.getPos())
-//        telemetry.addData("target", target)
-//        telemetry.addData("error", target - motors.getPos())
-//        telemetry.update()
-//
-//    }
+    override fun postUserLoopHook(opMode: Wrapper) {
+        telemetry.addData("pose", getPose())
+        telemetry.addData("target", target)
+        telemetry.addData("error", target - getPose())
+        telemetry.update()
+
+    }
 }

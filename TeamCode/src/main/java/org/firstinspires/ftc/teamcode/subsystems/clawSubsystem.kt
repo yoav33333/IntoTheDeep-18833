@@ -57,6 +57,16 @@ object clawSubsystem: Subsystem {
     val closeingPose = 1.0
     val openingPose = 0.0
 
+    val filter = 5
+    var oldRead = 0.0
+    var counter = 0
+    fun readSensorDis(): Double {
+        if (counter%filter ==0)
+            oldRead = colorDistSensor.getDistance(DistanceUnit.CM)
+        counter++
+        return oldRead
+    }
+
     fun closeClaw() {
         clawServo.setPosition(closeingPose)
     }
@@ -88,9 +98,13 @@ object clawSubsystem: Subsystem {
         .setInit{ check = false}
 
 
-    val rotateClaw = Lambda("rotate claw")
+    val rotateClawR = Lambda("rotate claw r")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setExecute{ clawRotationServo.position  += Mercurial.gamepad2.leftStickX.state*0.1
+        .setInit{clawRotationServo.setPosition(if(clawRotationServo.position<0.9) clawRotationServo.position+0.2 else 0.9)
+        }
+    val rotateClawL = Lambda("rotate claw l")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ clawRotationServo.setPosition(if(clawRotationServo.position>0.1) clawRotationServo.position-0.2 else 0.1)
         }
     val turnLeft = Lambda("turnLeft")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
