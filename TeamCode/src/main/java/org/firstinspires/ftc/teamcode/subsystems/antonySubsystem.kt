@@ -36,6 +36,7 @@ object antonySubsystem : Subsystem {
     }
     val default = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_FOREST_PALETTE
     val endGame = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE
+    val lowBattery = RevBlinkinLedDriver.BlinkinPattern.RED
 
     val endGameCommand = Lambda("endGameCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -45,20 +46,20 @@ object antonySubsystem : Subsystem {
 
     val lowBatteryCommand = Lambda("lowBatteryCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setExecute{antony.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED)}
+        .setExecute{antony.setPattern(lowBattery)}
         .setEnd{antony.setPattern(default)}
 
-    val minVoltage = 9.0
-    override fun postUserLoopHook(opMode: Wrapper) {
-        BoundBooleanSupplier(EnhancedBooleanSupplier{FeatureRegistrar.activeOpMode.runtime>80})
+    val minVoltage = 10.0
+
+
+    override fun postUserInitHook(opMode: Wrapper) {
+        BoundBooleanSupplier(EnhancedBooleanSupplier{
+            FeatureRegistrar.activeOpMode.runtime>80||FeatureRegistrar.activeOpMode.runtime>110})
             .onTrue(endGameCommand.raceWith(Wait(10.0)))
 
         BoundBooleanSupplier(EnhancedBooleanSupplier
-            {modules[0].getInputVoltage(VoltageUnit.VOLTS)<9.0})
+        {if (modules.isEmpty()) false else modules[0].getInputVoltage(VoltageUnit.VOLTS)<9.0})
             .whileTrue(lowBatteryCommand)
-
     }
-
-
 
 }

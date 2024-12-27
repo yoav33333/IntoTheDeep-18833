@@ -39,7 +39,7 @@ object extendoCommand : Subsystem{
         armClawSubsystem.openClawArm,
         extendoSubsystem.openExtendo,
         clawSubsystem.openClaw,
-        linearSlides.closeSlides
+//        linearSlides.closeSlides
     ),Wait(0.3),
         clawSubsystem.runCs,
         armIn
@@ -50,15 +50,15 @@ object extendoCommand : Subsystem{
         clawSubsystem.closeClaw2,
         clawSubsystem.resetAngleClaw,
         extendoSubsystem.closeExtendo,
+        armClawSubsystem.closeClawArm,
+        transferSeq,
         armIn
     ),
         Wait(0.2),
-        armClawSubsystem.closeClawArm,
-        transferSeq,
+
         anglePostTransfer,
         Wait(0.2),
         angleTransfer
-
     )
 
     val extendoMacro = Advancing(
@@ -67,6 +67,6 @@ object extendoCommand : Subsystem{
     )
 
     override fun preUserStartHook(opMode: Wrapper) {
-        extendoCloseCommand.schedule()
+        extendoMacro.schedule()
     }
 }

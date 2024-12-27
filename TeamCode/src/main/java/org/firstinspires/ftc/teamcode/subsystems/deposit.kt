@@ -18,7 +18,6 @@ import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
-import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.colorDistSensor
 import java.lang.annotation.Inherited
 
 object deposit: SDKSubsystem() {
@@ -58,17 +57,6 @@ object deposit: SDKSubsystem() {
     val ArmInPose = 0.05
     val ArmOutPose = 0.85
 
-
-    val filter = 5
-    var oldRead = 0.0
-    var counter = 0
-    fun readSensorDis(): Double {
-        if (counter%filter ==0)
-            oldRead = colorSensor.getDistance(DistanceUnit.CM)
-        counter++
-        return oldRead
-    }
-
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
 
@@ -98,7 +86,7 @@ object deposit: SDKSubsystem() {
     }
 
     fun checkIfSampleInPlace(): Boolean {
-        if (colorSensor.getDistance(DistanceUnit.MM)<35) {
+        if (colorSensor.getDistance(DistanceUnit.MM)<40) {
             closeClaw()
             return true
         }
@@ -115,13 +103,12 @@ object deposit: SDKSubsystem() {
         .setInit{
 
             intakeFromHumanPlayer()
-            stop = false
             extendoCommand.extendoMacro.cancel()
         }
         .setFinish{
-            checkIfSampleInPlace()&& !stop
+            checkIfSampleInPlace()&& stop
         }
-
+        .setEnd{}
 
     val transferCommand = Lambda("transferCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -143,12 +130,15 @@ object deposit: SDKSubsystem() {
         clawSubsystem.openClaw,
         Wait(0.2),
         armOut
-        )
+    )
     val armIn = Lambda("armIn")
         .setInit{
             armIn()
             stop = true
         }
+
+
+
 
     override fun postUserInitHook(opMode: Wrapper) {
         closeClaw()

@@ -5,13 +5,16 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DigitalChannel
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx
 import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
+import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
+import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.controller.PDController
@@ -57,6 +60,14 @@ object linearSlides: Subsystem {
         s.cachingTolerance = 0.01
         s
     }
+
+//    val magneticLimit: DigitalChannel by OpModeLazyCell {
+//        val s = FeatureRegistrar.activeOpMode.hardwareMap.get(
+//            DigitalChannel::class.java, "magneticLimit"
+//        )
+//        s.mode = DigitalChannel.Mode.INPUT
+//        s
+//    }
     var Kp = 1.0
     var Kd = 1.0
     val PDController = PDController(Kp, Kd)
@@ -88,35 +99,45 @@ object linearSlides: Subsystem {
         motorLiftMiddle.mode = mode
         motorLiftFar.mode = mode
     }
+    var offset = 0
     fun getPose() :Int{
-        return motorLiftNear.currentPosition
+        return motorLiftNear.currentPosition+ offset
     }
+    fun setPose(pose: Int){
+        offset = pose
+    }
+    val resetHeight = Lambda("resetHeight")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ setPose(0)}
     val manualControl = Lambda("manualControl")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{setPower(Mercurial.gamepad2.rightStickY.state)}
         .setExecute{setPower(Mercurial.gamepad2.rightStickY.state)}
         .setFinish{false}
 
-    val closeSlides = Lambda("closeSlides")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{closeSlides()}
-        .setExecute{closeSlides()}
-        .setFinish{ abs(target- getPose())<20}
+//    val closeSlides = Lambda("closeSlides")
+//        .setRunStates(Wrapper.OpModeState.ACTIVE)
+//        .setInit{closeSlides()}
+//        .setExecute{closeSlides()}
+//        .setFinish{ abs(target- getPose())<20}
 
-    override fun preUserInitHook(opMode: Wrapper) {
-
-        setRunMode(RunMode.STOP_AND_RESET_ENCODER)
-        setRunMode(RunMode.RUN_WITHOUT_ENCODER)
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
-    }
-    val telemetry = MultipleTelemetry(FeatureRegistrar.activeOpMode.telemetry, FtcDashboard.getInstance().telemetry)
-
-
-    override fun postUserLoopHook(opMode: Wrapper) {
-        telemetry.addData("pose", getPose())
-        telemetry.addData("target", target)
-        telemetry.addData("error", target - getPose())
-        telemetry.update()
-
-    }
+//    override fun preUserInitHook(opMode: Wrapper) {
+//        BoundBooleanSupplier(
+//            EnhancedBooleanSupplier { magneticLimit.state })
+//            .onTrue(resetHeight)
+//
+//        setRunMode(RunMode.STOP_AND_RESET_ENCODER)
+//        setRunMode(RunMode.RUN_WITHOUT_ENCODER)
+//        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+//    }
+//    val telemetry = MultipleTelemetry(FeatureRegistrar.activeOpMode.telemetry, FtcDashboard.getInstance().telemetry)
+//
+//
+//    override fun postUserLoopHook(opMode: Wrapper) {
+//        telemetry.addData("pose", getPose())
+//        telemetry.addData("target", target)
+//        telemetry.addData("error", target - getPose())
+//        telemetry.update()
+//
+//    }
 }

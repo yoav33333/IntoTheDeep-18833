@@ -57,12 +57,12 @@ object clawSubsystem: Subsystem {
     val closeingPose = 1.0
     val openingPose = 0.0
 
-    val filter = 5
+    val filter = 1
     var oldRead = 0.0
     var counter = 0
     fun readSensorDis(): Double {
         if (counter%filter ==0)
-            oldRead = colorDistSensor.getDistance(DistanceUnit.CM)
+            oldRead = colorDistSensor.getDistance(DistanceUnit.MM)
         counter++
         return oldRead
     }
@@ -117,7 +117,6 @@ object clawSubsystem: Subsystem {
 
 
     val resetAngleClaw = Lambda("resetAngleClaw")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{clawRotationServo.setPosition(0.5)}
 
     val openClaw = Lambda("openClaw")

@@ -33,12 +33,13 @@ import kotlin.math.abs
 @linearSlides.Attach
 @armClawSubsystem.Attach
 @extendoSubsystem.Attach
+@deposit.Attach
 @TeleOp
 
 class simpleOpMode : OpMode() {
 
     override fun init() {
-//        extendoMacro.schedule()
+        //operator controls
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(release)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
@@ -47,21 +48,19 @@ class simpleOpMode : OpMode() {
         Mercurial.gamepad2.dpadUp.whileTrue(extendoSubsystem.moveManualC)
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
-
-        BoundBooleanSupplier(EnhancedBooleanSupplier{clawSubsystem.readSensorDis()<35.0 && clawSubsystem.check})
-            .onTrue(Wait(0.1).then(clawSubsystem.closeClaw))
-
+        Mercurial.gamepad2.x.onTrue(extendoMacro)
 
         BoundBooleanSupplier(EnhancedBooleanSupplier{abs(Mercurial.gamepad2.rightStickY.state)>0.1})
             .whileTrue(linearSlides.manualControl)
+        BoundBooleanSupplier(EnhancedBooleanSupplier{clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<35.0 && clawSubsystem.check})
+            .onTrue(Wait(0.1).then(clawSubsystem.closeClaw))
+
 
 //        Mercurial.gamepad2.a.onTrue(linearSlides.closeSlides)
-
-
-
+        //drive controls
+        Mercurial.gamepad1.a.onTrue(release)
         Mercurial.gamepad1.b.onTrue(driveSubsystem.gears)
         Mercurial.gamepad1.x.onTrue(driveSubsystem.gears)
-        Mercurial.gamepad2.x.onTrue(extendoMacro)
 
     }
 
@@ -74,7 +73,7 @@ override fun loop() {
     telemetry.addData("p", armClawSubsystem.armClawServo.position)
     telemetry.addData("ry", Mercurial.gamepad2.rightStickY.state)
     telemetry.addData("time", runtime)
-    telemetry.addData("pos", deposit.depoArmServo.position)
+    telemetry.addData("pos", depoArmServo.position)
     telemetry.addData("dist", clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM))
     telemetry.addData("v4b", armClawSubsystem.armClawServo.position)
     telemetry.addData("v4b", clawSubsystem.clawRotationServo.position)
@@ -87,6 +86,5 @@ override fun loop() {
     telemetry.update()
 
     }
-
 
 }
