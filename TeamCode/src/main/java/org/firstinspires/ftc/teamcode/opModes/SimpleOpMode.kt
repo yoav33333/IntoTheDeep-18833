@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
+import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.rotateClawL
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.rotateClawR
 import org.firstinspires.ftc.teamcode.subsystems.deposit
+import org.firstinspires.ftc.teamcode.subsystems.deposit.catchPixel
 import org.firstinspires.ftc.teamcode.subsystems.deposit.depoArmServo
 import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeCommand
 import org.firstinspires.ftc.teamcode.subsystems.deposit.release
@@ -43,7 +45,7 @@ class simpleOpMode : OpMode() {
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(release)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
-        Mercurial.gamepad2.a.onTrue(intakeCommand)
+        Mercurial.gamepad2.a.onTrue(Sequential(intakeCommand, Wait(0.5).then(catchPixel)))
         Mercurial.gamepad2.dpadDown.whileTrue(extendoSubsystem.moveManualO)
         Mercurial.gamepad2.dpadUp.whileTrue(extendoSubsystem.moveManualC)
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)

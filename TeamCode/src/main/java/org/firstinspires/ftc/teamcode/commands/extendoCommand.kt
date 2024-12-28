@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.anglePostTransfer
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.angleTransfer
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.deposit.TransferState
 import org.firstinspires.ftc.teamcode.subsystems.deposit.armIn
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferCommand
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeq
@@ -42,7 +43,7 @@ object extendoCommand : Subsystem{
 //        linearSlides.closeSlides
     ),Wait(0.3),
         clawSubsystem.runCs,
-        armIn
+        TransferState
     )
 
     val extendoCloseCommand = Sequential(Parallel(
@@ -51,11 +52,10 @@ object extendoCommand : Subsystem{
         clawSubsystem.resetAngleClaw,
         extendoSubsystem.closeExtendo,
         armClawSubsystem.closeClawArm,
-        transferSeq,
-        armIn
+        TransferState,
+        transferSeq
     ),
         Wait(0.2),
-
         anglePostTransfer,
         Wait(0.2),
         angleTransfer

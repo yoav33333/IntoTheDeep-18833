@@ -105,10 +105,10 @@ object deposit: SDKSubsystem() {
             intakeFromHumanPlayer()
             extendoCommand.extendoMacro.cancel()
         }
+    val catchPixel = Lambda("catchPixel")
         .setFinish{
             checkIfSampleInPlace()&& stop
         }
-        .setEnd{}
 
     val transferCommand = Lambda("transferCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -131,9 +131,10 @@ object deposit: SDKSubsystem() {
         Wait(0.2),
         armOut
     )
-    val armIn = Lambda("armIn")
+    val TransferState = Lambda("TransferState")
         .setInit{
             armIn()
+            closeClaw()
             stop = true
         }
 

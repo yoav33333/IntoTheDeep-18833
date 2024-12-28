@@ -11,6 +11,7 @@ import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
+import dev.frozenmilk.dairy.core.util.supplier.numeric.EnhancedDoubleSupplier
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
@@ -34,10 +35,10 @@ object driveSubsystem: Subsystem{
     @Inherited
     annotation class Attach
 
-    var x = 0.0
-    var y = 0.0
-    var rotate = 0.0
-    var speed = 1.0
+//    var x = 0.0
+//    var y = 0.0
+//    var rotate = 0.0
+//    var speed = 1.0
 
 
     val leftFront: CachingDcMotorEx by OpModeLazyCell {
@@ -85,6 +86,15 @@ object driveSubsystem: Subsystem{
         rightBack.setPowerRaw((- y - x + rotate)*speed)
     }
 
+    val forward = EnhancedDoubleSupplier{0.0}
+    val strafe = EnhancedDoubleSupplier{0.0}
+    val rotate = EnhancedDoubleSupplier{0.0}
+    val speed = EnhancedDoubleSupplier{1.0}
+    fun newRobotOrientedDrive(x: EnhancedDoubleSupplier, y: EnhancedDoubleSupplier, rotate: EnhancedDoubleSupplier, speed: EnhancedDoubleSupplier){
+        followerSubsystem.teleopDrive(x,y,rotate,speed).schedule()
+    }
+
+
 
 
     fun fieldOrientedDrive(x: Double, y: Double, rotate: Double){
@@ -110,16 +120,16 @@ object driveSubsystem: Subsystem{
     val gears = Lambda("gears")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
-            speed += if(Mercurial.gamepad1.b.state&& speed<1)0.25 else 0.0 - if(Mercurial.gamepad1.x.state&& speed>0.25)0.25 else 0.0
+            speed.state += if(Mercurial.gamepad1.b.state&& speed.state<1)0.25 else 0.0 - if(Mercurial.gamepad1.x.state&& speed.state>0.25)0.25 else 0.0
         }
 
     override fun postUserLoopHook(opMode: Wrapper) {
-        x = Mercurial.gamepad1.leftStickX.state
-        y = Mercurial.gamepad1.leftStickY.state
-        rotate = Mercurial.gamepad1.rightStickX.state
-        x+=Mercurial.gamepad1.rightTrigger.state-Mercurial.gamepad1.leftTrigger.state
-        rotate+=if(Mercurial.gamepad1.rightBumper.state)1 else 0 - if(Mercurial.gamepad1.leftBumper.state)1 else 0
+        strafe.state = Mercurial.gamepad1.leftStickX.state
+        forward.state = Mercurial.gamepad1.leftStickY.state
+        rotate.state = Mercurial.gamepad1.rightStickX.state
+        strafe.state+=Mercurial.gamepad1.rightTrigger.state-Mercurial.gamepad1.leftTrigger.state
+        rotate.state+=if(Mercurial.gamepad1.rightBumper.state)1 else 0 - if(Mercurial.gamepad1.leftBumper.state)1 else 0
 
-        robotOrientedDrive(x, y, rotate, speed)
+        robotOrientedDrive(strafe.state, forward.state, rotate.state, speed.state)
     }
 }

@@ -54,6 +54,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx;
+
 /**
  * This is the Follower class. It handles the actual following of the paths and all the on-the-fly
  * calculations that are relevant for movement.
@@ -67,10 +69,10 @@ import java.util.List;
 public class Follower {
     private HardwareMap hardwareMap;
 
-    private DcMotorEx leftFront;
-    private DcMotorEx leftRear;
-    private DcMotorEx rightFront;
-    private DcMotorEx rightRear;
+    private CachingDcMotorEx leftFront;
+    private CachingDcMotorEx leftRear;
+    private CachingDcMotorEx rightFront;
+    private CachingDcMotorEx rightRear;
     private List<DcMotorEx> motors;
 
     private DriveVectorScaler driveVectorScaler;
@@ -176,10 +178,10 @@ public class Follower {
         driveVectorScaler = new DriveVectorScaler(FollowerConstants.frontLeftVector);
         poseUpdater = new PoseUpdater(hardwareMap);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
-        leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);
-        rightRear = hardwareMap.get(DcMotorEx.class, rightRearMotorName);
-        rightFront = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
+        leftFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftFrontMotorName));
+        leftRear = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftRearMotorName));
+        rightRear = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, rightRearMotorName));
+        rightFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, rightFrontMotorName));
         leftFront.setDirection(leftFrontMotorDirection);
         leftRear.setDirection(leftRearMotorDirection);
         rightFront.setDirection(rightFrontMotorDirection);
@@ -214,15 +216,10 @@ public class Follower {
         driveVectorScaler = new DriveVectorScaler(FollowerConstants.frontLeftVector);
         poseUpdater = new PoseUpdater(hardwareMap, localizer);
 
-        //        rightFront = hardwareMap.get(DcMotorEx.class, "motor_rf");
-        //        rightRear = hardwareMap.get(DcMotorEx.class, "motor_rb");
-        //        leftFront = hardwareMap.get(DcMotorEx.class, "motor_lf");
-        //        leftRear = hardwareMap.get(DcMotorEx.class, "motor_lb");
-
-        leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
-        leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);
-        rightRear = hardwareMap.get(DcMotorEx.class, rightRearMotorName);
-        rightFront = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
+        leftFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftFrontMotorName));
+        leftRear = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftRearMotorName));
+        rightRear = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, rightRearMotorName));
+        rightFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, rightFrontMotorName));
 
         // TODO: Make sure that this is the direction your motors need to be reversed in.
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);

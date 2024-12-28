@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opModes
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier
 import dev.frozenmilk.mercurial.Mercurial
@@ -8,7 +7,6 @@ import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.util.Wait
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
-import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoCloseCommand
 import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoMacro
 import org.firstinspires.ftc.teamcode.subsystems.BulkReads
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
@@ -35,9 +33,10 @@ import kotlin.math.abs
 @extendoSubsystem.Attach
 @deposit.Attach
 @TeleOp
-class test : linearOpMode_dairy() {
+
+class test : CommandOpMode(BulkReads, Mercurial, clawSubsystem, driveSubsystem, extendoCommand, linearSlides, armClawSubsystem, extendoSubsystem, deposit) {
     override fun myInit() {
-        //operator controls
+        /*------------operator controls------------*/
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(release)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
@@ -47,15 +46,14 @@ class test : linearOpMode_dairy() {
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
         Mercurial.gamepad2.x.onTrue(extendoMacro)
+//        Mercurial.gamepad2.a.onTrue(linearSlides.closeSlides)
 
         BoundBooleanSupplier(EnhancedBooleanSupplier{abs(Mercurial.gamepad2.rightStickY.state)>0.1})
             .whileTrue(linearSlides.manualControl)
         BoundBooleanSupplier(EnhancedBooleanSupplier{clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<35.0 && clawSubsystem.check})
             .onTrue(Wait(0.1).then(clawSubsystem.closeClaw))
 
-
-//        Mercurial.gamepad2.a.onTrue(linearSlides.closeSlides)
-        //drive controls
+        /*------------driver controls------------*/
         Mercurial.gamepad1.a.onTrue(release)
         Mercurial.gamepad1.b.onTrue(driveSubsystem.gears)
         Mercurial.gamepad1.x.onTrue(driveSubsystem.gears)
