@@ -59,6 +59,16 @@ object extendoSubsystem: Subsystem {
             extendoServoR.setPosition(if(extendoServoR.position<1) extendoServoR.position+0.01 else extendoServoR.position)
             extendoServoL.setPosition(if(extendoServoL.position<1) extendoServoL.position+0.01 else extendoServoL.position)
         }
+    val moveManual = Lambda("moveManual")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setExecute{
+//            extendoServoR.position+=(Mercurial.gamepad2.leftStickY.state/100.0)
+//            extendoServoL.position+=(Mercurial.gamepad2.leftStickY.state/100.0)
+            if (extendoServoL.position-Mercurial.gamepad2.leftStickY.state/100.0>0.2) {
+                extendoServoL.position -= Mercurial.gamepad2.leftStickY.state/100.0
+                extendoServoR.position -= Mercurial.gamepad2.leftStickY.state/100.0
+            }
+        }
     val moveManualC = Lambda("moveManualC")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setExecute{

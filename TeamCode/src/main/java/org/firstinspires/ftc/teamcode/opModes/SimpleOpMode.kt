@@ -46,8 +46,8 @@ class simpleOpMode : OpMode() {
         Mercurial.gamepad2.b.onTrue(release)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
         Mercurial.gamepad2.a.onTrue(Sequential(intakeCommand, Wait(0.5).then(catchPixel)))
-        Mercurial.gamepad2.dpadDown.whileTrue(extendoSubsystem.moveManualO)
-        Mercurial.gamepad2.dpadUp.whileTrue(extendoSubsystem.moveManualC)
+//        Mercurial.gamepad2.dpadDown.whileTrue(extendoSubsystem.moveManualO)
+//        Mercurial.gamepad2.dpadUp.whileTrue(extendoSubsystem.moveManualC)
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
         Mercurial.gamepad2.x.onTrue(extendoMacro)
@@ -61,8 +61,8 @@ class simpleOpMode : OpMode() {
 //        Mercurial.gamepad2.a.onTrue(linearSlides.closeSlides)
         //drive controls
         Mercurial.gamepad1.a.onTrue(release)
-        Mercurial.gamepad1.b.onTrue(driveSubsystem.gears)
-        Mercurial.gamepad1.x.onTrue(driveSubsystem.gears)
+//        Mercurial.gamepad1.b.onTrue(driveSubsystem.gears)
+//        Mercurial.gamepad1.x.onTrue(driveSubsystem.gears)
 
     }
 

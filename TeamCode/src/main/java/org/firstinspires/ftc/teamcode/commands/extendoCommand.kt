@@ -11,6 +11,7 @@ import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import dev.frozenmilk.util.cell.RefCell
+import org.firstinspires.ftc.teamcode.subsystems.antonySubsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.anglePostTransfer
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.angleTransfer
@@ -37,13 +38,15 @@ object extendoCommand : Subsystem{
 
     val extendoOpenCommand = Sequential(Parallel(
         clawSubsystem.resetAngleClaw,
+        linearSlides.closeSlides,
         armClawSubsystem.openClawArm,
         extendoSubsystem.openExtendo,
         clawSubsystem.openClaw,
 //        linearSlides.closeSlides
     ),Wait(0.3),
         clawSubsystem.runCs,
-        TransferState
+        TransferState,
+        antonySubsystem.colorSensorData
     )
 
     val extendoCloseCommand = Sequential(Parallel(

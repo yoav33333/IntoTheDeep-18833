@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import android.R.color
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver
 import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
@@ -11,13 +15,14 @@ import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.commands.util.Wait
+import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.subsystems.BulkReads.modules
 import java.lang.annotation.Inherited
 
-object antonySubsystem : Subsystem {
+
+object antonySubsystem : SDKSubsystem() {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
 
@@ -37,6 +42,10 @@ object antonySubsystem : Subsystem {
     val default = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_FOREST_PALETTE
     val endGame = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE
     val lowBattery = RevBlinkinLedDriver.BlinkinPattern.RED
+    val redLED = RevBlinkinLedDriver.BlinkinPattern.RED
+    val yellowLED = RevBlinkinLedDriver.BlinkinPattern.YELLOW
+    val blueLED = RevBlinkinLedDriver.BlinkinPattern.BLUE
+
 
     val endGameCommand = Lambda("endGameCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -49,10 +58,41 @@ object antonySubsystem : Subsystem {
         .setExecute{antony.setPattern(lowBattery)}
         .setEnd{antony.setPattern(default)}
 
+    var data = 0
+    var red = 0
+    var blue = 0
+    var green = 0
+    fun csColors(){
+//        data =  clawSubsystem.colorDistSensor.argb()
+        red = clawSubsystem.colorDistSensor.red()
+        blue = clawSubsystem.colorDistSensor.blue()
+        green = clawSubsystem.colorDistSensor.green()
+
+        telemetry.update()
+        if (blue>300){
+            antony.setPattern(blueLED)
+        }
+        else if (green>300){
+            antony.setPattern(yellowLED)
+        }
+        else if (red>290){
+            antony.setPattern(redLED)
+        }
+        else antony.setPattern(default)
+    }
+
+    val colorSensorData = Lambda("colorSensorData")
+        .setExecute{
+            csColors()
+        }
+        .setFinish{false}
+        .setEnd{ antony.setPattern(default)}
+
     val minVoltage = 10.0
 
 
     override fun postUserInitHook(opMode: Wrapper) {
+        antony.setPattern(default)
         BoundBooleanSupplier(EnhancedBooleanSupplier{
             FeatureRegistrar.activeOpMode.runtime>80||FeatureRegistrar.activeOpMode.runtime>110})
             .onTrue(endGameCommand.raceWith(Wait(10.0)))

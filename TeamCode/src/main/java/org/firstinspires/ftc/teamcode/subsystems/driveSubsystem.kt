@@ -117,10 +117,25 @@ object driveSubsystem: Subsystem{
         rightFront.setPowerRaw((rotY - rotX - rotate) / denominator)
         rightBack.setPowerRaw((rotY + rotX - rotate) / denominator)
     }
-    val gears = Lambda("gears")
+    val fastGear = Lambda("gearF")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
-            speed.state += if(Mercurial.gamepad1.b.state&& speed.state<1)0.25 else 0.0 - if(Mercurial.gamepad1.x.state&& speed.state>0.25)0.25 else 0.0
+            speed.state = 1.0
+        }
+    val midFastGear = Lambda("gearFM")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{
+            speed.state = 0.75
+        }
+    val midSlowGear = Lambda("gearSM")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{
+            speed.state = 0.5
+        }
+    val slowGear = Lambda("gearS")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{
+            speed.state = 0.25
         }
 
     override fun postUserLoopHook(opMode: Wrapper) {

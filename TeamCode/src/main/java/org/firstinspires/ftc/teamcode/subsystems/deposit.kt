@@ -18,6 +18,8 @@ import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
+import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.clawServo
+import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.closeingPose
 import java.lang.annotation.Inherited
 
 object deposit: SDKSubsystem() {
@@ -54,12 +56,11 @@ object deposit: SDKSubsystem() {
     }
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
-    val ArmInPose = 0.05
+    val ArmInPose = 0.03
     val ArmOutPose = 0.85
 
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
-
     }
 
     fun openClaw() {
@@ -92,6 +93,17 @@ object deposit: SDKSubsystem() {
         }
         return false
     }
+
+    val changeClawPos = Lambda("changeClawPos")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{
+            if (depoClawServo.position == closeingClawPose) {
+                openClaw()
+            } else {
+                closeClaw()
+            }
+        }
+
     val release = Lambda("release")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{ openClaw()}
@@ -103,11 +115,13 @@ object deposit: SDKSubsystem() {
         .setInit{
 
             intakeFromHumanPlayer()
+            stop = false
             extendoCommand.extendoMacro.cancel()
+            transferCommand.cancel()
         }
     val catchPixel = Lambda("catchPixel")
         .setFinish{
-            checkIfSampleInPlace()&& stop
+            checkIfSampleInPlace()|| stop
         }
 
     val transferCommand = Lambda("transferCommand")
@@ -122,19 +136,18 @@ object deposit: SDKSubsystem() {
         .setFinish{
             checkIfSampleInPlace()
         }
-        .setEnd{closeClaw()}
 
     val transferSeq = Sequential(
         transferCommand,
-        Wait(0.2),
+        Wait(0.1),
         clawSubsystem.openClaw,
-        Wait(0.2),
+        Wait(0.1),
         armOut
     )
     val TransferState = Lambda("TransferState")
         .setInit{
             armIn()
-            closeClaw()
+            openClaw()
             stop = true
         }
 

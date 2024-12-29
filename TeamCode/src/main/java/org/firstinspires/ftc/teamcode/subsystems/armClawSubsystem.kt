@@ -58,8 +58,8 @@ object armClawSubsystem: Subsystem {
         s.direction = Servo.Direction.REVERSE
         s
     }
-    val armOut = 0.09
-    val armIn = 1.0
+    val armOut = 0.02
+    val armIn = 0.95
     val transfareState = 0.06
     val postTransfareState = 0.6
     val intakeState = 1.0

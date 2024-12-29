@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
@@ -70,16 +72,27 @@ object clawSubsystem: Subsystem {
     fun closeClaw() {
         clawServo.setPosition(closeingPose)
     }
+    var semiClose = 0.545
     fun closeClawP() {
-        clawServo.setPosition(0.53)
+        clawServo.setPosition(semiClose)
     }
+//    val telemetry = MultipleTelemetry(FeatureRegistrar.activeOpMode.telemetry, FtcDashboard.getInstance().telemetry)
+//
+//
+//    override fun postUserLoopHook(opMode: Wrapper) {
+//        telemetry.addData("pose", semiClose)
+//        telemetry.update()
+//
+//    }
 
     fun openClaw() {
         clawServo.setPosition(openingPose)
     }
 
 
-    var changeClawPos = Lambda("changeClawPos")
+
+
+    val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
             if (clawServo.position == closeingPose) {
@@ -95,16 +108,17 @@ object clawSubsystem: Subsystem {
 
     val stopCs = Lambda("scs")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ check = false}
+        .setInit{ check = false
+            antonySubsystem.colorSensorData.cancel()}
 
 
     val rotateClawR = Lambda("rotate claw r")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{clawRotationServo.setPosition(if(clawRotationServo.position<0.9) clawRotationServo.position+0.2 else 0.9)
+        .setInit{clawRotationServo.setPosition(if(clawRotationServo.position<0.9) clawRotationServo.position+0.4 else 0.9)
         }
     val rotateClawL = Lambda("rotate claw l")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ clawRotationServo.setPosition(if(clawRotationServo.position>0.1) clawRotationServo.position-0.2 else 0.1)
+        .setInit{ clawRotationServo.setPosition(if(clawRotationServo.position>0.1) clawRotationServo.position-0.4 else 0.1)
         }
     val turnLeft = Lambda("turnLeft")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
