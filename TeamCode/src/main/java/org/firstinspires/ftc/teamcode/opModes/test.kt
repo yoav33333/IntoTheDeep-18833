@@ -75,8 +75,7 @@ class test : CommandOpMode(BulkReads, Mercurial, clawSubsystem, driveSubsystem, 
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
             .onTrue(resetHeight)
 
-//        BoundBooleanSupplier(EnhancedBooleanSupplier{clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<35.0 && clawSubsystem.check})
-//            .onTrue(Wait(0.1).then(clawSubsystem.closeClaw))
+
 
 
 //        Mercurial.gamepad2.a.onTrue(linearSlides.closeSlides)

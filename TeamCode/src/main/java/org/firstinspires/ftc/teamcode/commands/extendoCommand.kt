@@ -50,6 +50,7 @@ object extendoCommand : Subsystem{
     )
 
     val extendoCloseCommand = Sequential(Parallel(
+        linearSlides.stopRunToPosition,
         clawSubsystem.stopCs,
         clawSubsystem.closeClaw2,
         clawSubsystem.resetAngleClaw,
@@ -61,7 +62,8 @@ object extendoCommand : Subsystem{
         Wait(0.2),
         anglePostTransfer,
         Wait(0.2),
-        angleTransfer
+        angleTransfer,
+        linearSlides.runToPosition
     )
 
     val extendoMacro = Advancing(

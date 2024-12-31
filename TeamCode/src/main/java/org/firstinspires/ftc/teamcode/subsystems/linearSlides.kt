@@ -125,6 +125,9 @@ object linearSlides: Subsystem {
     fun goToPreset(goal: Double) = Lambda("goToPreset")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{target = goal}
+    val stopRunToPosition = Lambda("stopRunToPosition")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ runToPosition.cancel()}
     val closeSlides = goToPreset(0.0)
     val goToHighBasket = goToPreset(2800.0)
     val goToHighChamber = goToPreset(2000.0)
