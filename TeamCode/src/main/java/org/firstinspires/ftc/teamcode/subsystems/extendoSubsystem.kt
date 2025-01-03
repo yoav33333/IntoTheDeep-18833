@@ -69,6 +69,7 @@ object extendoSubsystem: Subsystem {
                 extendoServoR.position -= Mercurial.gamepad2.leftStickY.state/100.0
             }
         }
+        .setFinish{false}
     val moveManualC = Lambda("moveManualC")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setExecute{

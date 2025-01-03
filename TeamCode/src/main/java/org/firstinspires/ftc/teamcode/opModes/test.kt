@@ -75,9 +75,6 @@ class test : CommandOpMode(BulkReads, Mercurial, clawSubsystem, driveSubsystem, 
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
             .onTrue(resetHeight)
 
-
-
-
 //        Mercurial.gamepad2.a.onTrue(linearSlides.closeSlides)
         //drive controls
         Mercurial.gamepad1.rightStickButton.onTrue(release)
@@ -98,9 +95,11 @@ class test : CommandOpMode(BulkReads, Mercurial, clawSubsystem, driveSubsystem, 
         telemetry.addData("ex r", extendoSubsystem.extendoServoR.position)
         telemetry.addData("ex l", extendoSubsystem.extendoServoL.position)
         telemetry.addData("offset", linearSlides.offset)
-        telemetry.addData("sensor", linearSlides.magneticLimit.state)
+        telemetry.addData("sensor", magneticLimit.state)
         telemetry.addData("sch", Mercurial.isScheduled(linearSlides.runToPosition))
-
+        telemetry.addData("l1", linearSlides.motorLiftNear.power)
+        telemetry.addData("l2", linearSlides.motorLiftMiddle.power)
+        telemetry.addData("l3", linearSlides.motorLiftFar.power)
         telemetry.update()
 
 //        runToPose(target.toDouble())

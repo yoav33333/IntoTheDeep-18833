@@ -57,7 +57,7 @@ object deposit: SDKSubsystem() {
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
     val ArmInPose = 0.03
-    val ArmOutPose = 0.85
+    val ArmOutPose = 0.8
 
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
