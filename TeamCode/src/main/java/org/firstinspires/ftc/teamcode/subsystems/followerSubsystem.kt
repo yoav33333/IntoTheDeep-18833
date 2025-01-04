@@ -20,16 +20,11 @@ import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain
+import org.firstinspires.ftc.teamcode.PedroPathing.follower.Follower
+import org.firstinspires.ftc.teamcode.PedroPathing.pathgen.PathChain
+
 import java.lang.annotation.Inherited
-import java.util.function.DoubleSupplier
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.pow
-import kotlin.math.sin
+
 
 
 object followerSubsystem: SDKSubsystem(){
@@ -49,7 +44,6 @@ object followerSubsystem: SDKSubsystem(){
         }
         .setExecute {
             follower.update()
-
         }
         .setFinish {
             !follower.isBusy
