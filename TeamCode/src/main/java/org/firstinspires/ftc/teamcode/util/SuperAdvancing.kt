@@ -56,6 +56,7 @@ class SuperAdvancing(private val commands: List<Command>) : Command {
     }
     fun restart(){
         iteratorCell.invalidate()
+        iteratorCell.safeEvaluate()
     }
 
     override fun end(interrupted: Boolean) {

@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.pedroPathing.examples;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierLine;
-import com.pedropathing.pathgen.PathChain;
-import com.pedropathing.pathgen.Point;
-import com.pedropathing.util.Constants;
+import PedroPathing.src.main.java.com.pedropathing.follower.Follower;
+import PedroPathing.src.main.java.com.pedropathing.localization.Pose;
+import PedroPathing.src.main.java.com.pedropathing.pathgen.BezierLine;
+import PedroPathing.src.main.java.com.pedropathing.pathgen.PathChain;
+import PedroPathing.src.main.java.com.pedropathing.pathgen.Point;
+import PedroPathing.src.main.java.com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 

@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.util.SuperAdvancing
 import java.lang.annotation.Inherited
+import kotlin.properties.Delegates
 
 object extendoCommand : Subsystem{
 
@@ -77,7 +78,6 @@ object extendoCommand : Subsystem{
         linearSlides.runToPosition
     ))
 
-//    val stateMachine = StateMachine
     val macro = Lambda("Macro")
     .setInit{
         if (Mercurial.isScheduled(extendoOpenCommand)) {
@@ -92,7 +92,6 @@ object extendoCommand : Subsystem{
     }
     val extendoMacro =
         SuperAdvancing(extendoCloseCommand, extendoOpenCommand)
-
     override fun preUserStartHook(opMode: Wrapper) {
         isOpen = false
         extendoMacro.restart()

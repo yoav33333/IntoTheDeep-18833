@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.constants;
 
-import com.pedropathing.localization.Localizers;
-import com.pedropathing.follower.FollowerConstants;
-import com.pedropathing.util.CustomFilteredPIDFCoefficients;
-import com.pedropathing.util.CustomPIDFCoefficients;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import PedroPathing.src.main.java.com.pedropathing.follower.FollowerConstants;
+import PedroPathing.src.main.java.com.pedropathing.localization.Localizers;
+import PedroPathing.src.main.java.com.pedropathing.util.CustomPIDFCoefficients;
+import PedroPathing.src.main.java.com.pedropathing.util.CustomFilteredPIDFCoefficients;
 public class FConstants {
     static {
         FollowerConstants.localizers = Localizers.THREE_WHEEL;
