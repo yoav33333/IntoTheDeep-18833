@@ -79,7 +79,6 @@ object linearSlides: Subsystem {
     @JvmField var Kf = 0.02
     @JvmField var maxPow = 1.0
     @JvmField var threshold = 30.0
-    //TODO: change to PFController
 
     var PDController = PDController(Kp, Kd)
     val closeingPose = 0.0
@@ -125,14 +124,14 @@ object linearSlides: Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{ runToPosition.cancel()}
         .setExecute{setPower(Mercurial.gamepad2.rightStickY.state)}
-        .setFinish{false}
+        .setFinish{abs(Mercurial.gamepad2.rightStickY.state)<0.1}
+        .setEnd{ target = getPose().toDouble()}
 
     val runToPosition = Lambda("runToPosition")
-        .setInit{ target = (getPose().toDouble())}
         .setExecute{
             runToPose(target)
         }
-        .setFinish{false}
+        .setFinish{Mercurial.gamepad2.rightStickY.state>0.1}
     fun goToPreset(goal: Double) = Lambda("goToPreset")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{target = goal}
@@ -140,7 +139,8 @@ object linearSlides: Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{runToPosition.cancel()}
 
-    val closeSlides = goToPreset(0.0).setFinish{ getPose()<20&& getPose()>-20}.setEnd{ runToPosition.cancel()}
+    val closeSlides = goToPreset(0.0).setFinish{ abs(getPose())<40}.setEnd{ runToPosition.cancel()}.addInit{runToPosition.schedule()
+    target = 0.0}
     val goToHighBasket = goToPreset(2870.0)
     val goToHighChamber = goToPreset(1800.0)
     val goToLowBasket = goToPreset(1600.0)

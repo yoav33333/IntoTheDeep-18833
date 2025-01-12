@@ -17,15 +17,12 @@ import PedroPathing.src.main.java.com.pedropathing.pathgen.Vector;
  *
  * @author Logan Nash
  * @author Anyi Lin - 10158 Scott's Bots
- * @author Baron Henderson - 20077 The Indubitables
  * @version 1.0, 4/22/2024
  */
-
 public class Drawing {
     public static final double ROBOT_RADIUS = 9;
 
     private static TelemetryPacket packet;
-    private static boolean fieldSetup = false;
 
     /**
      * This draws everything that will be used in the Follower's telemetryDebug() method. This takes
@@ -34,7 +31,6 @@ public class Drawing {
      * @param follower
      */
     public static void drawDebug(Follower follower) {
-        fieldSetup();
         if (follower.getCurrentPath() != null) {
             drawPath(follower.getCurrentPath(), "#3F51B5");
             Point closestPoint = follower.getPointFromPath(follower.getCurrentPath().getClosestPointTValue());
@@ -54,7 +50,6 @@ public class Drawing {
      * @param color the color to draw the robot with
      */
     public static void drawRobot(Pose pose, String color) {
-        fieldSetup();
         if (packet == null) packet = new TelemetryPacket();
 
         packet.fieldOverlay().setStroke(color);
@@ -69,7 +64,6 @@ public class Drawing {
      * @param color the color to draw the Path with
      */
     public static void drawPath(Path path, String color) {
-        fieldSetup();
         if (packet == null) packet = new TelemetryPacket();
 
         packet.fieldOverlay().setStroke(color);
@@ -84,7 +78,6 @@ public class Drawing {
      * @param color the color to draw the PathChain with
      */
     public static void drawPath(PathChain pathChain, String color) {
-        fieldSetup();
         for (int i = 0; i < pathChain.size(); i++) {
             drawPath(pathChain.getPath(i), color);
         }
@@ -98,8 +91,6 @@ public class Drawing {
      * @param color the color to draw the pose history with
      */
     public static void drawPoseHistory(DashboardPoseTracker poseTracker, String color) {
-        fieldSetup();
-
         if (packet == null) packet = new TelemetryPacket();
 
         packet.fieldOverlay().setStroke(color);
@@ -112,7 +103,6 @@ public class Drawing {
      * @return returns if the operation was successful.
      */
     public static boolean sendPacket() {
-        fieldSetup();
         if (packet != null) {
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
             packet = null;
@@ -128,7 +118,6 @@ public class Drawing {
      * @param t the Point to draw at
      */
     public static void drawRobotOnCanvas(Canvas c, Point t) {
-        fieldSetup();
         c.setStrokeWidth(1);
         c.strokeCircle(t.getX(), t.getY(), ROBOT_RADIUS);
 
@@ -146,7 +135,6 @@ public class Drawing {
      * @param t the Pose to draw at
      */
     public static void drawRobotOnCanvas(Canvas c, Pose t) {
-        fieldSetup();
         c.strokeCircle(t.getX(), t.getY(), ROBOT_RADIUS);
         Vector v = t.getHeadingVector();
         v.setMagnitude(v.getMagnitude() * ROBOT_RADIUS);
@@ -162,18 +150,6 @@ public class Drawing {
      * @param points the Points to draw
      */
     public static void drawPath(Canvas c, double[][] points) {
-        fieldSetup();
         c.strokePolyline(points[0], points[1]);
-    }
-
-    public static void fieldSetup() {
-        if (!fieldSetup) {
-            if(packet==null) packet = new TelemetryPacket();
-            packet.fieldOverlay().setRotation(-Math.toRadians(90));
-            packet.fieldOverlay().setTranslation(72, 72);
-            packet.field().setRotation(-Math.toRadians(90));
-            packet.field().setTranslation(72, 72);
-            fieldSetup = true;
-        }
     }
 }

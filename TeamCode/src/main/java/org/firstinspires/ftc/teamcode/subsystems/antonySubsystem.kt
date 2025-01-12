@@ -42,9 +42,9 @@ object antonySubsystem : SDKSubsystem() {
     val default = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_FOREST_PALETTE
     val endGame = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE
     val lowBattery = RevBlinkinLedDriver.BlinkinPattern.RED
-    val redLED = RevBlinkinLedDriver.BlinkinPattern.RED
-    val yellowLED = RevBlinkinLedDriver.BlinkinPattern.YELLOW
-    val blueLED = RevBlinkinLedDriver.BlinkinPattern.BLUE
+//    val redLED = RevBlinkinLedDriver.BlinkinPattern.RED
+//    val yellowLED = RevBlinkinLedDriver.BlinkinPattern.YELLOW
+//    val blueLED = RevBlinkinLedDriver.BlinkinPattern.BLUE
 
 
     val endGameCommand = Lambda("endGameCommand")
@@ -58,37 +58,37 @@ object antonySubsystem : SDKSubsystem() {
         .setExecute{antony.setPattern(lowBattery)}
         .setEnd{antony.setPattern(default)}
 
-    var data = 0
-    var red = 0
-    var blue = 0
-    var green = 0
-    fun csColors(){
-//        data =  clawSubsystem.colorDistSensor.argb()
-        red = clawSubsystem.colorDistSensor.red()
-        blue = clawSubsystem.colorDistSensor.blue()
-        green = clawSubsystem.colorDistSensor.green()
+//    var data = 0
+//    var red = 0
+//    var blue = 0
+//    var green = 0
+//    fun csColors(){
+////        data =  clawSubsystem.colorDistSensor.argb()
+//        red = clawSubsystem.colorDistSensor.red()
+//        blue = clawSubsystem.colorDistSensor.blue()
+//        green = clawSubsystem.colorDistSensor.green()
+//
+//        telemetry.update()
+//        if (blue>300){
+//            antony.setPattern(blueLED)
+//        }
+//        else if (green>300){
+//            antony.setPattern(yellowLED)
+//        }
+//        else if (red>290){
+//            antony.setPattern(redLED)
+//        }
+//        else antony.setPattern(default)
+//    }
+//
+//    val colorSensorData = Lambda("colorSensorData")
+//        .setExecute{
+//            csColors()
+//        }
+//        .setFinish{false}
+//        .setEnd{ antony.setPattern(default)}
 
-        telemetry.update()
-        if (blue>300){
-            antony.setPattern(blueLED)
-        }
-        else if (green>300){
-            antony.setPattern(yellowLED)
-        }
-        else if (red>290){
-            antony.setPattern(redLED)
-        }
-        else antony.setPattern(default)
-    }
-
-    val colorSensorData = Lambda("colorSensorData")
-        .setExecute{
-            csColors()
-        }
-        .setFinish{false}
-        .setEnd{ antony.setPattern(default)}
-
-    val minVoltage = 10.0
+    val minVoltage = 9.0
 
 
     override fun postUserInitHook(opMode: Wrapper) {
@@ -98,7 +98,7 @@ object antonySubsystem : SDKSubsystem() {
             .onTrue(endGameCommand.raceWith(Wait(10.0)))
 
         BoundBooleanSupplier(EnhancedBooleanSupplier
-        {if (modules.isEmpty()) false else modules[0].getInputVoltage(VoltageUnit.VOLTS)<9.0})
+        {if (modules.isEmpty()) false else modules[0].getInputVoltage(VoltageUnit.VOLTS)<minVoltage})
             .whileTrue(lowBatteryCommand)
     }
 

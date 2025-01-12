@@ -1,5 +1,4 @@
 package PedroPathing.src.main.java.com.pedropathing.localization;
-import static PedroPathing.src.main.java.com.pedropathing.follower.FollowerConstants.localizers;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -12,6 +11,7 @@ import PedroPathing.src.main.java.com.pedropathing.localization.localizers.Three
 import PedroPathing.src.main.java.com.pedropathing.localization.localizers.TwoWheelLocalizer;
 import PedroPathing.src.main.java.com.pedropathing.pathgen.MathFunctions;
 import PedroPathing.src.main.java.com.pedropathing.pathgen.Vector;
+import PedroPathing.src.main.java.com.pedropathing.follower.FollowerConstants;
 
 /**
  * This is the PoseUpdater class. This class handles getting pose data from the localizer and returning
@@ -76,22 +76,22 @@ public class PoseUpdater {
     }
 
     private static Localizer createLocalizer(HardwareMap hardwareMap) {
-        switch (localizers) {
-            case DRIVE_ENCODERS:
-                return new DriveEncoderLocalizer(hardwareMap);
-            case TWO_WHEEL:
-                return new TwoWheelLocalizer(hardwareMap);
-            case THREE_WHEEL:
+//        switch (FollowerConstants.localizers) {
+//            case Localizers.DRIVE_ENCODERS:
+//                return new DriveEncoderLocalizer(hardwareMap);
+//            case Localizers.TWO_WHEEL:
+//                return new TwoWheelLocalizer(hardwareMap);
+//            case Localizers.THREE_WHEEL:
                 return new ThreeWheelLocalizer(hardwareMap);
-            case THREE_WHEEL_IMU:
-                return new ThreeWheelIMULocalizer(hardwareMap);
-            case OTOS:
-                return new OTOSLocalizer(hardwareMap);
-            case PINPOINT:
-                return new PinpointLocalizer(hardwareMap);
-            default:
-                throw new IllegalArgumentException("Unsupported localizer type");
-        }
+//            case Localizers.THREE_WHEEL_IMU:
+//                return new ThreeWheelIMULocalizer(hardwareMap);
+//            case Localizers.OTOS:
+//                return new OTOSLocalizer(hardwareMap);
+//            case Localizers.PINPOINT:
+//                return new PinpointLocalizer(hardwareMap);
+//            default:
+//                throw new IllegalArgumentException("Unsupported localizer type");
+//        }
     }
 
 

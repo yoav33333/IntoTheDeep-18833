@@ -175,9 +175,9 @@ public class Follower {
         driveVectorScaler = new DriveVectorScaler(FollowerConstants.frontLeftVector);
 
         leftFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftFrontMotorName));
-        leftRear =  new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftRearMotorName));
+        leftRear = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftRearMotorName));
         rightRear = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, rightRearMotorName));
-        rightFront =new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, rightFrontMotorName));
+        rightFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, rightFrontMotorName));
         leftFront.setDirection(leftFrontMotorDirection);
         leftRear.setDirection(leftRearMotorDirection);
         rightFront.setDirection(rightFrontMotorDirection);
@@ -211,7 +211,7 @@ public class Follower {
         driveVectorScaler = new DriveVectorScaler(FollowerConstants.frontLeftVector);
 
         leftFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftFrontMotorName));
-        leftRear =  new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftRearMotorName));
+        leftRear = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, leftRearMotorName));
         rightRear = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, rightRearMotorName));
         rightFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, rightFrontMotorName));
         leftFront.setDirection(leftFrontMotorDirection);
@@ -591,94 +591,6 @@ public class Follower {
         }
     }
 
-    private void teleopDrive(){
-        velocities.add(poseUpdater.getVelocity());
-        velocities.remove(velocities.get(velocities.size() - 1));
-
-        calculateAveragedVelocityAndAcceleration();
-
-        drivePowers = driveVectorScaler.getDrivePowers(getCentripetalForceCorrection(), teleopHeadingVector, teleopDriveVector, poseUpdater.getPose().getHeading());
-
-        for (int i = 0; i < motors.size(); i++) {
-            if (Math.abs(motors.get(i).getPower() - drivePowers[i]) > FollowerConstants.motorCachingThreshold) {
-                motors.get(i).setPower(drivePowers[i]);
-            }
-        }
-    }
-    private void holdPose(){
-        closestPose = currentPath.getClosestPoint(poseUpdater.getPose(), 1);
-
-        drivePowers = driveVectorScaler.getDrivePowers(MathFunctions.scalarMultiplyVector(getTranslationalCorrection(), holdPointTranslationalScaling), MathFunctions.scalarMultiplyVector(getHeadingVector(), holdPointHeadingScaling), new Vector(), poseUpdater.getPose().getHeading());
-
-        for (int i = 0; i < motors.size(); i++) {
-            if (Math.abs(motors.get(i).getPower() - drivePowers[i]) > FollowerConstants.motorCachingThreshold) {
-                motors.get(i).setPower(drivePowers[i]);
-            }
-        }
-    }
-    private void run() {
-        closestPose = currentPath.getClosestPoint(poseUpdater.getPose(), BEZIER_CURVE_BINARY_STEP_LIMIT);
-
-        if (followingPathChain) updateCallbacks();
-
-        drivePowers = driveVectorScaler.getDrivePowers(getCorrectiveVector(), getHeadingVector(), getDriveVector(), poseUpdater.getPose().getHeading());
-
-        for (int i = 0; i < motors.size(); i++) {
-            if (Math.abs(motors.get(i).getPower() - drivePowers[i]) > FollowerConstants.motorCachingThreshold) {
-                motors.get(i).setPower(drivePowers[i]);
-            }
-        }
-    }
-    private void end(){
-        if (followingPathChain && chainIndex < currentPathChain.size() - 1) {
-            // Not at last path, keep going
-            breakFollowing();
-            pathStartTimes[chainIndex] = System.currentTimeMillis();
-            isBusy = true;
-            followingPathChain = true;
-            chainIndex++;
-            currentPath = currentPathChain.getPath(chainIndex);
-            closestPose = currentPath.getClosestPoint(poseUpdater.getPose(), BEZIER_CURVE_BINARY_STEP_LIMIT);
-            return;
-        }
-        // At last path, run some end detection stuff
-        // set isBusy to false if at end
-        if (!reachedParametricPathEnd) {
-            reachedParametricPathEnd = true;
-            reachedParametricPathEndTime = System.currentTimeMillis();
-        }
-
-        if ((System.currentTimeMillis() - reachedParametricPathEndTime > currentPath.getPathEndTimeoutConstraint()) || (poseUpdater.getVelocity().getMagnitude() < currentPath.getPathEndVelocityConstraint() && MathFunctions.distance(poseUpdater.getPose(), closestPose) < currentPath.getPathEndTranslationalConstraint() && MathFunctions.getSmallestAngleDifference(poseUpdater.getPose().getHeading(), currentPath.getClosestPointHeadingGoal()) < currentPath.getPathEndHeadingConstraint())) {
-            if (holdPositionAtEnd) {
-                holdPositionAtEnd = false;
-                holdPoint(new BezierPoint(currentPath.getLastControlPoint()), currentPath.getHeadingGoal(1));
-            } else {
-                breakFollowing();
-            }
-        }
-    }
-    public void newUpdate() {
-        updatePose();
-
-        if (teleopDrive) {
-            teleopDrive();
-            return;
-        }
-        if (currentPath == null)return;
-
-        if (holdingPosition) {
-            holdPose();
-            return;
-        }
-
-        if (isBusy) {
-            run();
-        }
-        if (currentPath.isAtParametricEnd()) {
-            end();
-        }
-
-    }
     /**
      * This sets the teleop drive vectors. This defaults to robot centric.
      *
@@ -1138,7 +1050,7 @@ public class Follower {
     }
 
     /**
-     * This returns the total number of radians the robot has turned.
+     * This returns the total number of radians the robot has turned. This is calculated by the PoseUpdater.
      *
      * @return the total heading.
      */
@@ -1167,7 +1079,7 @@ public class Follower {
     /**
      * This resets the IMU, if applicable.
      */
-    public void resetIMU() throws InterruptedException {
+    private void resetIMU() throws InterruptedException {
         poseUpdater.resetIMU();
     }
 }

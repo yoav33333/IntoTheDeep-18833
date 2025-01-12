@@ -12,8 +12,8 @@ public class Constants {
 
     private static void setup() {
         try {
-            Class.forName(fConstants.getName()); // This will trigger the static block for fConstants
-            Class.forName(lConstants.getName()); // This will trigger the static block for lConstants
+            Class.forName(fConstants.getName());
+            Class.forName(lConstants.getName());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

@@ -58,6 +58,7 @@ object deposit: SDKSubsystem() {
     val openingClawPose = 1.0
     val ArmInPose = 0.03
     val ArmOutPose = 0.8
+    val ArmOutPose2 = 0.9
 
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
@@ -73,13 +74,16 @@ object deposit: SDKSubsystem() {
     fun armOut() {
         depoArmServo.setPosition(ArmOutPose)
     }
+    fun armOut2() {
+        depoArmServo.setPosition(ArmOutPose2)
+    }
     fun transferPose(){
         openClaw()
         armIn()
     }
     fun intakeFromHumanPlayer(){
         openClaw()
-        armOut()
+        armOut2()
     }
     fun depoPreset(){
         closeClaw()

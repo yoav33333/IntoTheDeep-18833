@@ -1,10 +1,6 @@
 package PedroPathing.src.main.java.com.pedropathing.localization.localizers;
 
 import static PedroPathing.src.main.java.com.pedropathing.localization.constants.DriveEncoderConstants.*;
-import static PedroPathing.src.main.java.com.pedropathing.follower.FollowerConstants.leftFrontMotorName;
-import static PedroPathing.src.main.java.com.pedropathing.follower.FollowerConstants.leftRearMotorName;
-import static PedroPathing.src.main.java.com.pedropathing.follower.FollowerConstants.rightFrontMotorName;
-import static PedroPathing.src.main.java.com.pedropathing.follower.FollowerConstants.rightRearMotorName;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -18,6 +14,7 @@ import PedroPathing.src.main.java.com.pedropathing.localization.Pose;
 import PedroPathing.src.main.java.com.pedropathing.pathgen.MathFunctions;
 import PedroPathing.src.main.java.com.pedropathing.pathgen.Vector;
 import PedroPathing.src.main.java.com.pedropathing.util.NanoTimer;
+import PedroPathing.src.main.java.com.pedropathing.follower.FollowerConstants;
 
 /**
  * This is the DriveEncoderLocalizer class. This class extends the Localizer superclass and is a
@@ -73,10 +70,10 @@ public class DriveEncoderLocalizer extends Localizer {
         ROBOT_WIDTH = robot_Width;
         ROBOT_LENGTH = robot_Length;
 
-        leftFront = new Encoder(hardwareMap.get(DcMotorEx.class, leftFrontMotorName));
-        leftRear = new Encoder(hardwareMap.get(DcMotorEx.class, leftRearMotorName));
-        rightRear = new Encoder(hardwareMap.get(DcMotorEx.class, rightRearMotorName));
-        rightFront = new Encoder(hardwareMap.get(DcMotorEx.class, rightFrontMotorName));
+        leftFront = new Encoder(hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName));
+        leftRear = new Encoder(hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName));
+        rightRear = new Encoder(hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName));
+        rightFront = new Encoder(hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName));
 
         leftFront.setDirection(leftFrontEncoderDirection);
         leftRear.setDirection(leftRearEncoderDirection);
