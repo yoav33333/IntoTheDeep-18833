@@ -54,10 +54,12 @@ object deposit: SDKSubsystem() {
         )
         s
     }
+    var isSpe = false
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
     val ArmInPose = 0.03
     val ArmOutPose = 0.8
+    val ArmOutPose2 = 0.9
 
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
@@ -73,13 +75,16 @@ object deposit: SDKSubsystem() {
     fun armOut() {
         depoArmServo.setPosition(ArmOutPose)
     }
+    fun armOut2() {
+        depoArmServo.setPosition(ArmOutPose2)
+    }
     fun transferPose(){
         openClaw()
         armIn()
     }
     fun intakeFromHumanPlayer(){
         openClaw()
-        armOut()
+        armOut2()
     }
     fun depoPreset(){
         closeClaw()
@@ -87,34 +92,39 @@ object deposit: SDKSubsystem() {
     }
 
     fun checkIfSampleInPlace(): Boolean {
-        if (colorSensor.getDistance(DistanceUnit.MM)<40) {
+        if (colorSensor.getDistance(DistanceUnit.MM)<35) {
             closeClaw()
             return true
         }
         return false
     }
-
+    val slamArm = Lambda("slamArm")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{depoArmServo.position = 1.0
+        linearSlides.target-=200}
+    val release = Lambda("release")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ openClaw()}
+    val slamSeq = Sequential(slamArm, Wait(0.3), release)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
             if (depoClawServo.position == closeingClawPose) {
-                openClaw()
+                if(isSpe) slamSeq.schedule()
+                else openClaw()
             } else {
                 closeClaw()
             }
         }
 
-    val release = Lambda("release")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ openClaw()}
     val armOut = Lambda("armOut")
         .setInit{armOut()}
     var stop = false
     val intakeCommand = Lambda("intakeCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
-
             intakeFromHumanPlayer()
+            linearSlides.runToPosition.schedule()
             stop = false
             extendoCommand.extendoMacro.cancel()
             transferCommand.cancel()
@@ -123,12 +133,20 @@ object deposit: SDKSubsystem() {
         .setFinish{
             checkIfSampleInPlace()|| stop
         }
+    val catchSimple = Lambda("catchSimple")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ closeClaw()}
+    val postIntakeState = Lambda("postIntakeState")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ armOut()}
+
 
     val transferCommand = Lambda("transferCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
             transferPose()
             stop = true
+
         }
         .setExecute{
             telemetry.addData("active", true)

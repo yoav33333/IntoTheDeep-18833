@@ -101,15 +101,15 @@ object clawSubsystem: Subsystem {
                 closeClaw()
             }
         }
-    var check = true
-    val runCs = Lambda("rcs")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ check = true}
-
-    val stopCs = Lambda("scs")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ check = false
-            antonySubsystem.colorSensorData.cancel()}
+//    var check = true
+//    val runCs = Lambda("rcs")
+//        .setRunStates(Wrapper.OpModeState.ACTIVE)
+//        .setInit{ check = true}
+//
+//    val stopCs = Lambda("scs")
+//        .setRunStates(Wrapper.OpModeState.ACTIVE)
+//        .setInit{ check = false
+//            antonySubsystem.colorSensorData.cancel()}
 
 
     val rotateClawR = Lambda("rotate claw r")

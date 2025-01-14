@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.util.SuperAdvancing
 import java.lang.annotation.Inherited
+import kotlin.properties.Delegates
 
 object extendoCommand : Subsystem{
 
@@ -42,27 +43,20 @@ object extendoCommand : Subsystem{
     annotation class Attach
 
 
-    var isOpen = true
-    val changeState = Lambda("Chs")
-        .setInit{ isOpen = !isOpen
-        extendoOpenCommand.cancel()
-        extendoCloseCommand.cancel()}
 
     val extendoOpenCommand = Parallel(Sequential(Parallel(
-        clawSubsystem.resetAngleClaw,
         linearSlides.closeSlides,
+        clawSubsystem.resetAngleClaw,
         armClawSubsystem.openClawArm,
         extendoSubsystem.openExtendo,
         clawSubsystem.openClaw,
-//        linearSlides.closeSlides
     ),Wait(0.3),
-        clawSubsystem.runCs,
+//        clawSubsystem.runCs,
         TransferState,
-        antonySubsystem.colorSensorData
+//        antonySubsystem.colorSensorData
     ))
     val extendoCloseCommand = Parallel(Sequential(Parallel(
-        linearSlides.stopRunToPosition,
-        clawSubsystem.stopCs,
+//        clawSubsystem.stopCs,
         clawSubsystem.closeClaw2,
         clawSubsystem.resetAngleClaw,
         extendoSubsystem.closeExtendo,
@@ -70,31 +64,17 @@ object extendoCommand : Subsystem{
         TransferState,
         transferSeq
     ),
+        linearSlides.runToPosition,
         Wait(0.2),
         anglePostTransfer,
         Wait(0.2),
         angleTransfer,
-        linearSlides.runToPosition
     ))
 
-//    val stateMachine = StateMachine
-    val macro = Lambda("Macro")
-    .setInit{
-        if (Mercurial.isScheduled(extendoOpenCommand)) {
-            extendoOpenCommand.cancel()
-            extendoCloseCommand.schedule()
-
-        }
-        if (Mercurial.isScheduled(extendoCloseCommand)) {
-            extendoCloseCommand.cancel()
-            extendoOpenCommand.schedule()
-        }
-    }
     val extendoMacro =
         SuperAdvancing(extendoCloseCommand, extendoOpenCommand)
 
     override fun preUserStartHook(opMode: Wrapper) {
-        isOpen = false
         extendoMacro.restart()
         extendoMacro.schedule()
     }

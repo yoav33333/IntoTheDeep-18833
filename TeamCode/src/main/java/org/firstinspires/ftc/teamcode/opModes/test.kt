@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
 import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoMacro
 import org.firstinspires.ftc.teamcode.subsystems.BulkReads
+import org.firstinspires.ftc.teamcode.subsystems.antonySubsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 
@@ -23,10 +24,12 @@ import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.deposit.catchPixel
 import org.firstinspires.ftc.teamcode.subsystems.deposit.depoArmServo
 import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeCommand
+import org.firstinspires.ftc.teamcode.subsystems.deposit.postIntakeState
 import org.firstinspires.ftc.teamcode.subsystems.deposit.release
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferCommand
-import org.firstinspires.ftc.teamcode.subsystems.driveSubsystem
+//import org.firstinspires.ftc.teamcode.subsystems.driveSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToHighBasket
@@ -39,25 +42,19 @@ import org.firstinspires.ftc.teamcode.subsystems.linearSlides.runToPose
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.target
 import kotlin.math.abs
 
-@BulkReads.Attach
-@Mercurial.Attach
-@clawSubsystem.Attach
-@driveSubsystem.Attach
-@extendoCommand.Attach
-@linearSlides.Attach
-@armClawSubsystem.Attach
-@extendoSubsystem.Attach
-@deposit.Attach
+
 @TeleOp
 @Config
-class test : CommandOpMode(BulkReads, Mercurial, clawSubsystem, driveSubsystem, extendoCommand, linearSlides, armClawSubsystem, extendoSubsystem, deposit) {
+
+class test : MegiddoOpMode() {
     lateinit var telemetryDB : MultipleTelemetry
+    //TODO: add auto closing if pixel intaked
     override fun myInit() {
         //operator controls
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(deposit.changeClawPos)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
-        Mercurial.gamepad2.a.onTrue(Sequential(intakeCommand, Wait(0.5).then(catchPixel)))
+        Mercurial.gamepad2.a.onTrue(Sequential(intakeCommand, Wait(0.5),catchPixel, Wait(0.3 ), postIntakeState))
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
         Mercurial.gamepad2.x.onTrue(extendoMacro)
@@ -69,20 +66,19 @@ class test : CommandOpMode(BulkReads, Mercurial, clawSubsystem, driveSubsystem, 
             .whileTrue(extendoSubsystem.moveManual)
 
         BoundBooleanSupplier(EnhancedBooleanSupplier{abs(Mercurial.gamepad2.rightStickY.state)>0.1})
-            .whileTrue(linearSlides.manualControl)
+            .onTrue(linearSlides.manualControl)
         BoundBooleanSupplier(EnhancedBooleanSupplier{abs(Mercurial.gamepad2.rightStickY.state)<0.1})
-            .whileTrue(linearSlides.runToPosition)
+            .onTrue(linearSlides.runToPosition)
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
             .onTrue(resetHeight)
 
-//        Mercurial.gamepad2.a.onTrue(linearSlides.closeSlides)
         //drive controls
         Mercurial.gamepad1.rightStickButton.onTrue(release)
         Mercurial.gamepad1.leftStickButton.onTrue(release)
-        Mercurial.gamepad1.b.onTrue(driveSubsystem.midSlowGear)
-        Mercurial.gamepad1.x.onTrue(driveSubsystem.midFastGear)
-        Mercurial.gamepad1.a.onTrue(driveSubsystem.fastGear)
-        Mercurial.gamepad1.y.onTrue(driveSubsystem.slowGear)
+        Mercurial.gamepad1.b.onTrue(followerSubsystem.thirdGear)
+        Mercurial.gamepad1.x.onTrue(followerSubsystem.secondGear)
+        Mercurial.gamepad1.a.onTrue(followerSubsystem.firstGear)
+//        Mercurial.gamepad1.y.onTrue(driveSubsystem.slowGear)
 
         telemetryDB = MultipleTelemetry(FeatureRegistrar.activeOpMode.telemetry, FtcDashboard.getInstance().telemetry)
 
@@ -102,13 +98,9 @@ class test : CommandOpMode(BulkReads, Mercurial, clawSubsystem, driveSubsystem, 
         telemetry.addData("l3", linearSlides.motorLiftFar.power)
         telemetry.update()
 
-//        runToPose(target.toDouble())
         telemetryDB.addData("pose", getPose())
         telemetryDB.addData("target", target)
         telemetryDB.addData("error", target - getPose())
-        telemetryDB.addData("red", clawSubsystem.colorDistSensor.red())
-        telemetryDB.addData("blue", clawSubsystem.colorDistSensor.blue())
-        telemetryDB.addData("green", clawSubsystem.colorDistSensor.green())
         telemetryDB.update()
 
     }

@@ -22,6 +22,7 @@ import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.controller.PDController
+import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.util.motorGroup
 import java.lang.annotation.Inherited
 import kotlin.math.abs
@@ -79,7 +80,6 @@ object linearSlides: Subsystem {
     @JvmField var Kf = 0.02
     @JvmField var maxPow = 1.0
     @JvmField var threshold = 30.0
-    //TODO: change to PFController
 
     var PDController = PDController(Kp, Kd)
     val closeingPose = 0.0
@@ -125,14 +125,14 @@ object linearSlides: Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{ runToPosition.cancel()}
         .setExecute{setPower(Mercurial.gamepad2.rightStickY.state)}
-        .setFinish{false}
+        .setFinish{abs(Mercurial.gamepad2.rightStickY.state)<0.1}
+        .setEnd{ target = getPose().toDouble()}
 
     val runToPosition = Lambda("runToPosition")
-        .setInit{ target = (getPose().toDouble())}
         .setExecute{
             runToPose(target)
         }
-        .setFinish{false}
+        .setFinish{Mercurial.gamepad2.rightStickY.state>0.1}
     fun goToPreset(goal: Double) = Lambda("goToPreset")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{target = goal}
@@ -140,21 +140,16 @@ object linearSlides: Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{runToPosition.cancel()}
 
-    val closeSlides = goToPreset(0.0).setFinish{ getPose()<20&& getPose()>-20}.setEnd{ runToPosition.cancel()}
-    val goToHighBasket = goToPreset(2870.0)
-    val goToHighChamber = goToPreset(1800.0)
-    val goToLowBasket = goToPreset(1600.0)
-    val goToLowChamber = goToPreset(400.0)
-
-//    val closeSlides = Lambda("closeSlides")
-//        .setRunStates(Wrapper.OpModeState.ACTIVE)
-//        .setInit{closeSlides()}
-//        .setExecute{closeSlides()}
-//        .setFinish{ abs(target- getPose())<20}
+    val closeSlides = goToPreset(0.0).setFinish{ abs(getPose())<40}.setEnd{ runToPosition.cancel()}.addInit{runToPosition.schedule()
+    target = 0.0
+    isSpe = false
+    }
+    val goToHighBasket = goToPreset(3600.0).addInit{isSpe = false }
+    val goToHighChamber = goToPreset(2200.0).addInit{isSpe = false }
+    val goToLowBasket = goToPreset(1600.0).addInit{isSpe = true }
+    val goToLowChamber = goToPreset(400.0).addInit{isSpe = true }
 
     override fun preUserInitHook(opMode: Wrapper) {
-
-
         setRunMode(RunMode.STOP_AND_RESET_ENCODER)
         setRunMode(RunMode.RUN_WITHOUT_ENCODER)
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
