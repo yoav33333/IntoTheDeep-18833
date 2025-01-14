@@ -14,8 +14,7 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem
 import java.lang.annotation.Inherited
 
 
-
-object extendoSubsystem: Subsystem {
+object extendoSubsystem : Subsystem {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
 
@@ -44,45 +43,46 @@ object extendoSubsystem: Subsystem {
     val open = 0.2
     val close = 1.0
 
-    fun openExtendoF(){
+    fun openExtendoF() {
         extendoServoR.setPosition(open)
         extendoServoL.setPosition(open)
     }
-    fun closeExtendoF(){
+
+    fun closeExtendoF() {
         extendoServoR.setPosition(close)
         extendoServoL.setPosition(close)
     }
 
     val moveManualO = Lambda("moveManualO")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setExecute{
-            extendoServoR.setPosition(if(extendoServoR.position<1) extendoServoR.position+0.01 else extendoServoR.position)
-            extendoServoL.setPosition(if(extendoServoL.position<1) extendoServoL.position+0.01 else extendoServoL.position)
+        .setExecute {
+            extendoServoR.setPosition(if (extendoServoR.position < 1) extendoServoR.position + 0.01 else extendoServoR.position)
+            extendoServoL.setPosition(if (extendoServoL.position < 1) extendoServoL.position + 0.01 else extendoServoL.position)
         }
     val moveManual = Lambda("moveManual")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setExecute{
+        .setExecute {
 //            extendoServoR.position+=(Mercurial.gamepad2.leftStickY.state/100.0)
 //            extendoServoL.position+=(Mercurial.gamepad2.leftStickY.state/100.0)
-            if (extendoServoL.position-Mercurial.gamepad2.leftStickY.state/100.0>0.2) {
-                extendoServoL.position -= Mercurial.gamepad2.leftStickY.state/100.0
-                extendoServoR.position -= Mercurial.gamepad2.leftStickY.state/100.0
+            if (extendoServoL.position - Mercurial.gamepad2.leftStickY.state / 100.0 > 0.2) {
+                extendoServoL.position -= Mercurial.gamepad2.leftStickY.state / 100.0
+                extendoServoR.position -= Mercurial.gamepad2.leftStickY.state / 100.0
             }
         }
-        .setFinish{false}
+        .setFinish { false }
     val moveManualC = Lambda("moveManualC")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setExecute{
-            extendoServoR.setPosition(if(extendoServoR.position>0.2) extendoServoR.position-0.01 else extendoServoR.position)
-            extendoServoL.setPosition(if(extendoServoL.position>0.2) extendoServoL.position-0.01 else extendoServoL.position)
+        .setExecute {
+            extendoServoR.setPosition(if (extendoServoR.position > 0.2) extendoServoR.position - 0.01 else extendoServoR.position)
+            extendoServoL.setPosition(if (extendoServoL.position > 0.2) extendoServoL.position - 0.01 else extendoServoL.position)
         }
 
     val openExtendo = Lambda("openExtendo")
-        .setInit{
+        .setInit {
             openExtendoF()
         }
     val closeExtendo = Lambda("closeClawArm")
-        .setInit{
+        .setInit {
             closeExtendoF()
         }
 }

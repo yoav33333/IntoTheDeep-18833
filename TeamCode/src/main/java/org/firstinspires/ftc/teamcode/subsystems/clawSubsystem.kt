@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
@@ -12,14 +10,12 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
-import dev.frozenmilk.mercurial.commands.groups.Sequential
-import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import java.lang.annotation.Inherited
 
 
-object clawSubsystem: Subsystem {
+object clawSubsystem : Subsystem {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
 
@@ -50,7 +46,7 @@ object clawSubsystem: Subsystem {
         s
     }
 
-    val colorDistSensor: ColorRangeSensor by OpModeLazyCell{
+    val colorDistSensor: ColorRangeSensor by OpModeLazyCell {
         FeatureRegistrar.activeOpMode.hardwareMap.get(
             ColorRangeSensor::class.java, "color claw"
         )
@@ -63,7 +59,7 @@ object clawSubsystem: Subsystem {
     var oldRead = 0.0
     var counter = 0
     fun readSensorDis(): Double {
-        if (counter%filter ==0)
+        if (counter % filter == 0)
             oldRead = colorDistSensor.getDistance(DistanceUnit.MM)
         counter++
         return oldRead
@@ -72,6 +68,7 @@ object clawSubsystem: Subsystem {
     fun closeClaw() {
         clawServo.setPosition(closeingPose)
     }
+
     var semiClose = 0.545
     fun closeClawP() {
         clawServo.setPosition(semiClose)
@@ -90,11 +87,9 @@ object clawSubsystem: Subsystem {
     }
 
 
-
-
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{
+        .setInit {
             if (clawServo.position == closeingPose) {
                 openClaw()
             } else {
@@ -114,36 +109,38 @@ object clawSubsystem: Subsystem {
 
     val rotateClawR = Lambda("rotate claw r")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{clawRotationServo.setPosition(if(clawRotationServo.position<0.9) clawRotationServo.position+0.4 else 0.9)
+        .setInit {
+            clawRotationServo.setPosition(if (clawRotationServo.position < 0.9) clawRotationServo.position + 0.4 else 0.9)
         }
     val rotateClawL = Lambda("rotate claw l")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ clawRotationServo.setPosition(if(clawRotationServo.position>0.1) clawRotationServo.position-0.4 else 0.1)
+        .setInit {
+            clawRotationServo.setPosition(if (clawRotationServo.position > 0.1) clawRotationServo.position - 0.4 else 0.1)
         }
     val turnLeft = Lambda("turnLeft")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{clawRotationServo.setPosition(0.1)}
+        .setInit { clawRotationServo.setPosition(0.1) }
 
     val turnRight = Lambda("turnRight")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{clawRotationServo.setPosition(0.9)}
-
+        .setInit { clawRotationServo.setPosition(0.9) }
 
 
     val resetAngleClaw = Lambda("resetAngleClaw")
-        .setInit{clawRotationServo.setPosition(0.5)}
+        .setInit { clawRotationServo.setPosition(0.5) }
 
     val openClaw = Lambda("openClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{
-            openClaw()}
+        .setInit {
+            openClaw()
+        }
 
     val closeClaw = Lambda("closeClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ closeClaw()}
+        .setInit { closeClaw() }
     val closeClaw2 = Lambda("closeClaw2")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ closeClawP() }
+        .setInit { closeClawP() }
 
     override fun postUserInitHook(opMode: Wrapper) {
         openClaw()

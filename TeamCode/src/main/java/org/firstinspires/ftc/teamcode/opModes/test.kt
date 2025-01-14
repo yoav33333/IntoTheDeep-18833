@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opModes
 
+//import org.firstinspires.ftc.teamcode.subsystems.driveSubsystem
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
@@ -10,24 +11,16 @@ import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
-import org.firstinspires.ftc.teamcode.commands.extendoCommand
 import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoMacro
-import org.firstinspires.ftc.teamcode.subsystems.BulkReads
-import org.firstinspires.ftc.teamcode.subsystems.antonySubsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
-
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.rotateClawL
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.rotateClawR
 import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.deposit.catchPixel
-import org.firstinspires.ftc.teamcode.subsystems.deposit.depoArmServo
 import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeCommand
 import org.firstinspires.ftc.teamcode.subsystems.deposit.postIntakeState
 import org.firstinspires.ftc.teamcode.subsystems.deposit.release
-import org.firstinspires.ftc.teamcode.subsystems.deposit.transferCommand
-//import org.firstinspires.ftc.teamcode.subsystems.driveSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
@@ -38,7 +31,6 @@ import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToLowBasket
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToLowChamber
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.magneticLimit
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.resetHeight
-import org.firstinspires.ftc.teamcode.subsystems.linearSlides.runToPose
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.target
 import kotlin.math.abs
 
@@ -47,14 +39,23 @@ import kotlin.math.abs
 @Config
 
 class test : MegiddoOpMode() {
-    lateinit var telemetryDB : MultipleTelemetry
+    lateinit var telemetryDB: MultipleTelemetry
+
     //TODO: add auto closing if pixel intaked
     override fun myInit() {
         //operator controls
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(deposit.changeClawPos)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
-        Mercurial.gamepad2.a.onTrue(Sequential(intakeCommand, Wait(0.5),catchPixel, Wait(0.3 ), postIntakeState))
+        Mercurial.gamepad2.a.onTrue(
+            Sequential(
+                intakeCommand,
+                Wait(0.5),
+                catchPixel,
+                Wait(0.3),
+                postIntakeState
+            )
+        )
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
         Mercurial.gamepad2.x.onTrue(extendoMacro)
@@ -62,12 +63,12 @@ class test : MegiddoOpMode() {
         Mercurial.gamepad2.dpadLeft.onTrue(goToHighChamber)
         Mercurial.gamepad2.dpadRight.onTrue(goToLowBasket)
         Mercurial.gamepad2.dpadDown.onTrue(goToLowChamber)
-        BoundBooleanSupplier(EnhancedBooleanSupplier{ abs(Mercurial.gamepad2.leftStickY.state)>0.3})
+        BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.leftStickY.state) > 0.3 })
             .whileTrue(extendoSubsystem.moveManual)
 
-        BoundBooleanSupplier(EnhancedBooleanSupplier{abs(Mercurial.gamepad2.rightStickY.state)>0.1})
+        BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.rightStickY.state) > 0.1 })
             .onTrue(linearSlides.manualControl)
-        BoundBooleanSupplier(EnhancedBooleanSupplier{abs(Mercurial.gamepad2.rightStickY.state)<0.1})
+        BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.rightStickY.state) < 0.1 })
             .onTrue(linearSlides.runToPosition)
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
             .onTrue(resetHeight)
@@ -80,9 +81,13 @@ class test : MegiddoOpMode() {
         Mercurial.gamepad1.a.onTrue(followerSubsystem.firstGear)
 //        Mercurial.gamepad1.y.onTrue(driveSubsystem.slowGear)
 
-        telemetryDB = MultipleTelemetry(FeatureRegistrar.activeOpMode.telemetry, FtcDashboard.getInstance().telemetry)
+        telemetryDB = MultipleTelemetry(
+            FeatureRegistrar.activeOpMode.telemetry,
+            FtcDashboard.getInstance().telemetry
+        )
 
     }
+
     override fun myLoop() {
         telemetry.addData("clawPosDepo", deposit.depoClawServo.position)
         telemetry.addData("clawPos", clawSubsystem.clawServo.position)

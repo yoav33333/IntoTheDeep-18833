@@ -1,18 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import android.content.Context
 import android.view.Menu
 import com.qualcomm.ftccommon.FtcEventLoop
 import com.qualcomm.robotcore.eventloop.opmode.AnnotatedOpModeManager
 import com.qualcomm.robotcore.util.WebHandlerManager
-import android.content.Context
 import dev.frozenmilk.sinister.apphooks.OnCreate
 import dev.frozenmilk.sinister.apphooks.OnCreateEventLoop
 import dev.frozenmilk.sinister.apphooks.OnCreateMenu
 import dev.frozenmilk.sinister.apphooks.OnDestroy
 import dev.frozenmilk.sinister.apphooks.OpModeRegistrar
 import dev.frozenmilk.sinister.apphooks.WebHandlerRegistrar
-import kotlin.Suppress;
 
 @Suppress("unused")
 class tonsOfShit private constructor() {

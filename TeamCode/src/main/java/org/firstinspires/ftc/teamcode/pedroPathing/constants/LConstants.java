@@ -8,9 +8,9 @@ import com.pedropathing.localization.constants.ThreeWheelConstants;
 
 public class LConstants {
     static {
-        ThreeWheelConstants.forwardTicksToInches = 2*PI/8192;
-        ThreeWheelConstants.strafeTicksToInches = 2*PI/8192;
-        ThreeWheelConstants.turnTicksToInches = 2*PI/8192;
+        ThreeWheelConstants.forwardTicksToInches = 2 * PI / 8192;
+        ThreeWheelConstants.strafeTicksToInches = 2 * PI / 8192;
+        ThreeWheelConstants.turnTicksToInches = 2 * PI / 8192;
         ThreeWheelConstants.leftY = 7;
         ThreeWheelConstants.rightY = -7;
         ThreeWheelConstants.strafeX = 0;

@@ -34,11 +34,12 @@ open class CommandOpMode(vararg var features: Feature) : LinearOpMode() {
         FeatureRegistrar.opModePostStop(FeatureRegistrar.activeOpModeWrapper)
 
     }
-    open fun myStart(){}
-    open fun myInit(){}
-    open fun myInitLoop(){}
-    open fun myLoop(){}
-    open fun myStop(){}
+
+    open fun myStart() {}
+    open fun myInit() {}
+    open fun myInitLoop() {}
+    open fun myLoop() {}
+    open fun myStop() {}
 
 
 }

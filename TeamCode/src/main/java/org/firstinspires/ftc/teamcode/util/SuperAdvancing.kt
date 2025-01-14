@@ -8,9 +8,11 @@ import dev.frozenmilk.util.cell.InvalidatingCell
 import dev.frozenmilk.util.cell.LazyCell
 
 class SuperAdvancing(private val commands: List<Command>) : Command {
-    private val iteratorCell = InvalidatingCell({ commands.iterator() }, { _, ref -> !ref.hasNext() })
+    private val iteratorCell =
+        InvalidatingCell({ commands.iterator() }, { _, ref -> !ref.hasNext() })
     private val iterator by iteratorCell
     private var advance = false
+
     constructor(vararg commands: Command) : this(commands.toList())
 
     /**
@@ -33,9 +35,14 @@ class SuperAdvancing(private val commands: List<Command>) : Command {
         val finished = currentCommandCell.safeInvoke { command ->
             try {
                 command.finished()
-            }
-            catch (e: Throwable) {
-                if (e !is UnwindCommandStack) throw UnwindCommandStack(command, this, "finished?", unwindStackTrace(command, "ERR"), e)
+            } catch (e: Throwable) {
+                if (e !is UnwindCommandStack) throw UnwindCommandStack(
+                    command,
+                    this,
+                    "finished?",
+                    unwindStackTrace(command, "ERR"),
+                    e
+                )
                 else e.wrapAndRethrow(this)
             }
         } ?: false
@@ -47,14 +54,20 @@ class SuperAdvancing(private val commands: List<Command>) : Command {
         currentCommandCell.safeInvoke { command ->
             try {
                 command.execute()
-            }
-            catch (e: Throwable) {
-                if (e !is UnwindCommandStack) throw UnwindCommandStack(command, this, "execute", unwindStackTrace(command, "ERR"), e)
+            } catch (e: Throwable) {
+                if (e !is UnwindCommandStack) throw UnwindCommandStack(
+                    command,
+                    this,
+                    "execute",
+                    unwindStackTrace(command, "ERR"),
+                    e
+                )
                 else e.wrapAndRethrow(this)
             }
         }
     }
-    fun restart(){
+
+    fun restart() {
         iteratorCell.invalidate()
     }
 
@@ -62,9 +75,14 @@ class SuperAdvancing(private val commands: List<Command>) : Command {
         currentCommandCell.safeInvoke { command ->
             try {
                 command.end(interrupted)
-            }
-            catch (e: Throwable) {
-                if (e !is UnwindCommandStack) throw UnwindCommandStack(command, this, "end", unwindStackTrace(command, "ERR"), e)
+            } catch (e: Throwable) {
+                if (e !is UnwindCommandStack) throw UnwindCommandStack(
+                    command,
+                    this,
+                    "end",
+                    unwindStackTrace(command, "ERR"),
+                    e
+                )
                 else e.wrapAndRethrow(this)
             }
         }
@@ -91,18 +109,35 @@ class SuperAdvancing(private val commands: List<Command>) : Command {
 
     override fun unwindStackTrace(command: Command, sub: String): String {
         return if (command == this) sub
-        else { "(${rename(javaClass.simpleName)} (\n\t${commands.joinToString(separator = "\n") { it.unwindStackTrace(command, sub) }.replace("\n", "\n\t")}))" }
+        else {
+            "(${rename(javaClass.simpleName)} (\n\t${
+                commands.joinToString(separator = "\n") {
+                    it.unwindStackTrace(
+                        command,
+                        sub
+                    )
+                }.replace("\n", "\n\t")
+            }))"
+        }
     }
-    override fun toString() = "(${rename(javaClass.simpleName)} (\n\t${commands.joinToString(separator = "\n").replace("\n", "\n\t")}))"
+
+    override fun toString() = "(${rename(javaClass.simpleName)} (\n\t${
+        commands.joinToString(separator = "\n").replace("\n", "\n\t")
+    }))"
 
     private val currentCommandCell = LazyCell {
         advance = false
         val command = iterator.next()
         try {
             command.initialise()
-        }
-        catch (e: Throwable) {
-            if (e !is UnwindCommandStack) throw UnwindCommandStack(command, this, "initialise", unwindStackTrace(command, "ERR"), e)
+        } catch (e: Throwable) {
+            if (e !is UnwindCommandStack) throw UnwindCommandStack(
+                command,
+                this,
+                "initialise",
+                unwindStackTrace(command, "ERR"),
+                e
+            )
             else e.wrapAndRethrow(this)
         }
         command

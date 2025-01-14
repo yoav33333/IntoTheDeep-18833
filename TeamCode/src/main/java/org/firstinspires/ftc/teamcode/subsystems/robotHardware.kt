@@ -6,26 +6,31 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 
-class robotHardware private constructor(hardwareMap: HardwareMap){
+class robotHardware private constructor(hardwareMap: HardwareMap) {
     private lateinit var INSTANCE: robotHardware
 
-    fun Init(hardwareMap: HardwareMap): robotHardware{
+    fun Init(hardwareMap: HardwareMap): robotHardware {
         INSTANCE = robotHardware(hardwareMap)
         return INSTANCE
     }
-    fun getInstance(): robotHardware{
+
+    fun getInstance(): robotHardware {
         return INSTANCE
     }
 
     val leftFront: CachingDcMotorEx by OpModeLazyCell {
-        CachingDcMotorEx(hardwareMap.get(
-            DcMotorEx::class.java, "lf"
-        ))
+        CachingDcMotorEx(
+            hardwareMap.get(
+                DcMotorEx::class.java, "lf"
+            )
+        )
     }
     val leftBack: CachingDcMotorEx by OpModeLazyCell {
-        CachingDcMotorEx(hardwareMap.get(
-            DcMotorEx::class.java, "lb"
-        ))
+        CachingDcMotorEx(
+            hardwareMap.get(
+                DcMotorEx::class.java, "lb"
+            )
+        )
     }
 
     val rightBack: CachingDcMotorEx by OpModeLazyCell {

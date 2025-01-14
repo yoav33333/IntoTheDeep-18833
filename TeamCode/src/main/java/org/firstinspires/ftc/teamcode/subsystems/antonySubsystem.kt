@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import android.R.color
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver
 import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
@@ -49,56 +45,54 @@ object antonySubsystem : SDKSubsystem() {
 
     val endGameCommand = Lambda("endGameCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{antony.setPattern(endGame)}
-        .setFinish{false}
-        .setEnd{antony.setPattern(default)}
+        .setInit { antony.setPattern(endGame) }
+        .setFinish { false }
+        .setEnd { antony.setPattern(default) }
 
     val lowBatteryCommand = Lambda("lowBatteryCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setExecute{antony.setPattern(lowBattery)}
-        .setEnd{antony.setPattern(default)}
+        .setExecute { antony.setPattern(lowBattery) }
+        .setEnd { antony.setPattern(default) }
 
     var data = 0
     var red = 0
     var blue = 0
     var green = 0
-    fun csColors(){
+    fun csColors() {
 //        data =  clawSubsystem.colorDistSensor.argb()
         red = clawSubsystem.colorDistSensor.red()
         blue = clawSubsystem.colorDistSensor.blue()
         green = clawSubsystem.colorDistSensor.green()
 
         telemetry.update()
-        if (blue>300){
+        if (blue > 300) {
             antony.setPattern(blueLED)
-        }
-        else if (green>300){
+        } else if (green > 300) {
             antony.setPattern(yellowLED)
-        }
-        else if (red>290){
+        } else if (red > 290) {
             antony.setPattern(redLED)
-        }
-        else antony.setPattern(default)
+        } else antony.setPattern(default)
     }
 
     val colorSensorData = Lambda("colorSensorData")
-        .setExecute{
+        .setExecute {
             csColors()
         }
-        .setFinish{false}
-        .setEnd{ antony.setPattern(default)}
+        .setFinish { false }
+        .setEnd { antony.setPattern(default) }
 
     val minVoltage = 10.0
 
 
     override fun postUserInitHook(opMode: Wrapper) {
         antony.setPattern(default)
-        BoundBooleanSupplier(EnhancedBooleanSupplier{
-            FeatureRegistrar.activeOpMode.runtime>80||FeatureRegistrar.activeOpMode.runtime>110})
+        BoundBooleanSupplier(EnhancedBooleanSupplier {
+            FeatureRegistrar.activeOpMode.runtime > 80 || FeatureRegistrar.activeOpMode.runtime > 110
+        })
             .onTrue(endGameCommand.raceWith(Wait(10.0)))
 
         BoundBooleanSupplier(EnhancedBooleanSupplier
-        {if (modules.isEmpty()) false else modules[0].getInputVoltage(VoltageUnit.VOLTS)<9.0})
+        { if (modules.isEmpty()) false else modules[0].getInputVoltage(VoltageUnit.VOLTS) < 9.0 })
             .whileTrue(lowBatteryCommand)
     }
 

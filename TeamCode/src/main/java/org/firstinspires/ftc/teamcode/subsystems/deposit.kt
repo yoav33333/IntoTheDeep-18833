@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.qualcomm.hardware.rev.RevColorSensorV3
-import com.qualcomm.robotcore.hardware.ColorRangeSensor
-import com.qualcomm.robotcore.hardware.ColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
 import dev.frozenmilk.dairy.core.FeatureRegistrar
@@ -18,11 +16,9 @@ import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
-import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.clawServo
-import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.closeingPose
 import java.lang.annotation.Inherited
 
-object deposit: SDKSubsystem() {
+object deposit : SDKSubsystem() {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
 
@@ -72,45 +68,53 @@ object deposit: SDKSubsystem() {
     fun armIn() {
         depoArmServo.setPosition(ArmInPose)
     }
+
     fun armOut() {
         depoArmServo.setPosition(ArmOutPose)
     }
+
     fun armOut2() {
         depoArmServo.setPosition(ArmOutPose2)
     }
-    fun transferPose(){
+
+    fun transferPose() {
         openClaw()
         armIn()
     }
-    fun intakeFromHumanPlayer(){
+
+    fun intakeFromHumanPlayer() {
         openClaw()
         armOut2()
     }
-    fun depoPreset(){
+
+    fun depoPreset() {
         closeClaw()
         armOut()
     }
 
     fun checkIfSampleInPlace(): Boolean {
-        if (colorSensor.getDistance(DistanceUnit.MM)<35) {
+        if (colorSensor.getDistance(DistanceUnit.MM) < 35) {
             closeClaw()
             return true
         }
         return false
     }
+
     val slamArm = Lambda("slamArm")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{depoArmServo.position = 1.0
-        linearSlides.target-=200}
+        .setInit {
+            depoArmServo.position = 1.0
+            linearSlides.target -= 200
+        }
     val release = Lambda("release")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ openClaw()}
+        .setInit { openClaw() }
     val slamSeq = Sequential(slamArm, Wait(0.3), release)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{
+        .setInit {
             if (depoClawServo.position == closeingClawPose) {
-                if(isSpe) slamSeq.schedule()
+                if (isSpe) slamSeq.schedule()
                 else openClaw()
             } else {
                 closeClaw()
@@ -118,11 +122,11 @@ object deposit: SDKSubsystem() {
         }
 
     val armOut = Lambda("armOut")
-        .setInit{armOut()}
+        .setInit { armOut() }
     var stop = false
     val intakeCommand = Lambda("intakeCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{
+        .setInit {
             intakeFromHumanPlayer()
             linearSlides.runToPosition.schedule()
             stop = false
@@ -130,28 +134,28 @@ object deposit: SDKSubsystem() {
             transferCommand.cancel()
         }
     val catchPixel = Lambda("catchPixel")
-        .setFinish{
-            checkIfSampleInPlace()|| stop
+        .setFinish {
+            checkIfSampleInPlace() || stop
         }
     val catchSimple = Lambda("catchSimple")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ closeClaw()}
+        .setInit { closeClaw() }
     val postIntakeState = Lambda("postIntakeState")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{ armOut()}
+        .setInit { armOut() }
 
 
     val transferCommand = Lambda("transferCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{
+        .setInit {
             transferPose()
             stop = true
 
         }
-        .setExecute{
+        .setExecute {
             telemetry.addData("active", true)
         }
-        .setFinish{
+        .setFinish {
             checkIfSampleInPlace()
         }
 
@@ -163,13 +167,11 @@ object deposit: SDKSubsystem() {
         armOut
     )
     val TransferState = Lambda("TransferState")
-        .setInit{
+        .setInit {
             armIn()
             openClaw()
             stop = true
         }
-
-
 
 
     override fun postUserInitHook(opMode: Wrapper) {
