@@ -30,10 +30,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 @Config
 @Autonomous(name = "Circle", group = "Examples")
 public class Circle extends OpMode {
-    private Telemetry telemetryA;
-
     public static double RADIUS = 10;
-
+    private Telemetry telemetryA;
     private Follower follower;
 
     private PathChain circle;

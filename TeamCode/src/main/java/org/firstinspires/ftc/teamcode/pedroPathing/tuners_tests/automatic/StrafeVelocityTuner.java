@@ -50,19 +50,15 @@ import java.util.List;
 @Config
 @Autonomous(name = "Strafe Velocity Tuner", group = "Automatic Tuners")
 public class StrafeVelocityTuner extends OpMode {
-    private ArrayList<Double> velocities = new ArrayList<>();
-
+    public static double DISTANCE = 48;
+    public static double RECORD_NUMBER = 10;
+    private final ArrayList<Double> velocities = new ArrayList<>();
     private DcMotorEx leftFront;
     private DcMotorEx leftRear;
     private DcMotorEx rightFront;
     private DcMotorEx rightRear;
     private List<DcMotorEx> motors;
-
     private PoseUpdater poseUpdater;
-
-    public static double DISTANCE = 48;
-    public static double RECORD_NUMBER = 10;
-
     private Telemetry telemetryA;
 
     private boolean end;
@@ -160,7 +156,7 @@ public class StrafeVelocityTuner extends OpMode {
             for (Double velocity : velocities) {
                 average += velocity;
             }
-            average /= (double) velocities.size();
+            average /= velocities.size();
 
             telemetryA.addData("strafe velocity:", average);
             telemetryA.update();

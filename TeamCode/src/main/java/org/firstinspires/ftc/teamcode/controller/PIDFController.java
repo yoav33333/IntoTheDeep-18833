@@ -76,15 +76,6 @@ public class PIDFController {
      * Sets the error which is considered tolerable for use with {@link #atSetPoint()}.
      *
      * @param positionTolerance Position error which is tolerable.
-     */
-    public void setTolerance(double positionTolerance) {
-        setTolerance(positionTolerance, Double.POSITIVE_INFINITY);
-    }
-
-    /**
-     * Sets the error which is considered tolerable for use with {@link #atSetPoint()}.
-     *
-     * @param positionTolerance Position error which is tolerable.
      * @param velocityTolerance Velocity error which is tolerable.
      */
     public void setTolerance(double positionTolerance, double velocityTolerance) {
@@ -142,6 +133,15 @@ public class PIDFController {
      */
     public double[] getTolerance() {
         return new double[]{errorTolerance_p, errorTolerance_v};
+    }
+
+    /**
+     * Sets the error which is considered tolerable for use with {@link #atSetPoint()}.
+     *
+     * @param positionTolerance Position error which is tolerable.
+     */
+    public void setTolerance(double positionTolerance) {
+        setTolerance(positionTolerance, Double.POSITIVE_INFINITY);
     }
 
     /**
@@ -229,36 +229,36 @@ public class PIDFController {
         totalError = 0;
     }
 
-    public void setP(double kp) {
-        kP = kp;
-    }
-
-    public void setI(double ki) {
-        kI = ki;
-    }
-
-    public void setD(double kd) {
-        kD = kd;
-    }
-
-    public void setF(double kf) {
-        kF = kf;
-    }
-
     public double getP() {
         return kP;
+    }
+
+    public void setP(double kp) {
+        kP = kp;
     }
 
     public double getI() {
         return kI;
     }
 
+    public void setI(double ki) {
+        kI = ki;
+    }
+
     public double getD() {
         return kD;
     }
 
+    public void setD(double kd) {
+        kD = kd;
+    }
+
     public double getF() {
         return kF;
+    }
+
+    public void setF(double kf) {
+        kF = kf;
     }
 
     public double getPeriod() {

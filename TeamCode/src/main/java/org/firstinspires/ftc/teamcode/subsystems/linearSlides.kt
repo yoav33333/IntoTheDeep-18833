@@ -68,14 +68,19 @@ object linearSlides : Subsystem {
 
     @JvmField
     var target = 0.0
+
     @JvmField
     var Kp = 0.0035
+
     @JvmField
     var Kd = 0.001
+
     @JvmField
     var Kf = 0.02
+
     @JvmField
     var maxPow = 1.0
+
     @JvmField
     var threshold = 30.0
 
@@ -107,7 +112,7 @@ object linearSlides : Subsystem {
         motorLiftFar.zeroPowerBehavior = zeroPowerBehavior
     }
 
-    fun setRunMode(mode: DcMotor.RunMode) {
+    fun setRunMode(mode: RunMode) {
         motorLiftNear.mode = mode
         motorLiftMiddle.mode = mode
         motorLiftFar.mode = mode

@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 @TeleOp(name = "Example Field-Centric Teleop", group = "Examples")
 public class ExampleFieldCentricTeleop extends OpMode {
-    private Follower follower;
     private final Pose startPose = new Pose(0, 0, 0);
+    private Follower follower;
 
     /**
      * This method is call once when init is played, it initializes the follower

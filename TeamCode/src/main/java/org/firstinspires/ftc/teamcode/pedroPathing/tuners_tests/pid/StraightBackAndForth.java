@@ -32,10 +32,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 @Config
 @Autonomous(name = "Straight Back And Forth", group = "PIDF Tuning")
 public class StraightBackAndForth extends OpMode {
-    private Telemetry telemetryA;
-
     public static double DISTANCE = 40;
-
+    private Telemetry telemetryA;
     private boolean forward = true;
 
     private Follower follower;

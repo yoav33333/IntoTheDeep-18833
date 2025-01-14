@@ -30,14 +30,18 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 @Autonomous(name = "Example Auto Blue", group = "Examples")
 public class ExampleBucketAuto extends OpMode {
 
-    private Follower follower;
-    private Timer pathTimer, actionTimer, opmodeTimer;
-
     /**
-     * This is the variable where we store the state of our auto.
-     * It is used by the pathUpdate method.
+     * Start Pose of our robot
      */
-    private int pathState;
+    private final Pose startPose = new Pose(9, 111, Math.toRadians(270));
+    /**
+     * Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle.
+     */
+    private final Pose scorePose = new Pose(14, 129, Math.toRadians(315));
+    /**
+     * Lowest (First) Sample from the Spike Mark
+     */
+    private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0));
 
     /* Create and Define Poses + Paths
      * Poses are built with three constructors: x, y, and heading (in Radians).
@@ -47,43 +51,30 @@ public class ExampleBucketAuto extends OpMode {
      * This visualizer is very easy to use to find and create paths/pathchains/poses: <https://pedro-path-generator.vercel.app/>
      * Lets assume our robot is 18 by 18 inches
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
-
-    /**
-     * Start Pose of our robot
-     */
-    private final Pose startPose = new Pose(9, 111, Math.toRadians(270));
-
-    /**
-     * Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle.
-     */
-    private final Pose scorePose = new Pose(14, 129, Math.toRadians(315));
-
-    /**
-     * Lowest (First) Sample from the Spike Mark
-     */
-    private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0));
-
     /**
      * Middle (Second) Sample from the Spike Mark
      */
     private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0));
-
     /**
      * Highest (Third) Sample from the Spike Mark
      */
     private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0));
-
     /**
      * Park Pose for our robot, after we do all of the scoring.
      */
     private final Pose parkPose = new Pose(60, 98, Math.toRadians(90));
-
     /**
      * Park Control Pose for our robot, this is used to manipulate the bezier curve that we will create for the parking.
      * The Robot will not go to this pose, it is used a control point for our bezier curve.
      */
     private final Pose parkControlPose = new Pose(60, 98, Math.toRadians(90));
-
+    private Follower follower;
+    private Timer pathTimer, actionTimer, opmodeTimer;
+    /**
+     * This is the variable where we store the state of our auto.
+     * It is used by the pathUpdate method.
+     */
+    private int pathState;
     /* These are our Paths and PathChains that we will define in buildPaths() */
     private Path scorePreload, park;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;

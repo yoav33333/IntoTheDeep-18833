@@ -34,6 +34,4 @@ open class MegiddoOpMode : CommandOpMode(
     deposit,
     antonySubsystem,
     followerSubsystem
-) {
-
-}
+)
