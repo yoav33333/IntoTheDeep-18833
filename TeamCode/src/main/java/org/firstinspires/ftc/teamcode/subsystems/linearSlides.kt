@@ -86,14 +86,11 @@ object linearSlides : Subsystem {
 
     var PDController = PDController(Kp, Kd)
     val closeingPose = 0.0
-//    private var target = 100.0
 
 
     fun runToPose(pose: Double) {
         PDController = PDController(Kp, Kd)
         setPower(PDController.calculate(getPose().toDouble(), pose))
-//        target = pose
-
     }
 
     fun closeSlides() {

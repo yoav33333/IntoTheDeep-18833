@@ -57,11 +57,15 @@ object extendoCommand : Subsystem {
                 TransferState,
                 transferSeq
             ),
-            linearSlides.runToPosition,
-            Wait(0.2),
-            anglePostTransfer,
-            Wait(0.2),
-            angleTransfer,
+            Parallel(
+                linearSlides.runToPosition,
+                Sequential(
+                    Wait(0.2),
+                    anglePostTransfer,
+                    Wait(0.2),
+                    angleTransfer
+                )
+            )
         )
     )
 
