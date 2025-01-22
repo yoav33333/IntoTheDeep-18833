@@ -50,12 +50,16 @@ object extendoCommand : Subsystem {
         Sequential(
             Parallel(
 //        clawSubsystem.stopCs,
-                clawSubsystem.closeClaw2,
                 clawSubsystem.resetAngleClaw,
                 extendoSubsystem.closeExtendo,
                 armClawSubsystem.closeClawArm,
                 TransferState,
-                transferSeq
+                Sequential(
+                    Wait(0.3),
+                    clawSubsystem.closeClaw2,
+                    transferSeq
+                )
+
             ),
             Parallel(
                 linearSlides.runToPosition,

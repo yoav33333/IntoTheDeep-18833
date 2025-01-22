@@ -54,7 +54,7 @@ object deposit : SDKSubsystem() {
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
     val ArmInPose = 0.03
-    val ArmOutPose = 0.8
+    val ArmOutPose = 0.7
     val ArmOutPose2 = 0.9
 
     fun closeClaw() {
@@ -103,13 +103,19 @@ object deposit : SDKSubsystem() {
     val slamArm = Lambda("slamArm")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            depoArmServo.position = 1.0
-            linearSlides.target -= 200
+            depoArmServo.position = 0.9
+            linearSlides.target -= 300
         }
     val release = Lambda("release")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { openClaw() }
-    val slamSeq = Sequential(slamArm, Wait(0.3), release)
+    val releaseH = Lambda("Hrelease")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit { depoClawServo.position = 0.35}
+    val closeH = Lambda("close")
+        .setInit{closeClaw()}
+    val quickRC = Sequential(releaseH, Wait(0.5), closeH)
+    val slamSeq = Sequential(slamArm, Wait(0.4), release)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {

@@ -33,7 +33,7 @@ object followerSubsystem : SDKSubsystem() {
         FeatureRegistrar.activeOpMode.gamepad1
     }
     val gamepad2: Gamepad by OpModeLazyCell {
-        FeatureRegistrar.activeOpMode.gamepad1
+        FeatureRegistrar.activeOpMode.gamepad2
     }
     lateinit var follower: Follower
     override fun postUserInitHook(opMode: Wrapper) {
@@ -70,7 +70,9 @@ object followerSubsystem : SDKSubsystem() {
             follower.setMaxPower(1.0)
         }
         .setExecute {
-            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y.toDouble(), -(gamepad1.left_stick_x + gamepad1.right_trigger - gamepad1.left_trigger).toDouble(), -(gamepad1.right_stick_x + (if (gamepad1.right_bumper) 1 else 0 - if (gamepad1.left_bumper) 1 else 0) + ((gamepad2.right_trigger - gamepad2.left_trigger) * 0.4)).toDouble())
+            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y.toDouble(),
+                -(gamepad1.left_stick_x + (if (gamepad1.right_bumper) 1 else 0 - if (gamepad1.left_bumper) 1 else 0)).toDouble(),
+                -(gamepad1.right_stick_x +gamepad1.right_trigger - gamepad1.left_trigger  + 0.4*(gamepad2.right_trigger - gamepad2.left_trigger)).toDouble())
             follower.update()
         }
         .setFinish { false }

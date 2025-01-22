@@ -16,6 +16,7 @@ import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.controller.PDController
 import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
+import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRC
 import java.lang.annotation.Inherited
 import kotlin.math.abs
 
@@ -155,10 +156,12 @@ object linearSlides : Subsystem {
                 target = 0.0
                 isSpe = false
             }
-    val goToHighBasket = goToPreset(3600.0).addInit { isSpe = false }
-    val goToHighChamber = goToPreset(2200.0).addInit { isSpe = false }
-    val goToLowBasket = goToPreset(1600.0).addInit { isSpe = true }
-    val goToLowChamber = goToPreset(400.0).addInit { isSpe = true }
+    val goToHighBasket = goToPreset(3700.0).addInit { isSpe = false }
+    val goToLowBasket = goToPreset(2400.0).addInit { isSpe = false }
+    val goToHighChamber = goToPreset(1200.0).addInit { isSpe = true
+        quickRC.schedule()}
+    val goToLowChamber = goToPreset(0.0).addInit { isSpe = true
+        quickRC.schedule()}
 
     override fun preUserInitHook(opMode: Wrapper) {
         setRunMode(RunMode.STOP_AND_RESET_ENCODER)

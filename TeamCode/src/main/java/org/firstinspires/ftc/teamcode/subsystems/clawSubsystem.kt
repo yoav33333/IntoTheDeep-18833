@@ -110,12 +110,12 @@ object clawSubsystem : Subsystem {
     val rotateClawR = Lambda("rotate claw r")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position < 0.9) clawRotationServo.position + 0.4 else 0.9)
+            clawRotationServo.setPosition(if (clawRotationServo.position < 0.9) clawRotationServo.position + 0.2 else 0.9)
         }
     val rotateClawL = Lambda("rotate claw l")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position > 0.1) clawRotationServo.position - 0.4 else 0.1)
+            clawRotationServo.setPosition(if (clawRotationServo.position > 0.1) clawRotationServo.position - 0.2 else 0.1)
         }
     val turnLeft = Lambda("turnLeft")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
