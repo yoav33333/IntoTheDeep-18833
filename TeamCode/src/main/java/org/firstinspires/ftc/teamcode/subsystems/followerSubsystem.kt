@@ -2,7 +2,12 @@ package org.firstinspires.ftc.teamcode.subsystems
 
 
 import com.pedropathing.follower.Follower
+import com.pedropathing.localization.Pose
+import com.pedropathing.pathgen.BezierCurve
+import com.pedropathing.pathgen.BezierLine
+import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.PathChain
+import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
 import com.qualcomm.robotcore.hardware.Gamepad
 import dev.frozenmilk.dairy.core.FeatureRegistrar
@@ -36,19 +41,21 @@ object followerSubsystem : SDKSubsystem() {
         FeatureRegistrar.activeOpMode.gamepad2
     }
     lateinit var follower: Follower
-    override fun postUserInitHook(opMode: Wrapper) {
+    override fun preUserInitHook(opMode: Wrapper) {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         follower = Follower(FeatureRegistrar.activeOpMode.hardwareMap)
 
     }
-
+    fun setStartingPose(pose: Pose){
+//        follower.setCurrentPoseWithOffset(pose)
+        follower.setStartingPose(pose)
+    }
+    val runFollower = Lambda("runFollower")
+        .setExecute{ follower.update()}
+        .setFinish{false}
     fun followPath(path: PathChain) = Lambda("follow-path")
         .setInit {
-            follower.followPath(path)
-        }
-        .setExecute {
-            follower.update()
-
+            follower.followPath(path, true)
         }
         .setFinish {
             !follower.isBusy
@@ -63,21 +70,35 @@ object followerSubsystem : SDKSubsystem() {
     val thirdGear = Lambda("g3")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { follower.setMaxPower(0.35) }
-
+    val angleReset = Lambda("angleReset")
+        .setInit{ follower.headingOffset = -follower.totalHeading}
     val teleopDrive = Lambda("teleop-drive")
         .setInit {
             follower.startTeleopDrive()
             follower.setMaxPower(1.0)
         }
         .setExecute {
-            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y.toDouble(),
-                -(gamepad1.left_stick_x + (if (gamepad1.right_bumper) 1 else 0 - if (gamepad1.left_bumper) 1 else 0)).toDouble(),
-                -(gamepad1.right_stick_x +gamepad1.right_trigger - gamepad1.left_trigger  + 0.4*(gamepad2.right_trigger - gamepad2.left_trigger)).toDouble())
+            follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y + (if(gamepad1.dpad_down) 0.3 else 0.0)).toDouble(),
+                -(gamepad1.left_stick_x - (if (gamepad1.right_bumper) 1 else 0 - if (gamepad1.left_bumper) 1 else 0)).toDouble(),
+                -(gamepad1.right_stick_x +gamepad1.right_trigger - gamepad1.left_trigger  + 0.3*(gamepad2.right_trigger - gamepad2.left_trigger)).toDouble()
+                ,false
+            )
             follower.update()
         }
         .setFinish { false }
-
-    override fun preUserStartHook(opMode: Wrapper) {
-        teleopDrive.schedule()
+    fun makeLinePath(startingPose: Pose, endingPose: Pose) = follower.pathBuilder().addPath(
+            BezierLine(
+            Point(startingPose),
+            Point(endingPose)
+            )
+        ).setLinearHeadingInterpolation(startingPose.heading, endingPose.heading).build()
+    fun makeCurvePath(vararg poses: Pose) : PathChain{
+        val arr = ArrayList<Point>()
+        poses.forEach { arr.add(Point(it)) }
+        return follower.pathBuilder().addPath(
+            BezierCurve(*arr.toTypedArray())
+        ).setLinearHeadingInterpolation(poses[0].heading, poses[poses.lastIndex].heading).build()
     }
+
+
 }

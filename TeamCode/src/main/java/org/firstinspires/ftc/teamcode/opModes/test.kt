@@ -44,6 +44,7 @@ class test : MegiddoOpMode() {
     //TODO: add auto closing if pixel intaked
     override fun myInit() {
         //operator controls
+
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(deposit.changeClawPos)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
@@ -71,15 +72,15 @@ class test : MegiddoOpMode() {
         BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.rightStickY.state) < 0.1 })
             .onTrue(linearSlides.runToPosition)
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
-            .onTrue(resetHeight)
+            .whileTrue(resetHeight)
 
         //drive controls
-        Mercurial.gamepad1.rightStickButton.onTrue(release)
-        Mercurial.gamepad1.leftStickButton.onTrue(release)
+        Mercurial.gamepad1.rightStickButton.onTrue(deposit.changeClawPos)
+        Mercurial.gamepad1.leftStickButton.onTrue(deposit.changeClawPos)
         Mercurial.gamepad1.b.onTrue(followerSubsystem.thirdGear)
         Mercurial.gamepad1.x.onTrue(followerSubsystem.secondGear)
         Mercurial.gamepad1.a.onTrue(followerSubsystem.firstGear)
-//        Mercurial.gamepad1.y.onTrue(driveSubsystem.slowGear)
+        Mercurial.gamepad1.dpadUp.onTrue( followerSubsystem.angleReset)
 
         telemetryDB = MultipleTelemetry(
             FeatureRegistrar.activeOpMode.telemetry,
@@ -88,25 +89,29 @@ class test : MegiddoOpMode() {
 
     }
 
+    override fun myStart() {
+        extendoMacro.schedule()
+        followerSubsystem.teleopDrive.schedule()
+    }
     override fun myLoop() {
-        telemetry.addData("clawPosDepo", deposit.depoClawServo.position)
-        telemetry.addData("clawPos", clawSubsystem.clawServo.position)
-        telemetry.addData("v4b", armClawSubsystem.armClawServo.position)
-        telemetry.addData("v4b flip", armClawSubsystem.angleClawServo.position)
-        telemetry.addData("ex r", extendoSubsystem.extendoServoR.position)
-        telemetry.addData("ex l", extendoSubsystem.extendoServoL.position)
-        telemetry.addData("offset", linearSlides.offset)
-        telemetry.addData("sensor", magneticLimit.state)
-        telemetry.addData("sch", Mercurial.isScheduled(linearSlides.runToPosition))
-        telemetry.addData("l1", linearSlides.motorLiftNear.power)
-        telemetry.addData("l2", linearSlides.motorLiftMiddle.power)
-        telemetry.addData("l3", linearSlides.motorLiftFar.power)
-        telemetry.update()
-
+        telemetryDB.addData("clawPosDepo", deposit.depoClawServo.position)
+        telemetryDB.addData("clawPos", clawSubsystem.clawServo.position)
+        telemetryDB.addData("v4b", armClawSubsystem.armClawServo.position)
+        telemetryDB.addData("v4b flip", armClawSubsystem.angleClawServo.position)
+        telemetryDB.addData("ex r", extendoSubsystem.extendoServoR.position)
+        telemetryDB.addData("ex l", extendoSubsystem.extendoServoL.position)
+        telemetryDB.addData("offset", linearSlides.offset)
+        telemetryDB.addData("sensor", magneticLimit.state)
+        telemetryDB.addData("sch", Mercurial.isScheduled(linearSlides.runToPosition))
+        telemetryDB.addData("l1", linearSlides.motorLiftNear.power)
+        telemetryDB.addData("l2", linearSlides.motorLiftMiddle.power)
+        telemetryDB.addData("l3", linearSlides.motorLiftFar.power)
+        telemetryDB.addData("rotate", clawSubsystem.clawRotationServo.position)
         telemetryDB.addData("pose", getPose())
         telemetryDB.addData("target", target)
         telemetryDB.addData("error", target - getPose())
         telemetryDB.update()
+
 
     }
 

@@ -52,6 +52,7 @@ object antonySubsystem : SDKSubsystem() {
     val lowBatteryCommand = Lambda("lowBatteryCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setExecute { antony.setPattern(lowBattery) }
+        .setFinish{false}
         .setEnd { antony.setPattern(default) }
 
     var data = 0

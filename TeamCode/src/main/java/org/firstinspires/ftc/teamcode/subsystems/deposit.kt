@@ -115,7 +115,7 @@ object deposit : SDKSubsystem() {
     val closeH = Lambda("close")
         .setInit{closeClaw()}
     val quickRC = Sequential(releaseH, Wait(0.5), closeH)
-    val slamSeq = Sequential(slamArm, Wait(0.4), release)
+    val slamSeq = Sequential(slamArm, Wait(0.3), release)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
@@ -126,6 +126,7 @@ object deposit : SDKSubsystem() {
                 closeClaw()
             }
         }
+
 
     val armOut = Lambda("armOut")
         .setInit { armOut() }
@@ -143,6 +144,7 @@ object deposit : SDKSubsystem() {
         .setFinish {
             checkIfSampleInPlace() || stop
         }
+        .setInterruptible{true}
     val catchSimple = Lambda("catchSimple")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { closeClaw() }
@@ -181,7 +183,7 @@ object deposit : SDKSubsystem() {
 
 
     override fun postUserInitHook(opMode: Wrapper) {
-        closeClaw()
+//        armIn()
     }
 
 }

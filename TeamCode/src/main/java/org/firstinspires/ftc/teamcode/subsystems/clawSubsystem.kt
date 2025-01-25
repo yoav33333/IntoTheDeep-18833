@@ -86,7 +86,9 @@ object clawSubsystem : Subsystem {
         clawServo.setPosition(openingPose)
     }
 
-
+    val closeIfRead = Lambda("closeIfRead")
+        .setFinish{ colorDistSensor.getDistance(DistanceUnit.MM)<35}
+        .setEnd{closeClaw}
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
@@ -107,15 +109,15 @@ object clawSubsystem : Subsystem {
 //            antonySubsystem.colorSensorData.cancel()}
 
 
-    val rotateClawR = Lambda("rotate claw r")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position < 0.9) clawRotationServo.position + 0.2 else 0.9)
-        }
     val rotateClawL = Lambda("rotate claw l")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position > 0.1) clawRotationServo.position - 0.2 else 0.1)
+            clawRotationServo.setPosition(if (clawRotationServo.position <= 0.9) clawRotationServo.position + 0.2 else 0.9)
+        }
+    val rotateClawR = Lambda("rotate claw r")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit {
+            clawRotationServo.setPosition(if (clawRotationServo.position >= 0.1) clawRotationServo.position - 0.2 else 0.1)
         }
     val turnLeft = Lambda("turnLeft")
         .setRunStates(Wrapper.OpModeState.ACTIVE)

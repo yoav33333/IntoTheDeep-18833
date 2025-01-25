@@ -39,10 +39,10 @@ object extendoCommand : Subsystem {
                 armClawSubsystem.openClawArm,
                 extendoSubsystem.openExtendo,
                 clawSubsystem.openClaw,
-            ),
-            Wait(0.3),
+                TransferState,
+                ),
+//            Wait(0.3),
 //        clawSubsystem.runCs,
-            TransferState,
 //        antonySubsystem.colorSensorData
         )
     )
@@ -76,8 +76,8 @@ object extendoCommand : Subsystem {
     val extendoMacro =
         SuperAdvancing(extendoCloseCommand, extendoOpenCommand)
 
-    override fun preUserStartHook(opMode: Wrapper) {
+    override fun preUserInitHook(opMode: Wrapper) {
         extendoMacro.restart()
-        extendoMacro.schedule()
+//        extendoMacro.schedule()
     }
 }

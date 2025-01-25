@@ -40,7 +40,7 @@ object extendoSubsystem : Subsystem {
         )
         s
     }
-    val open = 0.2
+    val open = 0.3
     val close = 1.0
 
     fun openExtendoF() {
@@ -64,7 +64,7 @@ object extendoSubsystem : Subsystem {
         .setExecute {
 //            extendoServoR.position+=(Mercurial.gamepad2.leftStickY.state/100.0)
 //            extendoServoL.position+=(Mercurial.gamepad2.leftStickY.state/100.0)
-            if (extendoServoL.position - Mercurial.gamepad2.leftStickY.state / 100.0 > 0.2) {
+            if (extendoServoL.position - Mercurial.gamepad2.leftStickY.state / 100.0 > 0.3) {
                 extendoServoL.position -= Mercurial.gamepad2.leftStickY.state / 100.0
                 extendoServoR.position -= Mercurial.gamepad2.leftStickY.state / 100.0
             }

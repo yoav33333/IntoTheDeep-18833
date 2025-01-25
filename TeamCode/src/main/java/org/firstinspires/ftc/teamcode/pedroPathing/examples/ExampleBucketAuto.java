@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.examples;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
@@ -28,7 +30,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 @Autonomous(name = "Example Auto Blue", group = "Examples")
 public class ExampleBucketAuto extends OpMode {
-
+    MultipleTelemetry tele = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
@@ -250,6 +252,8 @@ public class ExampleBucketAuto extends OpMode {
         // These loop the movements of the robot
         follower.update();
         autonomousPathUpdate();
+
+        follower.telemetryDebug(tele);
 
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);

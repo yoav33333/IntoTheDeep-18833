@@ -10,8 +10,10 @@ import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
+import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
+import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.controller.PDController
@@ -71,7 +73,7 @@ object linearSlides : Subsystem {
     var target = 0.0
 
     @JvmField
-    var Kp = 0.0035
+    var Kp = 0.0045
 
     @JvmField
     var Kd = 0.001
@@ -126,12 +128,13 @@ object linearSlides : Subsystem {
     }
 
     val resetHeight = Lambda("resetHeight")
-        .setInit { offset -= (getPose()) }
-
+        .setExecute { offset -= (getPose()) }
+        .setFinish{false}
     val manualControl = Lambda("manualControl")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { runToPosition.cancel() }
-        .setExecute { setPower(Mercurial.gamepad2.rightStickY.state) }
+        .setExecute {runToPosition.cancel()
+            setPower(Mercurial.gamepad2.rightStickY.state) }
         .setFinish { abs(Mercurial.gamepad2.rightStickY.state) < 0.1 }
         .setEnd { target = getPose().toDouble() }
 
@@ -139,7 +142,7 @@ object linearSlides : Subsystem {
         .setExecute {
             runToPose(target)
         }
-        .setFinish { Mercurial.gamepad2.rightStickY.state > 0.1 }
+        .setFinish { abs(Mercurial.gamepad2.rightStickY.state) > 0.1 }
 
     fun goToPreset(goal: Double) = Lambda("goToPreset")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -156,17 +159,21 @@ object linearSlides : Subsystem {
                 target = 0.0
                 isSpe = false
             }
-    val goToHighBasket = goToPreset(3700.0).addInit { isSpe = false }
-    val goToLowBasket = goToPreset(2400.0).addInit { isSpe = false }
+    val goToHighBasket = goToPreset(3500.0).addInit { isSpe = false }
+    val goToLowBasket = goToPreset(1700.0).addInit { isSpe = false }
     val goToHighChamber = goToPreset(1200.0).addInit { isSpe = true
         quickRC.schedule()}
     val goToLowChamber = goToPreset(0.0).addInit { isSpe = true
-        quickRC.schedule()}
+        quickRC.schedule()
+        deposit.depoArmServo.position = 0.8}
 
     override fun preUserInitHook(opMode: Wrapper) {
         setRunMode(RunMode.STOP_AND_RESET_ENCODER)
         setRunMode(RunMode.RUN_WITHOUT_ENCODER)
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+        BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
+            .whileTrue(resetHeight)
     }
+
 
 }
