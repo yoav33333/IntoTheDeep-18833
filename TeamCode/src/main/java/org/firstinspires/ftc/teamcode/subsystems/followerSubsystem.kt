@@ -9,8 +9,11 @@ import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.PathChain
 import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
+import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Gamepad
 import dev.frozenmilk.dairy.core.FeatureRegistrar
+import dev.frozenmilk.dairy.core.FeatureRegistrar.activeOpModeWrapper
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
@@ -19,6 +22,8 @@ import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants
 import java.lang.annotation.Inherited
@@ -42,6 +47,12 @@ object followerSubsystem : SDKSubsystem() {
     }
     lateinit var follower: Follower
     override fun preUserInitHook(opMode: Wrapper) {
+//        hardwareMap.get(DcMotorEx::class.java, "dfl").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+//        hardwareMap.get(DcMotorEx::class.java, "dfl").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+//        hardwareMap.get(DcMotorEx::class.java, "drl").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+//        hardwareMap.get(DcMotorEx::class.java, "drl").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+//        hardwareMap.get(DcMotorEx::class.java, "drr").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+//        hardwareMap.get(DcMotorEx::class.java, "drr").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         follower = Follower(FeatureRegistrar.activeOpMode.hardwareMap)
 
@@ -61,6 +72,24 @@ object followerSubsystem : SDKSubsystem() {
             !follower.isBusy
         }
 
+    override fun preUserInitLoopHook(opMode: Wrapper) {
+        if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP){
+            follower.headingOffset = -follower.totalHeading
+        }
+    }
+    fun followPathChain(chain: PathChain?): Lambda {
+        return Lambda("follow-path-chain")
+            .setInterruptible(true)
+            .setInit { follower.followPath(chain, true) }
+            .setExecute {
+//                follower.update()
+                follower.telemetryDebug(telemetry);
+            }
+            .setFinish { !follower.isBusy || follower.isRobotStuck }
+            .setEnd { interrupted: Boolean ->
+                if (interrupted) follower.breakFollowing();
+            }
+    }
     val firstGear = Lambda("g1")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { follower.setMaxPower(1.0) }

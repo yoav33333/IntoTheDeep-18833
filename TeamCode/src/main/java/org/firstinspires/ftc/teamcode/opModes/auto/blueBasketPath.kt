@@ -8,10 +8,11 @@ import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.PathChain
 import com.pedropathing.pathgen.Point
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.opModes.MegiddoOpMode
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem.follower
-
+@Disabled
 @Autonomous
 class blueBasketPath :MegiddoOpMode() {
     val builder = PathBuilder()

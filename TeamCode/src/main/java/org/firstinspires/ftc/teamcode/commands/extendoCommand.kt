@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.deposit.TransferState
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeq
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
+import org.firstinspires.ftc.teamcode.subsystems.linearSlides.nonBlockRTP
 import org.firstinspires.ftc.teamcode.util.SuperAdvancing
 import java.lang.annotation.Inherited
 
@@ -46,6 +47,26 @@ object extendoCommand : Subsystem {
 //        antonySubsystem.colorSensorData
         )
     )
+    val extendoOpenCommandAuto = Parallel(
+        Sequential(
+            Parallel(
+                linearSlides.closeSlidesAuto,
+                clawSubsystem.resetAngleClaw,
+                armClawSubsystem.openClawArm,
+                extendoSubsystem.openExtendo,
+                clawSubsystem.openClaw,
+                TransferState,
+                ),
+//            Wait(0.3),
+//        clawSubsystem.runCs,
+//        antonySubsystem.colorSensorData
+        )
+    )
+    val extendoReset = Parallel(
+        clawSubsystem.resetAngleClaw,
+        extendoSubsystem.closeExtendo,
+        armClawSubsystem.closeClawArm,
+    )
     val extendoCloseCommand = Parallel(
         Sequential(
             Parallel(
@@ -72,7 +93,21 @@ object extendoCommand : Subsystem {
             )
         )
     )
+    val extendoCloseCommandAuto =
+        Parallel(
+//        clawSubsystem.stopCs,
+            clawSubsystem.resetAngleClaw,
+            extendoSubsystem.closeExtendo,
+            armClawSubsystem.closeClawArm,
+            TransferState,
+            Sequential(
+                Wait(0.3),
+                clawSubsystem.closeClaw2,
+                transferSeq,
+                nonBlockRTP
+            )
 
+        )
     val extendoMacro =
         SuperAdvancing(extendoCloseCommand, extendoOpenCommand)
 

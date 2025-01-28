@@ -139,11 +139,13 @@ object linearSlides : Subsystem {
         .setEnd { target = getPose().toDouble() }
 
     val runToPosition = Lambda("runToPosition")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setExecute {
             runToPose(target)
         }
-        .setFinish { abs(Mercurial.gamepad2.rightStickY.state) > 0.1 }
-
+        .setFinish { abs(Mercurial.gamepad2.rightStickY.state) > 0.1 || !FeatureRegistrar.opModeRunning}
+    val nonBlockRTP = Lambda("nonBlockRTP")
+        .setInit{ runToPosition.schedule()}
     fun goToPreset(goal: Double) = Lambda("goToPreset")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { target = goal }
@@ -154,6 +156,13 @@ object linearSlides : Subsystem {
 
     val closeSlides =
         goToPreset(0.0).setFinish { abs(getPose()) < 40 }.setEnd { runToPosition.cancel() }
+            .addInit {
+                runToPosition.schedule()
+                target = 0.0
+                isSpe = false
+            }
+    val closeSlidesAuto =
+        goToPreset(0.0).setFinish { abs(getPose()) < 40 }
             .addInit {
                 runToPosition.schedule()
                 target = 0.0

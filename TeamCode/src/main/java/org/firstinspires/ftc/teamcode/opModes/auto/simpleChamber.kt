@@ -21,9 +21,9 @@ import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 
 
 @Autonomous
-class simpleBasket : MegiddoOpMode() {
+class simpleChambersket : MegiddoOpMode() {
     var tele: MultipleTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
-//    private var follower: Follower? = null
+    //    private var follower: Follower? = null
     private var pathTimer: Timer? = null
     private val actionTimer: Timer? = null
     private var opmodeTimer: Timer? = null
@@ -41,20 +41,21 @@ class simpleBasket : MegiddoOpMode() {
      * Lets assume our robot is 18 by 18 inches
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
     /** Start Pose of our robot  */
-    private val startPose = Pose(9.000, 87.882, Math.toRadians(0.0))
+    private val startPose = Pose(9.000, 56.118, Math.toRadians(0.0))
 //    private val startPose2 = Pose(9.000, 87.882, Math.toRadians(180.0))
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle.  */
-    private val ChamberPose = Pose(36.94117647058824, 82.412, Math.toRadians(180.0))
+    private val ChamberPose1 = Pose(36.94117647058824, 82.412, Math.toRadians(180.0))
+    private val ChamberPose2 = Pose(36.94117647058824, 82.412, Math.toRadians(180.0))
+    private val ChamberPose3 = Pose(36.94117647058824, 82.412, Math.toRadians(180.0))
 
     /** Lowest (First) Sample from the Spike Mark  */
     private val pickup1Pose = Pose(19.28823529411765, 118.70588235294117, Math.toRadians(0.0))
-    val basketScore = Pose(16.059, 126.382, Math.toRadians(310.0))
+    val basketScore = Pose(12.059, 128.382, Math.toRadians(310.0))
 
     /** Middle (Second) Sample from the Spike Mark  */
-//    private val pickup2PoseExtra = Pose(24.737, 128.382, Math.toRadians(0.0))
-    private val pickup2Pose = Pose(20.737, 129.382, Math.toRadians(0.0))
-    val parkPose = Pose(59.82352941176471, 102.59823529, 0.0)
+    private val pickup2PoseExtra = Pose(24.737, 128.382, Math.toRadians(0.0))
+    private val pickup2Pose = Pose(10.737, 128.382, Math.toRadians(0.0))
 //
 //    /** Highest (Third) Sample from the Spike Mark  */
 //    private val pickup3Pose = Pose(49.0, 135.0, Math.toRadians(0.0))
@@ -69,7 +70,7 @@ class simpleBasket : MegiddoOpMode() {
     /* These are our Paths and PathChains that we will define in buildPaths() */
     private var scorePreload: PathChain? = null
     private var scorePreload2: PathChain? = null
-    private var park: PathChain? = null
+    private var park: Path? = null
     private var grabPickup1: PathChain? = null
     private var grabPickup2Extra: PathChain? = null
     private var grabPickup2: PathChain? = null
@@ -83,16 +84,16 @@ class simpleBasket : MegiddoOpMode() {
     fun buildPaths() {
 
         scorePreload = followerSubsystem.follower.pathBuilder()
-            .addPath(BezierLine(Point(startPose), Point(ChamberPose)))
-            .setLinearHeadingInterpolation(startPose.heading, ChamberPose.heading)
+            .addPath(BezierLine(Point(startPose), Point(ChamberPose1)))
+            .setLinearHeadingInterpolation(startPose.heading, ChamberPose1.heading)
             .build()
 //        scorePreload2 = followerSubsystem.follower.pathBuilder()
 //            .addPath(BezierLine(Point(ChamberPose), Point(startPose2)))
 //            .setLinearHeadingInterpolation(ChamberPose.heading, startPose2.heading)
 //            .build()
         grabPickup1 = followerSubsystem.follower.pathBuilder()
-            .addPath(BezierLine(Point(ChamberPose), Point(pickup1Pose)))
-            .setLinearHeadingInterpolation(ChamberPose.heading, pickup1Pose.heading)
+            .addPath(BezierLine(Point(ChamberPose1), Point(pickup1Pose)))
+            .setLinearHeadingInterpolation(ChamberPose1.heading, pickup1Pose.heading)
             .build()
 
         /* This is our scorePickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
@@ -100,24 +101,20 @@ class simpleBasket : MegiddoOpMode() {
             .addPath(BezierLine(Point(pickup1Pose), Point(basketScore)))
             .setLinearHeadingInterpolation(pickup1Pose.heading, basketScore.heading)
             .build()
-        park = followerSubsystem.follower.pathBuilder()
-            .addPath(BezierLine(Point(basketScore), Point(parkPose)))
-            .setLinearHeadingInterpolation(basketScore.heading, parkPose.heading)
+
+        grabPickup2Extra = followerSubsystem.follower.pathBuilder()
+            .addPath(BezierLine(Point(basketScore), Point(pickup2PoseExtra)))
+            .setLinearHeadingInterpolation(basketScore.heading, pickup2PoseExtra.heading)
+            .build()
+        grabPickup2 = followerSubsystem.follower.pathBuilder()
+            .addPath(BezierLine(Point(pickup2PoseExtra), Point(pickup2PoseExtra)))
+            .setLinearHeadingInterpolation(pickup2PoseExtra.heading, pickup2PoseExtra.heading)
             .build()
 
-//        grabPickup2 = followerSubsystem.follower.pathBuilder()
-//            .addPath(BezierLine(Point(basketScore), Point(pickup2Pose)))
-//            .setLinearHeadingInterpolation(basketScore.heading, pickup2Pose.heading)
-//            .build()
-////        grabPickup2 = followerSubsystem.follower.pathBuilder()
-////            .addPath(BezierLine(Point(pickup2PoseExtra), Point(pickup2PoseExtra)))
-////            .setLinearHeadingInterpolation(pickup2PoseExtra.heading, pickup2PoseExtra.heading)
-////            .build()
-//
-//        scorePickup2 = followerSubsystem.follower.pathBuilder()
-//            .addPath(BezierLine(Point(pickup2Pose), Point(basketScore)))
-//            .setLinearHeadingInterpolation(pickup2Pose.heading, basketScore.heading)
-//            .build()
+        scorePickup2 = followerSubsystem.follower.pathBuilder()
+            .addPath(BezierLine(Point(pickup2Pose), Point(basketScore)))
+            .setLinearHeadingInterpolation(pickup2Pose.heading, basketScore.heading)
+            .build()
 
     }
 
@@ -171,7 +168,6 @@ class simpleBasket : MegiddoOpMode() {
 
     /** This method is called continuously after Init while waiting for "play".  */
     override fun myInitLoop() {
-        clawSubsystem.clawRotationServo.position = 0.5
         tele.addData("x", followerSubsystem.follower.pose.x)
         tele.addData("y", followerSubsystem.follower.pose.y)
         tele.addData("heading", followerSubsystem.follower.pose.heading)
@@ -202,32 +198,29 @@ class simpleBasket : MegiddoOpMode() {
             Wait(0.2),
             deposit.slamSeq,
             Wait(0.2),
-            Parallel(
-                followerSubsystem.followPathChain(grabPickup1!!),
-                Sequential(
-                    Wait(0.5),
-                    extendoCommand.extendoOpenCommand
-                )
-
-            ),
-            followerSubsystem.followPathChain(grabPickup1!!),
-            Wait(1.0),
-            clawSubsystem.closeClaw,
-            Wait(0.7),
-            Parallel(
-                extendoCommand.extendoCloseCommandAuto,
-                linearSlides.goToHighBasket,
-            ),
-            Wait(2.0),
-            followerSubsystem.followPath(scorePickup1!!),
-            Wait(0.1),
-            deposit.release,
-            Wait(0.2),
-            followerSubsystem.followPath(park!!),
-            linearSlides.goToLowChamber
+//            Parallel(
+//                followerSubsystem.followPathChain(grabPickup1!!),
+//                Sequential(
+//                    Wait(0.5),
+//                    extendoCommand.extendoOpenCommand
+//                )
+//
+//            ),
+//            followerSubsystem.followPathChain(grabPickup1!!),
+//            Wait(1.0),
+//            clawSubsystem.closeClaw,
+//            Wait(0.7),
+//            Parallel(
+//                extendoCommand.extendoCloseCommandAuto,
+//                linearSlides.goToHighBasket,
+//            ),
+//            Wait(2.0),
+//            followerSubsystem.followPath(scorePickup1!!),
+//            Wait(0.1),
+//            deposit.release,
 //            followerSubsystem.followPathChain(grabPickup2Extra!!),
-//            followerSubsystem.followPathChain(grabPickup2!!),
 //            extendoCommand.extendoOpenCommand,
+//            followerSubsystem.followPathChain(grabPickup2!!),
 //            Wait(1.0),
 //            clawSubsystem.closeClaw,
 //            Wait(0.7),
