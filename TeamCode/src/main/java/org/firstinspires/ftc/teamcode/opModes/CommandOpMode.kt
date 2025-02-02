@@ -9,6 +9,7 @@ open class CommandOpMode(vararg var features: Feature) : LinearOpMode() {
         FeatureRegistrar.checkFeatures(*features)
         /*init*/
         FeatureRegistrar.opModePreInit(FeatureRegistrar.activeOpModeWrapper)
+        preInit()
         myInit()
         FeatureRegistrar.opModePostInit(FeatureRegistrar.activeOpModeWrapper)
         /*init_loop*/
@@ -34,9 +35,10 @@ open class CommandOpMode(vararg var features: Feature) : LinearOpMode() {
         FeatureRegistrar.opModePostStop(FeatureRegistrar.activeOpModeWrapper)
 
     }
-
-    open fun myStart() {}
+    /**don't use!!!**/
+    open fun preInit() {}
     open fun myInit() {}
+    open fun myStart() {}
     open fun myInitLoop() {}
     open fun myLoop() {}
     open fun myStop() {}

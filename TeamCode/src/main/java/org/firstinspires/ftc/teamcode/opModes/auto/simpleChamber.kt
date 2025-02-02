@@ -9,6 +9,7 @@ import com.pedropathing.pathgen.PathChain
 import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import dev.frozenmilk.mercurial.commands.groups.Parallel
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 
-
+@Disabled
 @Autonomous
 class simpleChambersket : MegiddoOpMode() {
     var tele: MultipleTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)

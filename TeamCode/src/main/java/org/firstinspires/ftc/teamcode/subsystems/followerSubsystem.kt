@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.subsystems
 
 import com.pedropathing.follower.Follower
 import com.pedropathing.localization.Pose
+import com.pedropathing.localization.localizers.ThreeWheelLocalizer
 import com.pedropathing.pathgen.BezierCurve
 import com.pedropathing.pathgen.BezierLine
 import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.PathChain
 import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Gamepad
@@ -47,18 +49,18 @@ object followerSubsystem : SDKSubsystem() {
     }
     lateinit var follower: Follower
     override fun preUserInitHook(opMode: Wrapper) {
-//        hardwareMap.get(DcMotorEx::class.java, "dfl").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-//        hardwareMap.get(DcMotorEx::class.java, "dfl").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-//        hardwareMap.get(DcMotorEx::class.java, "drl").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-//        hardwareMap.get(DcMotorEx::class.java, "drl").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-//        hardwareMap.get(DcMotorEx::class.java, "drr").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-//        hardwareMap.get(DcMotorEx::class.java, "drr").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        hardwareMap.get(DcMotorEx::class.java, "dfl").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        hardwareMap.get(DcMotorEx::class.java, "dfl").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        hardwareMap.get(DcMotorEx::class.java, "drl").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        hardwareMap.get(DcMotorEx::class.java, "drl").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        hardwareMap.get(DcMotorEx::class.java, "drr").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        hardwareMap.get(DcMotorEx::class.java, "drr").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         follower = Follower(FeatureRegistrar.activeOpMode.hardwareMap)
+        (follower.poseUpdater.localizer as ThreeWheelLocalizer).resetEncoders()
 
     }
     fun setStartingPose(pose: Pose){
-//        follower.setCurrentPoseWithOffset(pose)
         follower.setStartingPose(pose)
     }
     val runFollower = Lambda("runFollower")
@@ -82,7 +84,7 @@ object followerSubsystem : SDKSubsystem() {
             .setInterruptible(true)
             .setInit { follower.followPath(chain, true) }
             .setExecute {
-//                follower.update()
+                follower.update()
                 follower.telemetryDebug(telemetry);
             }
             .setFinish { !follower.isBusy || follower.isRobotStuck }
@@ -95,7 +97,7 @@ object followerSubsystem : SDKSubsystem() {
         .setInit { follower.setMaxPower(1.0) }
     val secondGear = Lambda("g2")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit { follower.setMaxPower(0.65) }
+        .setInit { follower.setMaxPower(0.35) }
     val thirdGear = Lambda("g3")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { follower.setMaxPower(0.35) }
@@ -107,14 +109,32 @@ object followerSubsystem : SDKSubsystem() {
             follower.setMaxPower(1.0)
         }
         .setExecute {
-            follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y + (if(gamepad1.dpad_down) 0.3 else 0.0)).toDouble(),
-                -(gamepad1.left_stick_x - (if (gamepad1.right_bumper) 1 else 0 - if (gamepad1.left_bumper) 1 else 0)).toDouble(),
-                -(gamepad1.right_stick_x +gamepad1.right_trigger - gamepad1.left_trigger  + 0.3*(gamepad2.right_trigger - gamepad2.left_trigger)).toDouble()
+            follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y).toDouble(),
+                -(gamepad1.left_stick_x).toDouble(),
+                -(gamepad1.right_stick_x + 0.3*(gamepad2.right_trigger - gamepad2.left_trigger)).toDouble()
                 ,false
             )
             follower.update()
         }
         .setFinish { false }
+    val forward = Lambda("forward")
+        .setInit {
+            follower.startTeleopDrive()
+            follower.setMaxPower(1.0)
+        }
+        .setExecute{
+           follower.setTeleOpMovementVectors(-1.0,
+            0.0,
+            0.0)
+            follower.update()}
+        .setFinish{false}
+    val stop = Lambda("stop")
+        .setInit{ forward.cancel()
+            follower.setTeleOpMovementVectors(0.0,
+                0.0,
+                0.0)
+            follower.update()
+        }
     fun makeLinePath(startingPose: Pose, endingPose: Pose) = follower.pathBuilder().addPath(
             BezierLine(
             Point(startingPose),

@@ -7,9 +7,9 @@ package org.firstinspires.ftc.teamcode.pidTuners
 //
 //
 //    override fun runOpMode() {
-//        telemetry.addData("pose", getPose())
+//        telemetry.addData("pose", startingPose())
 //        telemetry.addData("target", target)
-//        telemetry.addData("error", target - getPose())
+//        telemetry.addData("error", target - startingPose())
 //        telemetry.update()
 //    }
 //}

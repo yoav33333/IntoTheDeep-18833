@@ -75,12 +75,22 @@ class test : MegiddoOpMode() {
             .whileTrue(resetHeight)
 
         //drive controls
+        BoundBooleanSupplier(EnhancedBooleanSupplier { Mercurial.gamepad1.rightTrigger.state >0.2 })
+            .onTrue(followerSubsystem.secondGear)
+            .onFalse(followerSubsystem.firstGear)
+        Mercurial.gamepad1.rightBumper.onTrue(followerSubsystem.secondGear)
+            .onFalse(followerSubsystem.firstGear)
         Mercurial.gamepad1.rightStickButton.onTrue(deposit.changeClawPos)
-        Mercurial.gamepad1.leftStickButton.onTrue(deposit.changeClawPos)
-        Mercurial.gamepad1.b.onTrue(followerSubsystem.thirdGear)
-        Mercurial.gamepad1.x.onTrue(followerSubsystem.secondGear)
-        Mercurial.gamepad1.a.onTrue(followerSubsystem.firstGear)
+
         Mercurial.gamepad1.dpadUp.onTrue( followerSubsystem.angleReset)
+        Mercurial.gamepad1.leftBumper.onTrue( followerSubsystem.angleReset)
+        Mercurial.gamepad1.leftStickButton.onTrue(
+            Sequential(
+                deposit.closeH,
+                Wait(0.3),
+                postIntakeState
+            )
+        )
 
         telemetryDB = MultipleTelemetry(
             FeatureRegistrar.activeOpMode.telemetry,

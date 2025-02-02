@@ -21,9 +21,9 @@ import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 
 
 @Autonomous
-class simpleBasket : MegiddoOpMode() {
+class delayBasket : MegiddoOpMode() {
     var tele: MultipleTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
-//    private var follower: Follower? = null
+    //    private var follower: Follower? = null
     private var pathTimer: Timer? = null
     private val actionTimer: Timer? = null
     private var opmodeTimer: Timer? = null
@@ -196,6 +196,7 @@ class simpleBasket : MegiddoOpMode() {
 //        setPathState(0)
         linearSlides.runToPosition.schedule()
         Sequential(
+            Wait(3.0),
             extendoCommand.extendoReset,
             linearSlides.goToHighChamber,
             followerSubsystem.followPathChain(scorePreload!!),
@@ -213,7 +214,7 @@ class simpleBasket : MegiddoOpMode() {
             followerSubsystem.followPathChain(grabPickup1!!),
             Wait(1.0),
             clawSubsystem.closeClaw,
-            Wait(1.2),
+            Wait(0.7),
             Parallel(
                 extendoCommand.extendoCloseCommandAuto,
                 linearSlides.goToHighBasket,

@@ -114,7 +114,7 @@ object deposit : SDKSubsystem() {
         .setInit { openClaw() }
     val up = Lambda("up")
         .setInit{
-            linearSlides.target += 100
+            linearSlides.target += 200
         }
     val releaseH = Lambda("Hrelease")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
