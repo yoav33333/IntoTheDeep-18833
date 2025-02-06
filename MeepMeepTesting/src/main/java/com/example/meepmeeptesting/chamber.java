@@ -28,10 +28,12 @@ public class chamber {
                 .waitSeconds(0)
                 .lineToLinearHeading(new Pose2d(-46, -34, Math.toRadians(-45)))
                 .waitSeconds(0)
+                .addTemporalMarker(0.0, ()->System.out.println("hi"))
                 .turn(Math.toRadians(-90))
                 .waitSeconds(0)
                 .lineToLinearHeading(new Pose2d(-46, -45, Math.toRadians(-45)))
                 .waitSeconds(0)
+                .addTemporalMarker(0.0, ()->System.out.println("hi"))
                 .turn(Math.toRadians(-90))
                 .waitSeconds(0)
                 .lineToLinearHeading(new Pose2d(-60, -42, Math.toRadians(0)))
@@ -58,7 +60,6 @@ public class chamber {
         catch(IOException ignored) {}
 
         assert img != null;
-//        meepMeep.
         meepMeep.setBackground(img)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)

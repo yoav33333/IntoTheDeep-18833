@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opModes.auto
 
 import com.pedropathing.localization.Pose
+import com.pedropathing.pathgen.PathChain
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import dev.frozenmilk.mercurial.commands.groups.Parallel
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
@@ -12,7 +14,8 @@ import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 
-abstract class newAuto : AutoBase(Side.basket) {
+@Autonomous
+class newAuto : AutoBase(Side.basket) {
 
     //poses
     val startPose = side.startingPose
@@ -23,11 +26,15 @@ abstract class newAuto : AutoBase(Side.basket) {
     val parkPose = Pose(59.82352941176471, 102.59823529, 0.0)
 
     //paths
-    val scorePreload = makeLinePath(startPose, chamberPose)
-    val grabPickup1 = makeLinePath(chamberPose, pickup1Pose)
-    val scorePickup1 = makeLinePath(pickup1Pose, basketScore)
-    val park = makeLinePath(basketScore, parkPose)
+    lateinit var scorePreload : PathChain
+    lateinit var grabPickup1 : PathChain
+    lateinit var scorePickup1 : PathChain
+    lateinit var park : PathChain
     override fun myInit() {
+        scorePreload = makeLinePath(startPose, chamberPose)
+        grabPickup1 = makeLinePath(chamberPose, pickup1Pose)
+        scorePickup1 = makeLinePath(pickup1Pose, basketScore)
+        park = makeLinePath(basketScore, parkPose)
         clawSubsystem.clawRotationServo.position = 0.5
         deposit.closeClaw()
         deposit.armOutHalf()
@@ -44,13 +51,11 @@ abstract class newAuto : AutoBase(Side.basket) {
             deposit.slamSeq,
             Wait(0.2),
             Parallel(
-                postTimeCommand(extendoOpenCommand, 0.5),
-                followPathExtra(grabPickup1),
-//                Sequential(
-//                    Wait(0.5),
-//                    extendoCommand.extendoOpenCommand
-//                )
-
+                followPath(grabPickup1),
+                Sequential(
+                    Wait(0.5),
+                    extendoOpenCommand
+                )
             ),
             followPath(grabPickup1),
             Wait(1.0),
@@ -67,8 +72,6 @@ abstract class newAuto : AutoBase(Side.basket) {
             Wait(0.2),
             followPath(park),
             linearSlides.goToLowChamber
-
-
         ).schedule()
     }
 }

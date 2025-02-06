@@ -53,10 +53,10 @@ object deposit : SDKSubsystem() {
     var isSpe = false
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
-    val ArmInPose = 0.03
+    val ArmInPose = 0.04
     val ArmOutPose = 0.7
     val ArmOutPose2 = 0.9
-
+    @JvmStatic
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
     }
@@ -68,10 +68,12 @@ object deposit : SDKSubsystem() {
     fun armIn() {
         depoArmServo.setPosition(ArmInPose)
     }
+    @JvmStatic
 
     fun armOut() {
         depoArmServo.setPosition(ArmOutPose)
     }
+    @JvmStatic
     fun armOutHalf() {
         depoArmServo.setPosition(0.5)
     }
@@ -109,6 +111,7 @@ object deposit : SDKSubsystem() {
             depoArmServo.position = 0.9
             linearSlides.target -= 300
         }
+    @JvmStatic
     val release = Lambda("release")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { openClaw() }
@@ -122,6 +125,7 @@ object deposit : SDKSubsystem() {
     val closeH = Lambda("close")
         .setInit{closeClaw()}
     val quickRC = Sequential(releaseH, Wait(0.5), closeH)
+    @JvmStatic
     val slamSeq = Sequential(slamArm, Wait(0.3), release,up)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -138,6 +142,7 @@ object deposit : SDKSubsystem() {
     val armOut = Lambda("armOut")
         .setInit { armOut() }
     var stop = false
+    @JvmStatic
     val intakeCommand = Lambda("intakeCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
@@ -147,6 +152,7 @@ object deposit : SDKSubsystem() {
             extendoCommand.extendoMacro.cancel()
             transferCommand.cancel()
         }
+    @JvmStatic
     val catchPixel = Lambda("catchPixel")
         .setFinish {
             checkIfSampleInPlace() || stop
@@ -155,6 +161,7 @@ object deposit : SDKSubsystem() {
     val catchSimple = Lambda("catchSimple")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { closeClaw() }
+    @JvmStatic
     val postIntakeState = Lambda("postIntakeState")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { armOut() }

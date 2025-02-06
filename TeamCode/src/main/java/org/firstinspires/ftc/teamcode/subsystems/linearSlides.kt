@@ -138,6 +138,7 @@ object linearSlides : Subsystem {
         .setFinish { abs(Mercurial.gamepad2.rightStickY.state) < 0.1 }
         .setEnd { target = getPose().toDouble() }
 
+    @JvmStatic
     val runToPosition = Lambda("runToPosition")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setExecute {
@@ -168,10 +169,13 @@ object linearSlides : Subsystem {
                 target = 0.0
                 isSpe = false
             }
+    @JvmStatic
     val goToHighBasket = goToPreset(3500.0).addInit { isSpe = false }
     val goToLowBasket = goToPreset(1700.0).addInit { isSpe = false }
+    @JvmStatic
     val goToHighChamber = goToPreset(1200.0).addInit { isSpe = true
         quickRC.schedule()}
+    @JvmStatic
     val goToLowChamber = goToPreset(0.0).addInit { isSpe = true
         quickRC.schedule()
         deposit.depoArmServo.position = 0.8}

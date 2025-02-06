@@ -120,6 +120,7 @@ class test : MegiddoOpMode() {
         telemetryDB.addData("pose", getPose())
         telemetryDB.addData("target", target)
         telemetryDB.addData("error", target - getPose())
+        telemetryDB.addData("deposit claw", deposit.depoClawServo.position)
         telemetryDB.update()
 
 

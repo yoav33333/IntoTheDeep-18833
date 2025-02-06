@@ -46,6 +46,7 @@ object armClawSubsystem : Subsystem {
     }
     var armOut = 0.029
     val armIn = 0.95
+    val armInFull = 1.0
     val transfareState = 0.06
     val postTransfareState = 0.6
     val intakeState = 1.0
@@ -73,6 +74,10 @@ object armClawSubsystem : Subsystem {
         .setInit {
             armClawServo.setPosition(armIn)
         }
+    val moveArmInFull = Lambda("moveArmInFull")
+        .setInit {
+            armClawServo.setPosition(armInFull)
+        }
 
 
     val openClawArm = Sequential(
@@ -83,7 +88,7 @@ object armClawSubsystem : Subsystem {
     val closeClawArm = Sequential(
         angleTransfer,
         Wait(0.2),
-        moveArmIn
+        moveArmInFull
     )
 
 

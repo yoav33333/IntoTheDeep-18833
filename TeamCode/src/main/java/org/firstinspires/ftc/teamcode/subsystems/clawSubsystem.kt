@@ -11,6 +11,7 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.Subsystem
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import java.lang.annotation.Inherited
 
@@ -34,8 +35,8 @@ object clawSubsystem : Subsystem {
         s.cachingTolerance = 0.001
         s
     }
-
-    val clawRotationServo: CachingServo by OpModeLazyCell {
+    @JvmStatic
+    var clawRotationServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 Servo::class.java, "rotate servo"
@@ -136,7 +137,7 @@ object clawSubsystem : Subsystem {
         .setInit {
             openClaw()
         }
-
+    @JvmStatic
     val closeClaw = Lambda("closeClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { closeClaw() }

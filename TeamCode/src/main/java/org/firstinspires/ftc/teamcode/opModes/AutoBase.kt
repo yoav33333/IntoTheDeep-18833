@@ -9,7 +9,10 @@ import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.PathChain
 import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
+import com.qualcomm.robotcore.hardware.Servo
+import dev.frozenmilk.dairy.cachinghardware.CachingServo
 import dev.frozenmilk.dairy.core.FeatureRegistrar
+import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.mercurial.commands.Command
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.commands.groups.Sequential
@@ -35,29 +38,31 @@ abstract class AutoBase (var side: Side) : MegiddoOpMode(){
         abstract var startingPose: Pose
     }
 
-
     lateinit var follower: Follower
+//    val follower: Follower by OpModeLazyCell {
+//        Constants.setConstants(FConstants::class.java, LConstants::class.java)
+//        val f = Follower(FeatureRegistrar.activeOpMode.hardwareMap)
+//        (f.poseUpdater.localizer as ThreeWheelLocalizer).resetEncoders()
+//        follower.setStartingPose(side.startingPose)
+//        f
+//    }
     final override fun preInit() {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         follower = Follower(FeatureRegistrar.activeOpMode.hardwareMap)
         (follower.poseUpdater.localizer as ThreeWheelLocalizer).resetEncoders()
         follower.setStartingPose(side.startingPose)
+        follower.setCurrentPoseWithOffset(side.startingPose)
     }
 
     abstract override fun myStart()
-    fun followPath(chain: PathChain): Lambda {
-        return Lambda("follow-path-chain")
-            .setInterruptible(true)
+    fun followPath(chain: PathChain) =Lambda("follow-path-chain")
             .setInit { follower.followPath(chain, true) }
             .setExecute {
                 follower.update()
-                follower.telemetryDebug(telemetry);
+//                follower.telemetryDebug(telemetry);
             }
             .setFinish { !follower.isBusy || follower.isRobotStuck }
-            .setEnd { interrupted: Boolean ->
-                if (interrupted) follower.breakFollowing();
-            }
-    }
+
     fun followPathExtra(chain: PathChain): Lambda {
         return Lambda("follow-path-chain")
             .setInterruptible(true)
@@ -118,7 +123,7 @@ abstract class AutoBase (var side: Side) : MegiddoOpMode(){
         .setInit{command.schedule()}
 
 
-    fun makeLinePath(startingPose: Pose, endingPose: Pose) = PathBuilder().addPath(
+    fun makeLinePath(startingPose: Pose, endingPose: Pose) = follower.pathBuilder().addPath(
             BezierLine(
                 Point(startingPose),
                 Point(endingPose)
@@ -128,7 +133,7 @@ abstract class AutoBase (var side: Side) : MegiddoOpMode(){
     fun makeCurvePath(vararg poses: Pose) : PathChain{
         val arr = ArrayList<Point>()
         poses.forEach { arr.add(Point(it)) }
-        return PathBuilder().addPath(
+        return follower.pathBuilder().addPath(
             BezierCurve(*arr.toTypedArray())
         ).setLinearHeadingInterpolation(poses[0].heading, poses[poses.lastIndex].heading).build()
     }

@@ -31,7 +31,7 @@ object extendoCommand : Subsystem {
     @Inherited
     annotation class Attach
 
-
+    @JvmStatic
     val extendoOpenCommand = Parallel(
         Sequential(
             Parallel(
@@ -62,6 +62,7 @@ object extendoCommand : Subsystem {
 //        antonySubsystem.colorSensorData
         )
     )
+    @JvmStatic
     val extendoReset = Parallel(
         clawSubsystem.resetAngleClaw,
         extendoSubsystem.closeExtendo,
@@ -72,11 +73,13 @@ object extendoCommand : Subsystem {
             Parallel(
 //        clawSubsystem.stopCs,
                 clawSubsystem.resetAngleClaw,
-                extendoSubsystem.closeExtendo,
                 armClawSubsystem.closeClawArm,
+                Wait(0.2),
+                extendoSubsystem.closeExtendo,
                 TransferState,
                 Sequential(
                     Wait(0.3),
+                    armClawSubsystem.moveArmIn,
                     clawSubsystem.closeClaw2,
                     transferSeq
                 )
@@ -93,6 +96,7 @@ object extendoCommand : Subsystem {
             )
         )
     )
+    @JvmStatic
     val extendoCloseCommandAuto =
         Parallel(
 //        clawSubsystem.stopCs,
