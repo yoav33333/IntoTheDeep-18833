@@ -119,10 +119,11 @@ object linearSlides : Subsystem {
     }
 
     var offset = 0
+    @JvmStatic
     fun getPose(): Int {
         return motorLiftNear.currentPosition + offset
     }
-
+    @JvmStatic
     fun setPose(pose: Int) {
         offset = pose
     }
@@ -163,12 +164,13 @@ object linearSlides : Subsystem {
                 isSpe = false
             }
     val closeSlidesAuto =
-        goToPreset(0.0).setFinish { abs(getPose()) < 40 }
+        goToPreset(0.0).setFinish { abs(getPose()) < 60 }
             .addInit {
                 runToPosition.schedule()
                 target = 0.0
                 isSpe = false
             }
+            .setEnd { runToPosition.cancel() }
     @JvmStatic
     val goToHighBasket = goToPreset(3500.0).addInit { isSpe = false }
     val goToLowBasket = goToPreset(1700.0).addInit { isSpe = false }
@@ -177,8 +179,9 @@ object linearSlides : Subsystem {
         quickRC.schedule()}
     @JvmStatic
     val goToLowChamber = goToPreset(0.0).addInit { isSpe = true
-        quickRC.schedule()
-        deposit.depoArmServo.position = 0.8}
+        quickRC.schedule() }
+    @JvmStatic
+    val goToLowChamberNoRC = goToPreset(0.0).addInit { isSpe = true }
 
     override fun preUserInitHook(opMode: Wrapper) {
         setRunMode(RunMode.STOP_AND_RESET_ENCODER)

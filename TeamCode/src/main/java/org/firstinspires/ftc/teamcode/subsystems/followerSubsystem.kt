@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems
 
 import com.pedropathing.follower.Follower
 import com.pedropathing.localization.Pose
+import com.pedropathing.localization.localizers.ThreeWheelIMULocalizer
 import com.pedropathing.localization.localizers.ThreeWheelLocalizer
 import com.pedropathing.pathgen.BezierCurve
 import com.pedropathing.pathgen.BezierLine
@@ -57,7 +58,7 @@ object followerSubsystem : SDKSubsystem() {
         hardwareMap.get(DcMotorEx::class.java, "drr").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         follower = Follower(FeatureRegistrar.activeOpMode.hardwareMap)
-        (follower.poseUpdater.localizer as ThreeWheelLocalizer).resetEncoders()
+//        (follower.poseUpdater.localizer as ThreeWheelIMULocalizer).resetEncoders()
 
     }
     fun setStartingPose(pose: Pose){

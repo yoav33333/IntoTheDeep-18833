@@ -15,6 +15,7 @@ open class CommandOpMode(vararg var features: Feature) : LinearOpMode() {
         /*init_loop*/
         while (opModeInInit()) {
             FeatureRegistrar.opModePreInitLoop(FeatureRegistrar.activeOpModeWrapper)
+            backgroundLoop()
             myInitLoop()
             FeatureRegistrar.opModePostInitLoop(FeatureRegistrar.activeOpModeWrapper)
         }
@@ -37,6 +38,7 @@ open class CommandOpMode(vararg var features: Feature) : LinearOpMode() {
     }
     /**don't use!!!**/
     open fun preInit() {}
+    open fun backgroundLoop(){}
     open fun myInit() {}
     open fun myStart() {}
     open fun myInitLoop() {}

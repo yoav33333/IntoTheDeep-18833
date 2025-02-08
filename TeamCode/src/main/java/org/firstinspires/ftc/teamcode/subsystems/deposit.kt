@@ -55,10 +55,15 @@ object deposit : SDKSubsystem() {
     val openingClawPose = 1.0
     val ArmInPose = 0.04
     val ArmOutPose = 0.7
+    val ArmOutPoseParallel = 0.8
     val ArmOutPose2 = 0.9
     @JvmStatic
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
+    }
+    @JvmStatic
+    fun closeClawRaw() {
+        depoClawServo.setPositionRaw(closeingClawPose)
     }
 
     fun openClaw() {
@@ -72,6 +77,11 @@ object deposit : SDKSubsystem() {
 
     fun armOut() {
         depoArmServo.setPosition(ArmOutPose)
+    }
+    @JvmStatic
+
+    fun armOutBasket() {
+        depoArmServo.setPosition(ArmOutPoseParallel)
     }
     @JvmStatic
     fun armOutHalf() {
@@ -121,7 +131,7 @@ object deposit : SDKSubsystem() {
         }
     val releaseH = Lambda("Hrelease")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit { depoClawServo.position = 0.35}
+        .setInit { depoClawServo.position = 0.42}
     val closeH = Lambda("close")
         .setInit{closeClaw()}
     val quickRC = Sequential(releaseH, Wait(0.5), closeH)
@@ -141,6 +151,8 @@ object deposit : SDKSubsystem() {
 
     val armOut = Lambda("armOut")
         .setInit { armOut() }
+    val armIn = Lambda("armIn")
+        .setInit { armIn() }
     var stop = false
     @JvmStatic
     val intakeCommand = Lambda("intakeCommand")
@@ -180,9 +192,18 @@ object deposit : SDKSubsystem() {
         .setFinish {
             checkIfSampleInPlace()
         }
-
+    val halfArmIn = Lambda("HAI")
+        .setInit{ depoArmServo.position = 0.5}
     val transferSeq = Sequential(
         transferCommand,
+        Wait(0.1),
+        clawSubsystem.openClaw,
+        Wait(0.1),
+        armOut
+    )
+    val transferSeqAuto = Sequential(
+        transferCommand.raceWith(Wait(1.1)),
+        closeH,
         Wait(0.1),
         clawSubsystem.openClaw,
         Wait(0.1),

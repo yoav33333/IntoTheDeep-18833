@@ -13,7 +13,9 @@ import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.anglePostTrans
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.angleTransfer
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.deposit.TransferState
+import org.firstinspires.ftc.teamcode.subsystems.deposit.halfArmIn
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeq
+import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeqAuto
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.nonBlockRTP
@@ -47,6 +49,7 @@ object extendoCommand : Subsystem {
 //        antonySubsystem.colorSensorData
         )
     )
+    @JvmStatic
     val extendoOpenCommandAuto = Parallel(
         Sequential(
             Parallel(
@@ -55,11 +58,10 @@ object extendoCommand : Subsystem {
                 armClawSubsystem.openClawArm,
                 extendoSubsystem.openExtendo,
                 clawSubsystem.openClaw,
-                TransferState,
-                ),
-//            Wait(0.3),
-//        clawSubsystem.runCs,
-//        antonySubsystem.colorSensorData
+                halfArmIn
+                ).raceWith(Wait(3.0)),
+            TransferState,
+
         )
     )
     @JvmStatic
@@ -106,8 +108,9 @@ object extendoCommand : Subsystem {
             TransferState,
             Sequential(
                 Wait(0.3),
+                armClawSubsystem.moveArmIn,
                 clawSubsystem.closeClaw2,
-                transferSeq,
+                transferSeqAuto,
                 nonBlockRTP
             )
 

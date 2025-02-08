@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.deposit.getCatchPixel;
 import static org.firstinspires.ftc.teamcode.subsystems.deposit.getPostIntakeState;
 
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -18,27 +19,25 @@ import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.Wait;
-
+@Config
 @Autonomous
 public class java5spec extends AutoBaseJava {
-    public java5spec() {
-        super(Side.chamber);
-    }
+    public java5spec() {super(Side.chamber);}
 
-    static Pose startPose = startingPoseChamber;
-    static Pose chamberPose1 = new Pose(-35, 8, Math.toRadians(180));
-    static Pose chamberPose2 = new Pose(-33.5, 4, Math.toRadians(180));
-    static Pose chamberPose3 = new Pose(-35, 0, Math.toRadians(180));
-    static Pose chamberPose4 = new Pose(-35, -4, Math.toRadians(180));
-    static Pose chamberPose5 = new Pose(-35, -8, Math.toRadians(180));
-    static Pose dragPose1 = new Pose(-40, -23, Math.toRadians(-45));
-    static Pose dragPose2 = new Pose(-40, -34, Math.toRadians(-45));
-    static Pose dragPose3 = new Pose(-40, -45, Math.toRadians(-45));
-    static Pose dragPoseTurn1 = new Pose(-40, -23, Math.toRadians(-45-90));
-    static Pose dragPoseTurn2 = new Pose(-40, -34, Math.toRadians(-45-90));
-    static Pose dragPoseTurn3 = new Pose(-40, -45, Math.toRadians(-45-90));
-    static Pose pickup1Pose = new Pose(-57.5, -40, Math.toRadians(0));
-    static Pose pickup2Pose = new Pose(-43, -15, Math.toRadians(180+50));
+    public static Pose startPose = startingPoseChamber;
+    public static Pose chamberPose1 = new Pose(-35.5, 8, Math.toRadians(180));
+    public static Pose chamberPose2 = new Pose(-33.5, 4, Math.toRadians(180));
+    public static Pose chamberPose3 = new Pose(-35, 0, Math.toRadians(180));
+    public static Pose chamberPose4 = new Pose(-35, -4, Math.toRadians(180));
+    public static Pose chamberPose5 = new Pose(-35, -8, Math.toRadians(180));
+    public static Pose dragPose1 = new Pose(-40, -23, Math.toRadians(-45));
+    public static Pose dragPose2 = new Pose(-40, -34, Math.toRadians(-45));
+    public static Pose dragPose3 = new Pose(-40, -45, Math.toRadians(-45));
+    public static Pose dragPoseTurn1 = new Pose(-40, -23, Math.toRadians(-45-90));
+    public static Pose dragPoseTurn2 = new Pose(-40, -34, Math.toRadians(-45-90));
+    public static Pose dragPoseTurn3 = new Pose(-40, -45, Math.toRadians(-45-90));
+    public static Pose pickup1Pose = new Pose(-59.5, -38, Math.toRadians(0));
+    public static Pose pickup2Pose = new Pose(-43, -15, Math.toRadians(180+50));
 
     static PathChain scorePreload;
     static PathChain getToDrag1;
@@ -67,7 +66,8 @@ public class java5spec extends AutoBaseJava {
         turnDrag2 = makeLinePath(dragPose2, dragPoseTurn2);
         getToDrag3 = makeLinePath(dragPoseTurn2, dragPose3);
         turnDrag3 = makeLinePath(dragPose3, dragPoseTurn3);
-        specialHPIntake = makeLinePath(dragPoseTurn3, pickup1Pose);
+//        specialHPIntake = makeLinePath(dragPoseTurn3, pickup1Pose);
+        specialHPIntake = makeLinePath(chamberPose1, pickup1Pose);
 //        dragToHP = makeCurvePath(chamberPose1, dragPose1, dragPoseTurn1, dragPose2, dragPoseTurn2, dragPose3, dragPoseTurn3,pickup1Pose);
         scorePickup1 = makeLinePath(pickup1Pose, chamberPose2);
         scorePickup2 = makeLinePath(pickup2Pose, chamberPose3);
@@ -79,8 +79,8 @@ public class java5spec extends AutoBaseJava {
         pickup4 = makeLinePath(chamberPose5, pickup2Pose);
 //        park = makeLinePath(basketScore, parkPose);
         clawSubsystem.getClawRotationServo().setPosition(0.5);
-        deposit.closeClaw();
         deposit.armOutHalf();
+        deposit.closeClawRaw();
     }
 
     @Override
@@ -92,29 +92,33 @@ public class java5spec extends AutoBaseJava {
             linearSlides.getGoToHighChamber(),
             followPath(scorePreload),
             deposit.getSlamSeq(),
-            new Parallel(
-                new Sequential(
-                    new Wait(0.4),
-                    linearSlides.getGoToLowChamber()
-                ),
-                followPath(getToDrag1)
-            ),
-            turnTo(-45-90).with(new Wait(1)),
-            followPath(getToDrag2),
-            turnTo(-45-90).with(new Wait(1)),
-            followPath(getToDrag3),
-            turnTo(-45-90).with(new Wait(1)),
+//            new Parallel(
+//                new Sequential(
+//                    new Wait(0.4),
+//                    linearSlides.getGoToLowChamber()
+//                ),
+//                followPath(getToDrag1)
+//            ),
+//            turn(90).with(new Wait(1)),
+//            followPath(getToDrag2),
+//            turn(90).with(new Wait(1)),
+//            followPath(getToDrag3),
+//            turn(90).with(new Wait(1)),
 
             new Parallel(
-            followPath(specialHPIntake),
-            new Sequential(
-                deposit.getIntakeCommand(),
-                deposit.getRelease(),
-                new Wait(0.5),
-                getCatchPixel(),
-                new Wait(0.3),
-                getPostIntakeState()
-            )
+                new Sequential(
+                    new Wait(0.2),
+                    linearSlides.getGoToLowChamberNoRC()
+                ),
+                followPath(specialHPIntake),
+                new Sequential(
+                    deposit.getIntakeCommand(),
+                    new Wait(0.5),
+                    deposit.getRelease(),
+                    getCatchPixel(),
+                    new Wait(0.3),
+                    getPostIntakeState()
+                )
             ),
             linearSlides.getGoToHighChamber(),
             followPath(scorePickup1),
@@ -132,7 +136,8 @@ public class java5spec extends AutoBaseJava {
             followPath(scorePickup3),
             followPath(pickup3),
             followPath(scorePickup4),
-            followPath(pickup4)
+            followPath(pickup4),
+            finishAuto
         ).schedule();
     }
 }

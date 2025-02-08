@@ -44,7 +44,7 @@ class test : MegiddoOpMode() {
     //TODO: add auto closing if pixel intaked
     override fun myInit() {
         //operator controls
-
+        Mercurial.gamepad2.options.onTrue(deposit.armIn)
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(deposit.changeClawPos)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)

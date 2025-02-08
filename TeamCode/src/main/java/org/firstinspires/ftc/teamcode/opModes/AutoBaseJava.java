@@ -15,8 +15,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 import java.util.ArrayList;
+import java.util.function.BooleanSupplier;
 
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
+import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
 public class AutoBaseJava extends MegiddoOpMode{
@@ -27,7 +29,7 @@ public class AutoBaseJava extends MegiddoOpMode{
         chamber
     }
     public static Pose startingPoseChamber = new Pose(-62, -8.5, Math.toRadians(0));
-    public static Pose startingPoseBasket = new Pose(9.000, 87.882, Math.toRadians(0.0));
+    public static Pose startingPoseBasket = new Pose(-62, 8.5+24, 0);
     Side side;
     public AutoBaseJava(Side side){
         this.side = side;
@@ -47,19 +49,35 @@ public class AutoBaseJava extends MegiddoOpMode{
                 follower.setCurrentPoseWithOffset(startingPoseChamber);
         }
     }
-
-    public static Lambda followPath(PathChain chain){
-        return new Lambda("follow-path-chain")
-            .setInit(() -> follower.followPath(chain, true))
-            .setExecute(() ->{
+    public static Lambda finishAuto = new Lambda("finishAuto")
+        .setInit(()-> {
+            follower.breakFollowing();
+            follower.update();
+        });
+    public static Lambda runFollower = new Lambda("update Follower")
+            .setFinish(()->false)
+            .setExecute(()->{
                 follower.update();
                 follower.telemetryDebug(telemetryA);
-
+            });
+    public static Lambda followPath(PathChain chain){
+        return new Lambda("follow-path-chain")
+            .setInit(() -> {
+                follower.followPath(chain, true);
+                runFollower.schedule();
             })
+//            .setExecute(() ->{
+//
+//
+//            })
             .setFinish(()->  (!follower.isBusy() || follower.isRobotStuck()))
             .setEnd((interrupted) -> {
                 if (interrupted) follower.breakFollowing();
             });
+    }
+    public static Lambda waitUntil(BooleanSupplier supplier){
+        return new Lambda("Wait until")
+                .setFinish(supplier::getAsBoolean);
     }
     /**
      in radians
@@ -70,7 +88,20 @@ public class AutoBaseJava extends MegiddoOpMode{
 //    }
     public static Lambda turnTo(double angle){
         return new Lambda("follow-path-chain")
-                .setInit(() -> follower.holdPoint(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(angle))))
+                .setInit(() -> follower.turnToDegrees(angle))
+                .setExecute(() ->{
+                    follower.update();
+                    follower.telemetryDebug(telemetryA);
+
+                })
+                .setFinish(()-> ((!follower.isBusy() ) || follower.isRobotStuck()))
+                .setEnd((interrupted) -> {
+                    if (interrupted) follower.breakFollowing();
+                });
+    }
+    public static Lambda turn(double angle){
+        return new Lambda("follow-path-chain")
+                .setInit(() -> follower.turnDegrees(angle, false))
                 .setExecute(() ->{
                     follower.update();
                     follower.telemetryDebug(telemetryA);

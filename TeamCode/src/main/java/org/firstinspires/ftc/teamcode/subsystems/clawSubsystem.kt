@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import com.pedropathing.follower.Follower
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
@@ -127,8 +128,11 @@ object clawSubsystem : Subsystem {
     val turnRight = Lambda("turnRight")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { clawRotationServo.setPosition(0.9) }
-
-
+    val clawRotationRange = 180.0
+    fun keepAngle(angle: Double, follower: Follower) = Lambda("keepAngle")
+        .setExecute{
+            clawRotationServo.position = (Math.toDegrees(follower.pose.heading) - angle +90)/ clawRotationRange
+        }
     val resetAngleClaw = Lambda("resetAngleClaw")
         .setInit { clawRotationServo.setPosition(0.5) }
 

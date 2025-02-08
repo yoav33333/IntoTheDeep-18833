@@ -19,7 +19,7 @@ public class basket {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(64.38234547128357, 60, Math.toRadians(180), Math.toRadians(180), 17)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-60, 35, 0))
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-62, 8.5+24, 0))
                         .waitSeconds(1)
                         .lineToLinearHeading(new Pose2d(-56, 56, Math.toRadians(-45)))
                         .lineToLinearHeading(new Pose2d(-52, 48, 0))
