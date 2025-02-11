@@ -41,7 +41,7 @@ object followerSubsystem : SDKSubsystem() {
     @MustBeDocumented
     @Inherited
     annotation class Attach
-
+    var isCentric = true
     val gamepad1: Gamepad by OpModeLazyCell {
         FeatureRegistrar.activeOpMode.gamepad1
     }
@@ -98,7 +98,7 @@ object followerSubsystem : SDKSubsystem() {
         .setInit { follower.setMaxPower(1.0) }
     val secondGear = Lambda("g2")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit { follower.setMaxPower(0.35) }
+        .setInit { follower.setMaxPower(0.40) }
     val thirdGear = Lambda("g3")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { follower.setMaxPower(0.35) }
@@ -110,10 +110,10 @@ object followerSubsystem : SDKSubsystem() {
             follower.setMaxPower(1.0)
         }
         .setExecute {
-            follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y).toDouble(),
+            follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y - 0.3*(gamepad1.left_trigger)).toDouble(),
                 -(gamepad1.left_stick_x).toDouble(),
                 -(gamepad1.right_stick_x + 0.3*(gamepad2.right_trigger - gamepad2.left_trigger)).toDouble()
-                ,false
+                , gamepad1.left_trigger>0.1
             )
             follower.update()
         }

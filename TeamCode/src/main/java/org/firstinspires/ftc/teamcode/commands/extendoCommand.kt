@@ -37,13 +37,19 @@ object extendoCommand : Subsystem {
     val extendoOpenCommand = Parallel(
         Sequential(
             Parallel(
-                linearSlides.closeSlides,
+//                linearSlides.closeSlides,
+                halfArmIn,
                 clawSubsystem.resetAngleClaw,
                 armClawSubsystem.openClawArm,
                 extendoSubsystem.openExtendo,
                 clawSubsystem.openClaw,
-                TransferState,
+//                TransferState,
                 ),
+                Wait(0.1),
+                Parallel(
+                    linearSlides.closeSlides,
+                ).raceWith(Wait(3.0)),
+                TransferState,
 //            Wait(0.3),
 //        clawSubsystem.runCs,
 //        antonySubsystem.colorSensorData
@@ -53,13 +59,16 @@ object extendoCommand : Subsystem {
     val extendoOpenCommandAuto = Parallel(
         Sequential(
             Parallel(
-                linearSlides.closeSlidesAuto,
                 clawSubsystem.resetAngleClaw,
                 armClawSubsystem.openClawArm,
-                extendoSubsystem.openExtendo,
                 clawSubsystem.openClaw,
                 halfArmIn
-                ).raceWith(Wait(3.0)),
+            ),
+            Wait(0.1),
+            Parallel(
+                linearSlides.closeSlidesAuto,
+                extendoSubsystem.openExtendo,
+            ).raceWith(Wait(3.0)),
             TransferState,
 
         )
@@ -90,7 +99,6 @@ object extendoCommand : Subsystem {
             Parallel(
                 linearSlides.runToPosition,
                 Sequential(
-                    Wait(0.2),
                     anglePostTransfer,
                     Wait(0.2),
                     angleTransfer

@@ -12,7 +12,9 @@ import com.pedropathing.util.Constants;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstantsBasket;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstantsBasket;
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -34,18 +36,20 @@ public class AutoBaseJava extends MegiddoOpMode{
     public AutoBaseJava(Side side){
         this.side = side;
     }
-    static Follower follower;
+    public static Follower follower;
     @Override
     final public void preInit(){
-        Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         switch(side){
             case basket:
+                Constants.setConstants(FConstants.class, LConstants.class);
+                follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
                 follower.setCurrentPoseWithOffset(startingPoseBasket);
                 break;
             case chamber:
+                Constants.setConstants(FConstants.class, LConstants.class);
+                follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
                 follower.setCurrentPoseWithOffset(startingPoseChamber);
         }
     }
@@ -77,7 +81,7 @@ public class AutoBaseJava extends MegiddoOpMode{
     }
     public static Lambda waitUntil(BooleanSupplier supplier){
         return new Lambda("Wait until")
-                .setFinish(supplier::getAsBoolean);
+                    .setFinish(supplier::getAsBoolean);
     }
     /**
      in radians

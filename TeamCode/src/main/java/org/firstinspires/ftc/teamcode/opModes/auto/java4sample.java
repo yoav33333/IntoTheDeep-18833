@@ -29,12 +29,12 @@ public class java4sample extends AutoBaseJava {
 
     public static Pose startPose = startingPoseBasket;
     public static Pose basketPose1 = new Pose(-59, 53, Math.toRadians(-45));
-    public static Pose basketPose2 = new Pose(-57, 55, Math.toRadians(-45));
+    public static Pose basketPose2 = new Pose(-56.5, 55, Math.toRadians(-45));
     public static Pose basketPose3 = new Pose(-56.5, 57, Math.toRadians(-45));
     public static Pose basketPose4 = new Pose(-55, 58, Math.toRadians(-45));
-    public static Pose pickup1Pose = new Pose(-53, 47.4, 0);
-    public static Pose pickup2Pose = new Pose(-53, 58.5, Math.toRadians(0));
-    public static Pose pickup3Pose = new Pose(-52.5, 59, Math.toRadians(20));
+    public static Pose pickup1Pose = new Pose(-53, 47.7, 0);
+    public static Pose pickup2Pose = new Pose(-53, 58, Math.toRadians(0));
+    public static Pose pickup3Pose = new Pose(-51.8, 59.2, Math.toRadians(20));
 
     static PathChain scorePreload;
     static PathChain scorePickup1;
@@ -54,35 +54,43 @@ public class java4sample extends AutoBaseJava {
         pickup3 = makeLinePath(basketPose3, pickup3Pose);
         scorePickup3 = makeLinePath(pickup3Pose, basketPose4);
 
-        clawSubsystem.getClawRotationServo().setPosition(0.5);
+        clawSubsystem.getClawRotationServo().setPositionRaw(0.5);
+        clawSubsystem.getClawServo().setPositionRaw(0.0);
         deposit.armOutHalf();
         deposit.closeClawRaw();
+
     }
 
 
     @Override
     public void myStart() {
-        deposit.armOutBasket();
+
         linearSlides.setPose(0);
         linearSlides.getRunToPosition().cancel();
         linearSlides.getRunToPosition().schedule();
         new Sequential(
             extendoCommand.getExtendoReset(),
             linearSlides.getGoToHighBasket(),
+            waitUntil(() -> linearSlides.getPose()>600),
+            deposit.getArmOutBasket(),
             waitUntil(() -> linearSlides.getPose()>2000),
             followPath(scorePreload),
             waitUntil(() -> linearSlides.getPose()>3400),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
-                extendoCommand.getExtendoOpenCommandAuto(),
+                new Sequential(
+                    waitUntil(()->follower.getCurrentTValue()>0.1),
+                    extendoCommand.getExtendoOpenCommandAuto()
+                ),
                 followPath(pickup1)
             ),
+            new Wait(0.2),
             clawSubsystem.getCloseClaw(),
             new Wait(0.2),
             extendoCommand.getExtendoCloseCommandAuto(),
             linearSlides.getGoToHighBasket(),
-            waitUntil(() -> linearSlides.getPose()>2200),
+            waitUntil(() -> linearSlides.getPose()>2400),
             followPath(scorePickup1),
             waitUntil(() -> linearSlides.getPose()>3400),
             deposit.getRelease(),
@@ -96,7 +104,7 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.2),
             extendoCommand.getExtendoCloseCommandAuto(),
             linearSlides.getGoToHighBasket(),
-            waitUntil(() -> linearSlides.getPose()>2200),
+            waitUntil(() -> linearSlides.getPose()>2400),
             followPath(scorePickup2),
             waitUntil(() -> linearSlides.getPose()>3400),
             deposit.getRelease(),

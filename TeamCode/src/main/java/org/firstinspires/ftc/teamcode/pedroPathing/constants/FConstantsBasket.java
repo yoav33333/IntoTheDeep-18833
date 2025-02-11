@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.constants;
 
-
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Localizers;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-public class FConstants {
+public class FConstantsBasket {
     static {
         FollowerConstants.localizers = Localizers.THREE_WHEEL;
 
@@ -27,12 +26,11 @@ public class FConstants {
         FollowerConstants.forwardZeroPowerAcceleration =  -55.71733464559506;
         FollowerConstants.lateralZeroPowerAcceleration = -99.3169995948494  ;
 
-        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.4, 0, 0.03, 0);
-        FollowerConstants.translationalPIDFFeedForward = 0.025;
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.3, 0, 0.02, 0);
         FollowerConstants.useSecondaryTranslationalPID = false;
         FollowerConstants.secondaryTranslationalPIDFCoefficients.setCoefficients(0.1, 0, 0.01, 0); // Not being used, @see useSecondaryTranslationalPID
 
-        FollowerConstants.headingPIDFCoefficients.setCoefficients(3, 0, 0.2, 0);
+        FollowerConstants.headingPIDFCoefficients.setCoefficients(2, 0, 0.2, 0);
         FollowerConstants.useSecondaryHeadingPID = false;
         FollowerConstants.secondaryHeadingPIDFCoefficients.setCoefficients(2, 0, 0.1, 0); // Not being used, @see useSecondaryHeadingPID
 
@@ -49,8 +47,9 @@ public class FConstants {
         FollowerConstants.pathEndHeadingConstraint = 0.005;
         FollowerConstants.useBrakeModeInTeleOp = true;
         FollowerConstants.useVoltageCompensationInAuto = true;
-        FollowerConstants.useVoltageCompensationInTeleOp = false;
+        FollowerConstants.useVoltageCompensationInTeleOp = true;
         FollowerConstants.nominalVoltage = 12.5;
         FollowerConstants.cacheInvalidateSeconds = 0.5;
     }
+
 }

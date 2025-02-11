@@ -26,7 +26,7 @@ object clawSubsystem : Subsystem {
     @MustBeDocumented
     @Inherited
     annotation class Attach
-
+    @JvmStatic
     val clawServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
@@ -114,12 +114,12 @@ object clawSubsystem : Subsystem {
     val rotateClawL = Lambda("rotate claw l")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position <= 0.9) clawRotationServo.position + 0.2 else 0.9)
+            clawRotationServo.setPosition(if (clawRotationServo.position <= 1.0) clawRotationServo.position + 0.25 else 1.0)
         }
     val rotateClawR = Lambda("rotate claw r")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position >= 0.1) clawRotationServo.position - 0.2 else 0.1)
+            clawRotationServo.setPosition(if (clawRotationServo.position >= 0.0) clawRotationServo.position - 0.25 else 0.0)
         }
     val turnLeft = Lambda("turnLeft")
         .setRunStates(Wrapper.OpModeState.ACTIVE)

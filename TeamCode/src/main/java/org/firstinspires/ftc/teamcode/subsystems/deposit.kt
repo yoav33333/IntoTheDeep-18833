@@ -8,6 +8,7 @@ import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
+import dev.frozenmilk.dairy.pasteurized.Pasteurized
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.commands.groups.Sequential
@@ -16,6 +17,7 @@ import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
+import org.firstinspires.ftc.teamcode.util.utilCommands
 import java.lang.annotation.Inherited
 
 object deposit : SDKSubsystem() {
@@ -80,7 +82,8 @@ object deposit : SDKSubsystem() {
     }
     @JvmStatic
 
-    fun armOutBasket() {
+    val armOutBasket = Lambda("aob")
+        .setInit{
         depoArmServo.setPosition(ArmOutPoseParallel)
     }
     @JvmStatic
@@ -108,7 +111,12 @@ object deposit : SDKSubsystem() {
     }
 
     fun checkIfSampleInPlace(): Boolean {
-        if (colorSensor.getDistance(DistanceUnit.MM) < 35) {
+        if (Pasteurized.gamepad2.a.onTrue){
+            intakeSeq.cancel()
+            intakeSeq.schedule()
+        }
+
+        if (colorSensor.getDistance(DistanceUnit.MM) < 30) {
             closeClaw()
             return true
         }
@@ -134,7 +142,9 @@ object deposit : SDKSubsystem() {
         .setInit { depoClawServo.position = 0.42}
     val closeH = Lambda("close")
         .setInit{closeClaw()}
-    val quickRC = Sequential(releaseH, Wait(0.5), closeH)
+    val quickRC = Sequential(utilCommands.waitUntil{ linearSlides.getPose()>500},
+        releaseH, Wait(0.5), closeH)
+    val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
     val slamSeq = Sequential(slamArm, Wait(0.3), release,up)
     val changeClawPos = Lambda("changeClawPos")
@@ -148,7 +158,7 @@ object deposit : SDKSubsystem() {
             }
         }
 
-
+    @JvmStatic
     val armOut = Lambda("armOut")
         .setInit { armOut() }
     val armIn = Lambda("armIn")
@@ -177,6 +187,13 @@ object deposit : SDKSubsystem() {
     val postIntakeState = Lambda("postIntakeState")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { armOut() }
+    val intakeSeq = Sequential(
+        intakeCommand,
+        Wait(0.5),
+        catchPixel,
+        Wait(0.3),
+        postIntakeState
+    )
 
 
     val transferCommand = Lambda("transferCommand")
@@ -193,7 +210,7 @@ object deposit : SDKSubsystem() {
             checkIfSampleInPlace()
         }
     val halfArmIn = Lambda("HAI")
-        .setInit{ depoArmServo.position = 0.5}
+        .setInit{ depoArmServo.position = 0.55}
     val transferSeq = Sequential(
         transferCommand,
         Wait(0.1),

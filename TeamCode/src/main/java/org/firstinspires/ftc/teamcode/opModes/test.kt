@@ -19,7 +19,9 @@ import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.rotateClawR
 import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.deposit.catchPixel
 import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeCommand
+import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeSeq
 import org.firstinspires.ftc.teamcode.subsystems.deposit.postIntakeState
+import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRCSimple
 import org.firstinspires.ftc.teamcode.subsystems.deposit.release
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
@@ -40,6 +42,7 @@ import kotlin.math.abs
 
 class test : MegiddoOpMode() {
     lateinit var telemetryDB: MultipleTelemetry
+    var lastRunTime = 0.0
 
     //TODO: add auto closing if pixel intaked
     override fun myInit() {
@@ -48,15 +51,7 @@ class test : MegiddoOpMode() {
         Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(deposit.changeClawPos)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
-        Mercurial.gamepad2.a.onTrue(
-            Sequential(
-                intakeCommand,
-                Wait(0.5),
-                catchPixel,
-                Wait(0.3),
-                postIntakeState
-            )
-        )
+        Mercurial.gamepad2.a.onTrue(intakeSeq)
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
         Mercurial.gamepad2.x.onTrue(extendoMacro)
@@ -64,6 +59,7 @@ class test : MegiddoOpMode() {
         Mercurial.gamepad2.dpadRight.onTrue(goToHighChamber)
         Mercurial.gamepad2.dpadLeft .onTrue(goToLowBasket)
         Mercurial.gamepad2.dpadDown.onTrue(goToLowChamber)
+        Mercurial.gamepad2.share.onTrue(quickRCSimple)
         BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.leftStickY.state) > 0.3 })
             .whileTrue(extendoSubsystem.moveManual)
 
@@ -104,6 +100,8 @@ class test : MegiddoOpMode() {
         followerSubsystem.teleopDrive.schedule()
     }
     override fun myLoop() {
+        telemetryDB.addData("delta time", runtime - lastRunTime)
+        lastRunTime = runtime
         telemetryDB.addData("clawPosDepo", deposit.depoClawServo.position)
         telemetryDB.addData("clawPos", clawSubsystem.clawServo.position)
         telemetryDB.addData("v4b", armClawSubsystem.armClawServo.position)
