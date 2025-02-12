@@ -37,13 +37,11 @@ object clawSubsystem : Subsystem {
         s
     }
     @JvmStatic
-    var clawRotationServo: CachingServo by OpModeLazyCell {
-        val s = CachingServo(
+    var clawRotationServo: Servo by OpModeLazyCell {
+        val s =
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 Servo::class.java, "rotate servo"
-            )
         )
-        s.cachingTolerance = 0.001
         s.setPosition(0.5)
         s
     }

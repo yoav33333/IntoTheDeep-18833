@@ -20,19 +20,20 @@ public class basket {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(64.38234547128357, 60, Math.toRadians(180), Math.toRadians(180), 17)
                 .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(-62, 8.5+24, 0))
-                        .waitSeconds(1)
+//                        .waitSeconds(1)
                         .lineToLinearHeading(new Pose2d(-56, 56, Math.toRadians(-45)))
                         .lineToLinearHeading(new Pose2d(-52, 48, 0))
-                        .waitSeconds(1)
+//                        .waitSeconds(1)
                         .lineToLinearHeading(new Pose2d(-56, 56, Math.toRadians(-45)))
-                        .waitSeconds(1)
+//                        .waitSeconds(1)
                         .lineToLinearHeading(new Pose2d(-50, 59, Math.toRadians(0)))
-                        .waitSeconds(1)
+//                        .waitSeconds(1)
                         .lineToLinearHeading(new Pose2d(-56, 56, Math.toRadians(-45)))
-                        .waitSeconds(1)
+//                        .waitSeconds(1)
                         .lineToLinearHeading(new Pose2d(-50, 59, Math.toRadians(20)))
-                        .waitSeconds(1)
+//                        .waitSeconds(1)
                         .lineToLinearHeading(new Pose2d(-56, 56, Math.toRadians(-45)))
+                        .lineToLinearHeading(new Pose2d(-9, 24, Math.toRadians(90)))
                         .build());
 
         Image img = null;

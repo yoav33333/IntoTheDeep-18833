@@ -110,7 +110,7 @@ object followerSubsystem : SDKSubsystem() {
             follower.setMaxPower(1.0)
         }
         .setExecute {
-            follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y - 0.3*(gamepad1.left_trigger)).toDouble(),
+            follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y - 0.25*(gamepad1.left_trigger)).toDouble(),
                 -(gamepad1.left_stick_x).toDouble(),
                 -(gamepad1.right_stick_x + 0.3*(gamepad2.right_trigger - gamepad2.left_trigger)).toDouble()
                 , gamepad1.left_trigger>0.1

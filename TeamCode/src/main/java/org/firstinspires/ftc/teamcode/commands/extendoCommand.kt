@@ -13,14 +13,19 @@ import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.anglePostTrans
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.angleTransfer
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.deposit.TransferState
+import org.firstinspires.ftc.teamcode.subsystems.deposit.armOut
 import org.firstinspires.ftc.teamcode.subsystems.deposit.halfArmIn
+import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeq
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeqAuto
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
+import org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.nonBlockRTP
 import org.firstinspires.ftc.teamcode.util.SuperAdvancing
+import org.firstinspires.ftc.teamcode.util.utilCommands
 import java.lang.annotation.Inherited
+import kotlin.math.abs
 
 object extendoCommand : Subsystem {
 
@@ -66,7 +71,7 @@ object extendoCommand : Subsystem {
             ),
             Wait(0.1),
             Parallel(
-                linearSlides.closeSlidesAuto,
+                linearSlides.closeSlides,
                 extendoSubsystem.openExtendo,
             ).raceWith(Wait(3.0)),
             TransferState,
@@ -103,6 +108,10 @@ object extendoCommand : Subsystem {
                     Wait(0.2),
                     angleTransfer
                 )
+            ),
+            Sequential(
+                utilCommands.waitUntil{abs(Mercurial.gamepad2.rightStickY.state) >0.2 || isSpe},
+                armOut
             )
         )
     )
@@ -119,7 +128,9 @@ object extendoCommand : Subsystem {
                 armClawSubsystem.moveArmIn,
                 clawSubsystem.closeClaw2,
                 transferSeqAuto,
-                nonBlockRTP
+                nonBlockRTP,
+//                utilCommands.waitUntil{linearSlides.getPose()>3200},
+//                armOut
             )
 
         )

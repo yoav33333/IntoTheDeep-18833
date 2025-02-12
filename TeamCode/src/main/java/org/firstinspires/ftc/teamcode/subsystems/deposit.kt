@@ -161,6 +161,7 @@ object deposit : SDKSubsystem() {
     @JvmStatic
     val armOut = Lambda("armOut")
         .setInit { armOut() }
+    @JvmStatic
     val armIn = Lambda("armIn")
         .setInit { armIn() }
     var stop = false
@@ -216,7 +217,7 @@ object deposit : SDKSubsystem() {
         Wait(0.1),
         clawSubsystem.openClaw,
         Wait(0.1),
-        armOut
+        halfArmIn
     )
     val transferSeqAuto = Sequential(
         transferCommand.raceWith(Wait(1.1)),
@@ -224,7 +225,7 @@ object deposit : SDKSubsystem() {
         Wait(0.1),
         clawSubsystem.openClaw,
         Wait(0.1),
-        armOut
+        halfArmIn
     )
     val TransferState = Lambda("TransferState")
         .setInit {

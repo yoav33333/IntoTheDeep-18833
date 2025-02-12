@@ -53,17 +53,18 @@ public class AutoBaseJava extends MegiddoOpMode{
                 follower.setCurrentPoseWithOffset(startingPoseChamber);
         }
     }
-    public static Lambda finishAuto = new Lambda("finishAuto")
-        .setInit(()-> {
-            follower.breakFollowing();
-            follower.update();
-        });
     public static Lambda runFollower = new Lambda("update Follower")
             .setFinish(()->false)
             .setExecute(()->{
                 follower.update();
                 follower.telemetryDebug(telemetryA);
             });
+    public static Lambda finishAuto = new Lambda("finishAuto")
+        .setInit(()-> {
+            follower.breakFollowing();
+            follower.update();
+            runFollower.cancel();
+        });
     public static Lambda followPath(PathChain chain){
         return new Lambda("follow-path-chain")
             .setInit(() -> {

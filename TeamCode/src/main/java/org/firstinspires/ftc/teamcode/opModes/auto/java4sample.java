@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes.auto;
 
 import static org.firstinspires.ftc.teamcode.commands.extendoCommand.getExtendoOpenCommand;
+import static org.firstinspires.ftc.teamcode.subsystems.deposit.getArmIn;
 import static org.firstinspires.ftc.teamcode.subsystems.deposit.getCatchPixel;
 import static org.firstinspires.ftc.teamcode.subsystems.deposit.getPostIntakeState;
 
@@ -32,9 +33,11 @@ public class java4sample extends AutoBaseJava {
     public static Pose basketPose2 = new Pose(-56.5, 55, Math.toRadians(-45));
     public static Pose basketPose3 = new Pose(-56.5, 57, Math.toRadians(-45));
     public static Pose basketPose4 = new Pose(-55, 58, Math.toRadians(-45));
-    public static Pose pickup1Pose = new Pose(-53, 47.7, 0);
+    public static Pose pickup1Pose = new Pose(-53, 48.3, 0);
     public static Pose pickup2Pose = new Pose(-53, 58, Math.toRadians(0));
     public static Pose pickup3Pose = new Pose(-51.8, 59.2, Math.toRadians(20));
+    public static Pose parkPose = new Pose(-7.8, 24, Math.toRadians(90));
+    public static Pose parkControl = new Pose(-9, 55, Math.toRadians(0));
 
     static PathChain scorePreload;
     static PathChain scorePickup1;
@@ -53,8 +56,9 @@ public class java4sample extends AutoBaseJava {
         scorePickup2 = makeLinePath(pickup2Pose, basketPose3);
         pickup3 = makeLinePath(basketPose3, pickup3Pose);
         scorePickup3 = makeLinePath(pickup3Pose, basketPose4);
+        park = makeCurvePath(basketPose4, parkControl, parkPose);
 
-        clawSubsystem.getClawRotationServo().setPositionRaw(0.5);
+        clawSubsystem.getClawRotationServo().setPosition(0.5);
         clawSubsystem.getClawServo().setPositionRaw(0.0);
         deposit.armOutHalf();
         deposit.closeClawRaw();
@@ -88,8 +92,8 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.2),
             clawSubsystem.getCloseClaw(),
             new Wait(0.2),
-            extendoCommand.getExtendoCloseCommandAuto(),
             linearSlides.getGoToHighBasket(),
+            extendoCommand.getExtendoCloseCommandAuto(),
             waitUntil(() -> linearSlides.getPose()>2400),
             followPath(scorePickup1),
             waitUntil(() -> linearSlides.getPose()>3400),
@@ -102,8 +106,8 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.3),
             clawSubsystem.getCloseClaw(),
             new Wait(0.2),
-            extendoCommand.getExtendoCloseCommandAuto(),
             linearSlides.getGoToHighBasket(),
+            extendoCommand.getExtendoCloseCommandAuto(),
             waitUntil(() -> linearSlides.getPose()>2400),
             followPath(scorePickup2),
             waitUntil(() -> linearSlides.getPose()>3400),
@@ -116,12 +120,21 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.3),
             clawSubsystem.getCloseClaw(),
             new Wait(0.2),
-            extendoCommand.getExtendoCloseCommandAuto(),
             linearSlides.getGoToHighBasket(),
+            extendoCommand.getExtendoCloseCommandAuto(),
             waitUntil(() -> linearSlides.getPose()>2200),
             followPath(scorePickup3),
             waitUntil(() -> linearSlides.getPose()>3400),
             deposit.getRelease(),
+            new Wait(0.1),
+            new Parallel(
+                followPath(park),
+                new Sequential(
+                    waitUntil(()->follower.getCurrentTValue()>0.3),
+                    linearSlides.getTouchBar(),
+                    getArmIn()
+                )
+            ),
 
             finishAuto
         ).schedule();
