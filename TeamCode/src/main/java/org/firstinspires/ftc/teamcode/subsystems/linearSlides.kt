@@ -176,26 +176,36 @@ object linearSlides : Subsystem {
             .setEnd { runToPosition.cancel() }
     @JvmStatic
     val goToHighBasket = goToPreset(3500.0).addInit { isSpe = false
-        Sequential(
-            utilCommands.waitUntil{ getPose()>3300 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
-            armOut
-        ).schedule()
+//        Sequential(
+//            utilCommands.waitUntil{ getPose()>3300 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
+//            armOut
+//        ).schedule()
     }
     val goToLowBasket = goToPreset(1700.0).addInit { isSpe = false
-        Sequential(
-            utilCommands.waitUntil{ getPose()>1500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
-            armOut
-        ).schedule()
+//        Sequential(
+//            utilCommands.waitUntil{ getPose()>1500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
+//            armOut
+//        ).schedule()
     }
     @JvmStatic
-    val goToHighChamber = goToPreset(1200.0).addInit { isSpe = true
-        quickRC.schedule()}
+    val goToHighChamber = goToPreset(1160.0).addInit { isSpe = true
+        quickRC.schedule()
+//        Sequential(
+//            utilCommands.waitUntil{ getPose()>500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
+//            armOut
+//        ).schedule()
+    }
     @JvmStatic
     val touchBar = goToPreset(1400.0).addInit { isSpe = true
         quickRC.schedule()}
     @JvmStatic
     val goToLowChamber = goToPreset(0.0).addInit { isSpe = true
-        quickRC.schedule() }
+        quickRC.schedule()
+//        Sequential(
+//            utilCommands.waitUntil{ Mercurial.isScheduled(runToPosition) || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
+//            armOut
+//        ).schedule()
+    }
     @JvmStatic
     val goToLowChamberNoRC = goToPreset(0.0).addInit { isSpe = true }
 

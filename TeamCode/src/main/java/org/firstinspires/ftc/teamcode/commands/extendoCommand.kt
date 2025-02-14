@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.anglePostTransfer
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.angleTransfer
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.deposit.TransferState
 import org.firstinspires.ftc.teamcode.subsystems.deposit.armOut
 import org.firstinspires.ftc.teamcode.subsystems.deposit.halfArmIn
@@ -44,6 +45,7 @@ object extendoCommand : Subsystem {
             Parallel(
 //                linearSlides.closeSlides,
                 halfArmIn,
+                deposit.release,
                 clawSubsystem.resetAngleClaw,
                 armClawSubsystem.openClawArm,
                 extendoSubsystem.openExtendo,
@@ -102,7 +104,7 @@ object extendoCommand : Subsystem {
 
             ),
             Parallel(
-                linearSlides.runToPosition,
+                linearSlides.nonBlockRTP,
                 Sequential(
                     anglePostTransfer,
                     Wait(0.2),
@@ -110,7 +112,8 @@ object extendoCommand : Subsystem {
                 )
             ),
             Sequential(
-                utilCommands.waitUntil{abs(Mercurial.gamepad2.rightStickY.state) >0.2 || isSpe},
+//                utilCommands.waitUntil{abs(Mercurial.gamepad2.rightStickY.state) >0.2 || isSpe},
+                utilCommands.waitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-300<getPose()) )},
                 armOut
             )
         )
