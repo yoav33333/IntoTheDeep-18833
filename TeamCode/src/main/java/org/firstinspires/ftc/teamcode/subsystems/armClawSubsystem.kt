@@ -27,19 +27,19 @@ object armClawSubsystem : Subsystem {
     @Inherited
     annotation class Attach
 
-    val armClawServo: CachingServo by OpModeLazyCell {
-        val s = CachingServo(
+    val armClawServo: Servo by OpModeLazyCell {
+        val s =
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 Servo::class.java, "4 bar s"
-            )
+
         )
         s
     }
-    val angleClawServo: CachingServo by OpModeLazyCell {
-        val s = CachingServo(
+    val angleClawServo: Servo by OpModeLazyCell {
+        val s = 
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 Servo::class.java, "arm s"
-            )
+
         )
         s.direction = Servo.Direction.REVERSE
         s

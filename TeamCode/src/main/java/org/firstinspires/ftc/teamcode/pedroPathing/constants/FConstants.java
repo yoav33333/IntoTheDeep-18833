@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class FConstants {
     static {
-        FollowerConstants.localizers = Localizers.THREE_WHEEL;
+        FollowerConstants.localizers = Localizers.THREE_WHEEL_IMU;
 
         FollowerConstants.leftFrontMotorName = "dfl";
         FollowerConstants.leftRearMotorName = "drl";
@@ -27,19 +27,19 @@ public class FConstants {
         FollowerConstants.forwardZeroPowerAcceleration =  -55.71733464559506;
         FollowerConstants.lateralZeroPowerAcceleration = -99.3169995948494  ;
 
-        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.4, 0, 0.03, 0);
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.46, 0, 0.049, 0);
         FollowerConstants.translationalPIDFFeedForward = 0.025;
         FollowerConstants.useSecondaryTranslationalPID = false;
         FollowerConstants.secondaryTranslationalPIDFCoefficients.setCoefficients(0.1, 0, 0.01, 0); // Not being used, @see useSecondaryTranslationalPID
 
-        FollowerConstants.headingPIDFCoefficients.setCoefficients(3, 0, 0.2, 0);
+        FollowerConstants.headingPIDFCoefficients.setCoefficients(1.5, 0, 0.189, 0);
         FollowerConstants.useSecondaryHeadingPID = false;
-        FollowerConstants.secondaryHeadingPIDFCoefficients.setCoefficients(2, 0, 0.1, 0); // Not being used, @see useSecondaryHeadingPID
+        FollowerConstants.secondaryHeadingPIDFCoefficients.setCoefficients(0.7, 0, 0.04, 0); // Not being used, @see useSecondaryHeadingPID
 
-        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.3, 0, 0.03, 0.5, 0);
+        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.2, 0, 0.045, 0.5, 0);
         FollowerConstants.useSecondaryDrivePID = false;
         FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(0.1, 0, 0, 0.5, 0); // Not being used, @see useSecondaryDrivePID
-        FollowerConstants.zeroPowerAccelerationMultiplier = 8;
+        FollowerConstants.zeroPowerAccelerationMultiplier = 3;
         FollowerConstants.centripetalScaling = 0.0004;
 
         FollowerConstants.pathEndTimeoutConstraint = 500;
@@ -50,7 +50,7 @@ public class FConstants {
         FollowerConstants.useBrakeModeInTeleOp = true;
         FollowerConstants.useVoltageCompensationInAuto = true;
         FollowerConstants.useVoltageCompensationInTeleOp = false;
-        FollowerConstants.nominalVoltage = 12.5;
+        FollowerConstants.nominalVoltage = 11;
         FollowerConstants.cacheInvalidateSeconds = 0.5;
     }
 }

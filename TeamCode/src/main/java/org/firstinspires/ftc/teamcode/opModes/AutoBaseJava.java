@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstantsBasket;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstantsBasket;
+import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -63,8 +66,15 @@ public class AutoBaseJava extends MegiddoOpMode{
         .setInit(()-> {
             follower.breakFollowing();
             follower.update();
-            runFollower.cancel();
+            linearSlides.setStartingPose(linearSlides.getPose());
+            followerSubsystem.setStartingPose(follower.getPose());
+
         });
+
+    public static Lambda instantCommand(Runnable runnable){
+        return new Lambda("instant command")
+                .setInit(runnable);
+    }
     public static Lambda followPath(PathChain chain){
         return new Lambda("follow-path-chain")
             .setInit(() -> {
@@ -82,8 +92,22 @@ public class AutoBaseJava extends MegiddoOpMode{
     }
     public static Lambda waitUntil(BooleanSupplier supplier){
         return new Lambda("Wait until")
-                    .setFinish(supplier::getAsBoolean);
+            .setFinish(supplier::getAsBoolean);
     }
+    public static Lambda setHeadingPID(double p, double d){
+        return new Lambda("setHeadingPID")
+            .setInit(()-> {
+                FollowerConstants.headingPIDFCoefficients.D = d;
+                FollowerConstants.headingPIDFCoefficients.P = p;
+            });
+    }
+    static double openExD = 0.18;
+    static double openExP = 1.4;
+    static double closeExD = 0.18;
+    static double closeExP = 1.4;
+
+    public static Lambda setOpenExPid = setHeadingPID(openExP, openExD);
+    public static Lambda setCloseExPid = setHeadingPID(closeExP, closeExD);
     /**
      in radians
      **/
@@ -104,9 +128,9 @@ public class AutoBaseJava extends MegiddoOpMode{
                     if (interrupted) follower.breakFollowing();
                 });
     }
-    public static Lambda turn(double angle){
+    public static Lambda turn(double degrees){
         return new Lambda("follow-path-chain")
-                .setInit(() -> follower.turnDegrees(angle, false))
+                .setInit(() -> follower.turnDegrees(degrees, false))
                 .setExecute(() ->{
                     follower.update();
                     follower.telemetryDebug(telemetryA);

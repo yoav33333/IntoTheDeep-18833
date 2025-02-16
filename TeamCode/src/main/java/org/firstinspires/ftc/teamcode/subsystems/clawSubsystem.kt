@@ -27,13 +27,13 @@ object clawSubsystem : Subsystem {
     @Inherited
     annotation class Attach
     @JvmStatic
-    val clawServo: CachingServo by OpModeLazyCell {
-        val s = CachingServo(
+    val clawServo: Servo by OpModeLazyCell {
+        val s =
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 Servo::class.java, "claw servo"
-            )
+
         )
-        s.cachingTolerance = 0.001
+//        s.cachingTolerance = 0.001
         s
     }
     @JvmStatic
@@ -82,6 +82,7 @@ object clawSubsystem : Subsystem {
 //
 //    }
 
+    @JvmStatic
     fun openClaw() {
         clawServo.setPosition(openingPose)
     }
@@ -119,13 +120,14 @@ object clawSubsystem : Subsystem {
         .setInit {
             clawRotationServo.setPosition(if (clawRotationServo.position >= 0.0) clawRotationServo.position - 0.25 else 0.0)
         }
+    @JvmStatic
     val turnLeft = Lambda("turnLeft")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit { clawRotationServo.setPosition(0.1) }
+        .setInit { clawRotationServo.position = 1.0  }
 
     val turnRight = Lambda("turnRight")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit { clawRotationServo.setPosition(0.9) }
+        .setInit { clawRotationServo.position = 0.0 }
     val clawRotationRange = 180.0
     fun keepAngle(angle: Double, follower: Follower) = Lambda("keepAngle")
         .setExecute{
@@ -133,7 +135,7 @@ object clawSubsystem : Subsystem {
         }
     val resetAngleClaw = Lambda("resetAngleClaw")
         .setInit { clawRotationServo.setPosition(0.5) }
-
+    @JvmStatic
     val openClaw = Lambda("openClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
@@ -149,6 +151,6 @@ object clawSubsystem : Subsystem {
 
     override fun postUserInitHook(opMode: Wrapper) {
         openClaw()
-        clawRotationServo.setPosition(0.5)
+        clawRotationServo.position = 0.5
     }
 }

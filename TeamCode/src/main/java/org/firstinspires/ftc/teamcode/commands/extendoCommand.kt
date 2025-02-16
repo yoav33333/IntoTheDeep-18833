@@ -132,9 +132,31 @@ object extendoCommand : Subsystem {
                 clawSubsystem.closeClaw2,
                 transferSeqAuto,
                 nonBlockRTP,
-//                utilCommands.waitUntil{linearSlides.getPose()>3200},
-//                armOut
+                utilCommands.runNonBlocking(
+                    Sequential(
+                        anglePostTransfer,
+                        Wait(0.2),
+                        angleTransfer
+                    )
+                ),
+                utilCommands.runNonBlocking(
+                    Sequential(
+                        utilCommands.waitUntil{(linearSlides.target>500 && linearSlides.target-300<getPose()) },
+                        armOut
+                    )
+                )
             )
+
+        )
+    @JvmStatic
+    val extendoCloseCommandSimple =
+        Parallel(
+//        clawSubsystem.stopCs,
+            clawSubsystem.resetAngleClaw,
+            extendoSubsystem.closeExtendo,
+            armClawSubsystem.closeClawArm,
+            TransferState,
+            nonBlockRTP
 
         )
     val extendoMacro =

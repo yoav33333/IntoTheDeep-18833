@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.opModes.auto;
 
+import static org.firstinspires.ftc.teamcode.commands.extendoCommand.getExtendoCloseCommandAuto;
 import static org.firstinspires.ftc.teamcode.commands.extendoCommand.getExtendoOpenCommand;
 import static org.firstinspires.ftc.teamcode.subsystems.deposit.getCatchPixel;
 import static org.firstinspires.ftc.teamcode.subsystems.deposit.getPostIntakeState;
+import static org.firstinspires.ftc.teamcode.subsystems.deposit.getRelease;
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -25,19 +28,21 @@ public class java5spec extends AutoBaseJava {
     public java5spec() {super(Side.chamber);}
 
     public static Pose startPose = startingPoseChamber;
-    public static Pose chamberPose1 = new Pose(-35.5, 8, Math.toRadians(180));
-    public static Pose chamberPose2 = new Pose(-33.5, 4, Math.toRadians(180));
-    public static Pose chamberPose3 = new Pose(-35, 0, Math.toRadians(180));
-    public static Pose chamberPose4 = new Pose(-35, -4, Math.toRadians(180));
-    public static Pose chamberPose5 = new Pose(-35, -8, Math.toRadians(180));
-    public static Pose dragPose1 = new Pose(-40, -23, Math.toRadians(-45));
-    public static Pose dragPose2 = new Pose(-40, -34, Math.toRadians(-45));
+    public static Pose chamberPose1 = new Pose(-33.2, 2, Math.toRadians(180));
+    public static Pose chamberPose2 = new Pose(-32.2, 0, Math.toRadians(180));
+    public static Pose chamberPose3 = new Pose(-33.2, -2, Math.toRadians(180));
+    public static Pose chamberPose4 = new Pose(-33.5, -4, Math.toRadians(180));
+    public static Pose chamberPose5 = new Pose(-33.5, -6, Math.toRadians(180));
+    public static Pose dragPose1 = new Pose(-45.5, -27, Math.toRadians(-45));
+    public static Pose dragPose2 = new Pose(-46, -38.5, Math.toRadians(-45));
     public static Pose dragPose3 = new Pose(-40, -45, Math.toRadians(-45));
-    public static Pose dragPoseTurn1 = new Pose(-40, -23, Math.toRadians(-45-90));
-    public static Pose dragPoseTurn2 = new Pose(-40, -34, Math.toRadians(-45-90));
-    public static Pose dragPoseTurn3 = new Pose(-40, -45, Math.toRadians(-45-90));
-    public static Pose pickup1Pose = new Pose(-59.5, -38, Math.toRadians(0));
-    public static Pose pickup2Pose = new Pose(-43, -15, Math.toRadians(180+50));
+    public static Pose dragPoseTurn1 = new Pose(-47, -31, Math.toRadians(-45-110));
+    public static Pose dragPoseTurn2 = new Pose(-45, -39.5, Math.toRadians(-45-110));
+    public static Pose dragPoseTurn3 = new Pose(-40, -45, Math.toRadians(-45-110));
+    public static Pose pickup1Pose = new Pose(-61, -38, Math.toRadians(0));
+    public static Pose pickup12Pose = new Pose(-61.9, -38, Math.toRadians(0));
+    public static Pose pickup13Pose = new Pose(-62, -38, Math.toRadians(0));
+    public static Pose pickup2Pose = new Pose(-61.3, -33, Math.toRadians(180+80));
 
     static PathChain scorePreload;
     static PathChain getToDrag1;
@@ -47,6 +52,10 @@ public class java5spec extends AutoBaseJava {
     static PathChain getToDrag3;
     static PathChain turnDrag3;
     static PathChain specialHPIntake;
+    static PathChain specialHPIntake1;
+    static PathChain specialHPIntake1score;
+    static PathChain specialHPIntake2;
+    static PathChain specialHPIntake2score;
     static PathChain dragToHP;
     static PathChain scorePickup1;
     static PathChain scorePickup2;
@@ -59,6 +68,7 @@ public class java5spec extends AutoBaseJava {
     static PathChain park;
     @Override
     public void myInit() {
+
         scorePreload = makeLinePath(startPose, chamberPose1);
         getToDrag1 = makeLinePath(chamberPose1, dragPose1);
         turnDrag1 = makeLinePath(dragPose1, dragPoseTurn1);
@@ -68,6 +78,8 @@ public class java5spec extends AutoBaseJava {
         turnDrag3 = makeLinePath(dragPose3, dragPoseTurn3);
 //        specialHPIntake = makeLinePath(dragPoseTurn3, pickup1Pose);
         specialHPIntake = makeLinePath(chamberPose1, pickup1Pose);
+        specialHPIntake1 = makeLinePath(chamberPose2, pickup12Pose);
+        specialHPIntake1score = makeLinePath(pickup12Pose, chamberPose2);
 //        dragToHP = makeCurvePath(chamberPose1, dragPose1, dragPoseTurn1, dragPose2, dragPoseTurn2, dragPose3, dragPoseTurn3,pickup1Pose);
         scorePickup1 = makeLinePath(pickup1Pose, chamberPose2);
         scorePickup2 = makeLinePath(pickup2Pose, chamberPose3);
@@ -81,29 +93,47 @@ public class java5spec extends AutoBaseJava {
         clawSubsystem.getClawRotationServo().setPosition(0.5);
         deposit.armOutHalf();
         deposit.closeClawRaw();
+        clawSubsystem.openClaw();
     }
 
     @Override
     public void myStart() {
-        deposit.armOut();
+//        deposit.armOut();
         linearSlides.getRunToPosition().schedule();
         new Sequential(
             extendoCommand.getExtendoReset(),
             linearSlides.getGoToHighChamber(),
-            followPath(scorePreload),
+            followPath(scorePreload).with(
+                new Sequential(
+                    waitUntil(()->linearSlides.getPose()>500),
+                    deposit.getArmOut()
+                )
+            ),
             deposit.getSlamSeq(),
-//            new Parallel(
-//                new Sequential(
-//                    new Wait(0.4),
-//                    linearSlides.getGoToLowChamber()
-//                ),
-//                followPath(getToDrag1)
-//            ),
-//            turn(90).with(new Wait(1)),
+            new Parallel(
+                new Sequential(
+                    waitUntil(()->follower.getCurrentTValue()>0.2),
+                    extendoCommand.getExtendoOpenCommandAuto(),
+                    clawSubsystem.getTurnLeft()
+                ),
+                instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.65),
+                followPath(getToDrag1)
+            ),
+            new Wait(1),
+            clawSubsystem.getCloseClaw(),
+            new Wait(0.1),
+            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.5),
+            turn(110).with(new Wait(1)),
+            clawSubsystem.getOpenClaw(),
+//            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.65),
 //            followPath(getToDrag2),
-//            turn(90).with(new Wait(1)),
-//            followPath(getToDrag3),
-//            turn(90).with(new Wait(1)),
+//            new Wait(1),
+//            clawSubsystem.getCloseClaw(),
+//            new Wait(0.1),
+//            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.5),
+//            turn(110).with(new Wait(1)),
+//            clawSubsystem.getOpenClaw(),
+            extendoCommand.getExtendoCloseCommandSimple(),
 
             new Parallel(
                 new Sequential(
@@ -123,20 +153,116 @@ public class java5spec extends AutoBaseJava {
             linearSlides.getGoToHighChamber(),
             followPath(scorePickup1),
             deposit.getSlamSeq(),
-            new Parallel(
+                new Parallel(
                 new Sequential(
-                    new Wait(0.4),
-                    linearSlides.getGoToLowChamber()
+                    new Wait(0.2),
+                    linearSlides.getGoToLowChamberNoRC()
                 ),
-                followPath(pickup1)
+                followPath(specialHPIntake1),
+                new Sequential(
+                    deposit.getIntakeCommand(),
+                    new Wait(0.5),
+                    deposit.getRelease(),
+                    getCatchPixel(),
+                    new Wait(0.3),
+                    getPostIntakeState()
+                )
             ),
-//            followPath(pickup1),
-            followPath(scorePickup2),
-            followPath(pickup2),
-            followPath(scorePickup3),
-            followPath(pickup3),
-            followPath(scorePickup4),
-            followPath(pickup4),
+            linearSlides.getGoToHighChamber(),
+            followPath(specialHPIntake1score),
+            deposit.getSlamSeq(),
+                new Parallel(
+                    new Sequential(
+                            new Wait(0.2),
+                            linearSlides.getGoToLowChamberNoRC()
+                    ),
+                    followPath(specialHPIntake1)
+
+                ),
+//            new Parallel(
+//                new Sequential(
+//                    new Wait(0.2),
+//                    linearSlides.getGoToLowChamberNoRC()
+//                ),
+//                followPath(specialHPIntake1),
+//                new Sequential(
+//                    deposit.getIntakeCommand(),
+//                    new Wait(0.5),
+//                    deposit.getRelease(),
+//                    getCatchPixel(),
+//                    new Wait(0.3),
+//                    getPostIntakeState()
+//                )
+//            ),
+//            linearSlides.getGoToHighChamber(),
+//            followPath(specialHPIntake1score),
+//            deposit.getSlamSeq(),
+//                new Parallel(
+//                new Sequential(
+//                    new Wait(0.2),
+//                    linearSlides.getGoToLowChamberNoRC()
+//                ),
+//                followPath(specialHPIntake1),
+//                new Sequential(
+//                    deposit.getIntakeCommand(),
+//                    new Wait(0.5),
+//                    deposit.getRelease(),
+//                    getCatchPixel(),
+//                    new Wait(0.3),
+//                    getPostIntakeState()
+//                )
+//            ),
+//            linearSlides.getGoToHighChamber(),
+//            followPath(specialHPIntake1score),
+//            deposit.getSlamSeq(),
+//            new Parallel(
+//                followPath(pickup1),
+//                extendoCommand.getExtendoOpenCommandAuto()
+//            ),
+//            clawSubsystem.getCloseClaw(),
+//            new Wait(0.1),
+//            new Parallel(
+//                followPath(scorePickup2),
+//                linearSlides.getGoToHighChamber(),
+//                getExtendoCloseCommandAuto()
+//            ),
+//            waitUntil(()->linearSlides.getPose()>1130),
+//            deposit.getSlamSeq(),
+//
+//            new Wait(0.2),
+//                new Parallel(
+//                        followPath(pickup2),
+//                        extendoCommand.getExtendoOpenCommandAuto()
+//                ),
+//                clawSubsystem.getCloseClaw(),
+//                new Wait(0.1),
+//                new Parallel(
+//                        followPath(scorePickup3),
+//                        linearSlides.getGoToHighChamber(),
+//                        getExtendoCloseCommandAuto()
+//                ),
+//                waitUntil(()->linearSlides.getPose()>1130),
+//                deposit.getSlamSeq(),
+//                new Wait(0.2),
+////            followPath(pickup2),
+////            followPath(scorePickup3),
+//                new Parallel(
+//                        followPath(pickup3),
+//                        extendoCommand.getExtendoOpenCommandAuto()
+//                ),
+//                clawSubsystem.getCloseClaw(),
+//                new Wait(0.1),
+//                new Parallel(
+//                        followPath(scorePickup4),
+//                        linearSlides.getGoToHighChamber(),
+//                        getExtendoCloseCommandAuto()
+//                ),
+//                waitUntil(()->linearSlides.getPose()>1130),
+//                deposit.getSlamSeq(),
+//                new Wait(0.2),
+//                followPath(pickup4),
+//                followPath(pickup3),
+//                followPath(scorePickup4),
             finishAuto
         ).schedule();
     }

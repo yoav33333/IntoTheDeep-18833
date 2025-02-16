@@ -3,23 +3,15 @@ package org.firstinspires.ftc.teamcode.opModes.auto
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.pedropathing.localization.Pose
-import com.pedropathing.pathgen.BezierLine
-import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.PathChain
-import com.pedropathing.pathgen.Point
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
-import dev.frozenmilk.dairy.core.wrapper.Wrapper
-import dev.frozenmilk.mercurial.commands.Lambda
-import dev.frozenmilk.mercurial.commands.groups.Parallel
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
 import org.firstinspires.ftc.teamcode.opModes.MegiddoOpMode
-import org.firstinspires.ftc.teamcode.opModes.test
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.deposit
-import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 @Disabled
@@ -46,7 +38,7 @@ class blueBasket : MegiddoOpMode(){
     override fun myInit() {
         deposit.closeClaw()
         deposit.armOut()
-        followerSubsystem.setStartingPose(startingPose)
+//        followerSubsystem.setStartingPose(startingPose)
         linearSlides.runToPosition.cancel()
         telemetryDB = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
         scoreFirstSpecimen = followerSubsystem.makeLinePath(startingPose,chamberScore)

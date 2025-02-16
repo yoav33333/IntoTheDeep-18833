@@ -71,7 +71,8 @@ object linearSlides : Subsystem {
         s.mode = DigitalChannel.Mode.INPUT
         s
     }
-
+    @JvmStatic
+    var startingPose = 0
     @JvmField
     var target = 0.0
 
@@ -128,8 +129,9 @@ object linearSlides : Subsystem {
     }
     @JvmStatic
     fun setPose(pose: Int) {
-        offset = pose
+        offset -= getPose() - pose
     }
+
 
     val resetHeight = Lambda("resetHeight")
         .setExecute { offset -= (getPose()) }
@@ -196,7 +198,7 @@ object linearSlides : Subsystem {
 //        ).schedule()
     }
     @JvmStatic
-    val touchBar = goToPreset(1400.0).addInit { isSpe = true
+    val touchBar = goToPreset(1450.0).addInit { isSpe = true
         quickRC.schedule()}
     @JvmStatic
     val goToLowChamber = goToPreset(0.0).addInit { isSpe = true
@@ -215,6 +217,8 @@ object linearSlides : Subsystem {
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
             .whileTrue(resetHeight)
+        setPose(startingPose)
+
     }
 
 

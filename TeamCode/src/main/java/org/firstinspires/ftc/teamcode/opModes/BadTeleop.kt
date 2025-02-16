@@ -17,12 +17,9 @@ import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.rotateClawL
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem.rotateClawR
 import org.firstinspires.ftc.teamcode.subsystems.deposit
-import org.firstinspires.ftc.teamcode.subsystems.deposit.catchPixel
-import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeCommand
 import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeSeq
 import org.firstinspires.ftc.teamcode.subsystems.deposit.postIntakeState
 import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRCSimple
-import org.firstinspires.ftc.teamcode.subsystems.deposit.release
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
@@ -40,7 +37,7 @@ import kotlin.math.abs
 @TeleOp
 @Config
 
-class test : MegiddoOpMode() {
+class BadTeleop : MegiddoOpMode() {
     lateinit var telemetryDB: MultipleTelemetry
     var lastRunTime = 0.0
 

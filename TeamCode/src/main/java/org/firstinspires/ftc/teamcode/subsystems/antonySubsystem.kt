@@ -35,8 +35,8 @@ object antonySubsystem : SDKSubsystem() {
             )
         s
     }
-    val default = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_FOREST_PALETTE
-    val endGame = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE
+    val default = RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_FOREST_PALETTE
+    val endGame = RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE
     val lowBattery = RevBlinkinLedDriver.BlinkinPattern.RED
     val redLED = RevBlinkinLedDriver.BlinkinPattern.RED
     val yellowLED = RevBlinkinLedDriver.BlinkinPattern.YELLOW

@@ -50,19 +50,10 @@ object followerSubsystem : SDKSubsystem() {
     }
     lateinit var follower: Follower
     override fun preUserInitHook(opMode: Wrapper) {
-        hardwareMap.get(DcMotorEx::class.java, "dfl").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        hardwareMap.get(DcMotorEx::class.java, "dfl").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        hardwareMap.get(DcMotorEx::class.java, "drl").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        hardwareMap.get(DcMotorEx::class.java, "drl").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        hardwareMap.get(DcMotorEx::class.java, "drr").mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        hardwareMap.get(DcMotorEx::class.java, "drr").mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         follower = Follower(FeatureRegistrar.activeOpMode.hardwareMap)
 //        (follower.poseUpdater.localizer as ThreeWheelIMULocalizer).resetEncoders()
 
-    }
-    fun setStartingPose(pose: Pose){
-        follower.setStartingPose(pose)
     }
     val runFollower = Lambda("runFollower")
         .setExecute{ follower.update()}
@@ -74,12 +65,9 @@ object followerSubsystem : SDKSubsystem() {
         .setFinish {
             !follower.isBusy
         }
+    @JvmStatic
+    var startingPose = Pose(0.0, 0.0, 0.0)
 
-    override fun preUserInitLoopHook(opMode: Wrapper) {
-        if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP){
-            follower.headingOffset = -follower.totalHeading
-        }
-    }
     fun followPathChain(chain: PathChain?): Lambda {
         return Lambda("follow-path-chain")
             .setInterruptible(true)
@@ -107,6 +95,11 @@ object followerSubsystem : SDKSubsystem() {
     val teleopDrive = Lambda("teleop-drive")
         .setInit {
             follower.startTeleopDrive()
+            follower.setTeleOpMovementVectors(0.5,0.0,0.0)
+            follower.update()
+            follower.setTeleOpMovementVectors(0.0,0.0,0.0)
+            follower.update()
+            follower.setCurrentPoseWithOffset(startingPose)
             follower.setMaxPower(1.0)
         }
         .setExecute {

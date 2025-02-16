@@ -7,15 +7,19 @@ import static org.firstinspires.ftc.teamcode.subsystems.deposit.getPostIntakeSta
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.extendoCommand;
 import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
+import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
 
 import java.util.function.BooleanSupplier;
 
@@ -29,15 +33,15 @@ public class java4sample extends AutoBaseJava {
     public java4sample() {super(Side.basket);}
 
     public static Pose startPose = startingPoseBasket;
-    public static Pose basketPose1 = new Pose(-59, 53, Math.toRadians(-45));
-    public static Pose basketPose2 = new Pose(-56.5, 55, Math.toRadians(-45));
+    public static Pose basketPose1 = new Pose(-58, 55, Math.toRadians(-45));
+    public static Pose basketPose2 = new Pose(-56.5, 56, Math.toRadians(-45));
     public static Pose basketPose3 = new Pose(-56.5, 57, Math.toRadians(-45));
     public static Pose basketPose4 = new Pose(-55, 58, Math.toRadians(-45));
-    public static Pose pickup1Pose = new Pose(-53, 48.3, 0);
-    public static Pose pickup2Pose = new Pose(-53, 58, Math.toRadians(0));
-    public static Pose pickup3Pose = new Pose(-51.8, 59.2, Math.toRadians(20));
-    public static Pose parkPose = new Pose(-7.8, 24, Math.toRadians(90));
-    public static Pose parkControl = new Pose(-9, 55, Math.toRadians(0));
+    public static Pose pickup1Pose = new Pose(-53, 48, 0);
+    public static Pose pickup2Pose = new Pose(-53, 57.7, Math.toRadians(0));
+    public static Pose pickup3Pose = new Pose(-50, 58, Math.toRadians(25));
+    public static Pose parkPose = new Pose(-7, 20, Math.toRadians(90));
+    public static Pose parkControl = new Pose(-9, 49, Math.toRadians(0));
 
     static PathChain scorePreload;
     static PathChain scorePickup1;
@@ -49,6 +53,7 @@ public class java4sample extends AutoBaseJava {
     static PathChain park;
     @Override
     public void myInit() {
+
         scorePreload = makeLinePath(startPose, basketPose1);
         pickup1 = makeLinePath(basketPose1, pickup1Pose);
         scorePickup1 = makeLinePath(pickup1Pose, basketPose2);
@@ -59,7 +64,7 @@ public class java4sample extends AutoBaseJava {
         park = makeCurvePath(basketPose4, parkControl, parkPose);
 
         clawSubsystem.getClawRotationServo().setPosition(0.5);
-        clawSubsystem.getClawServo().setPositionRaw(0.0);
+        clawSubsystem.getClawServo().setPosition(0.0);
         deposit.armOutHalf();
         deposit.closeClawRaw();
 
@@ -94,7 +99,7 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.2),
             linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
-            waitUntil(() -> linearSlides.getPose()>2400),
+            waitUntil(() -> linearSlides.getPose()>2200),
             followPath(scorePickup1),
             waitUntil(() -> linearSlides.getPose()>3400),
             deposit.getRelease(),
@@ -108,7 +113,7 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.2),
             linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
-            waitUntil(() -> linearSlides.getPose()>2400),
+            waitUntil(() -> linearSlides.getPose()>2200),
             followPath(scorePickup2),
             waitUntil(() -> linearSlides.getPose()>3400),
             deposit.getRelease(),
@@ -138,5 +143,13 @@ public class java4sample extends AutoBaseJava {
 
             finishAuto
         ).schedule();
+    }
+    @Override
+    public void myStop() {
+        follower.breakFollowing();
+        runFollower.cancel();
+        linearSlides.getRunToPosition().cancel();
+        linearSlides.setStartingPose(linearSlides.getPose());
+        followerSubsystem.setStartingPose(follower.getPose());
     }
 }
