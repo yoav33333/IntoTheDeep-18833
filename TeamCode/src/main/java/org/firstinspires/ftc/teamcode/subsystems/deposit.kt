@@ -127,7 +127,7 @@ object deposit : SDKSubsystem() {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
             depoArmServo.position = 0.9
-            linearSlides.target -= 300
+            linearSlides.target -= 400
         }
     @JvmStatic
     val release = Lambda("release")

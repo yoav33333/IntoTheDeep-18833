@@ -28,7 +28,7 @@ import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier;
 import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
-public class AutoBaseJava extends MegiddoOpModeAuto {
+public class AutoBaseJava extends MegiddoOpMode {
     private static Telemetry telemetryA;
 
     public enum Side{
@@ -147,6 +147,25 @@ public class AutoBaseJava extends MegiddoOpModeAuto {
                     if (interrupted) follower.breakFollowing();
                 });
     }
+    static PathChain slowPath;
+    public static Lambda slowX = new Lambda("slowF")
+            .setEnd((interrupted)-> {
+                follower.breakFollowing();
+                follower.setMaxPower(1.0);
+            })
+            .setInit(()-> {
+                follower.setMaxPower(0.5);
+                follower.followPath(makeLinePath(follower.getPose(),
+                 new Pose(follower.getPose().getX()-50, follower.getPose().getY(),
+                0)));
+            })
+            .setExecute(() ->{
+                follower.update();
+                follower.telemetryDebug(telemetryA);
+
+            })
+            .setFinish(()-> ((!follower.isBusy() ) || follower.isRobotStuck()));
+
     public static PathChain makeLinePath(Pose startingPose, Pose endingPose){
         return follower.pathBuilder().addPath(
             new BezierLine(new Point(startingPose), new Point(endingPose)))

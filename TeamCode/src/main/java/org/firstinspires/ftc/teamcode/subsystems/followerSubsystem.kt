@@ -101,7 +101,7 @@ object followerSubsystem : SDKSubsystem() {
                 -(gamepad1.right_stick_x + 0.3*(gamepad2.right_trigger - gamepad2.left_trigger)).toDouble()
                 , gamepad1.left_trigger>0.1
             )
-            follower.telemetryDebug(MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry))
+//            follower.telemetryDebug(MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry))
             follower.update()
         }
         .setFinish { false }
