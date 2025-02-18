@@ -12,6 +12,7 @@ object  utilCommands {
     fun runNonBlocking(vararg command: Command) =
         Lambda("Run non-blocking")
             .setInit{ command.forEach { it.schedule() } }
+
     fun instantCommand(vararg command: Runnable)=
         Lambda("instant command")
             .setInit{command.forEach { it.run() }}

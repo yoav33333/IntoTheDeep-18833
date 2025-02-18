@@ -1,22 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.pedropathing.follower.Follower
 import com.pedropathing.localization.Pose
-import com.pedropathing.localization.localizers.ThreeWheelIMULocalizer
-import com.pedropathing.localization.localizers.ThreeWheelLocalizer
 import com.pedropathing.pathgen.BezierCurve
 import com.pedropathing.pathgen.BezierLine
-import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.PathChain
 import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Gamepad
 import dev.frozenmilk.dairy.core.FeatureRegistrar
-import dev.frozenmilk.dairy.core.FeatureRegistrar.activeOpModeWrapper
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
@@ -25,8 +20,7 @@ import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
+import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants
 import java.lang.annotation.Inherited
@@ -65,8 +59,7 @@ object followerSubsystem : SDKSubsystem() {
         .setFinish {
             !follower.isBusy
         }
-    @JvmStatic
-    var startingPose = Pose(0.0, 0.0, 0.0)
+
 
     fun followPathChain(chain: PathChain?): Lambda {
         return Lambda("follow-path-chain")
@@ -95,11 +88,11 @@ object followerSubsystem : SDKSubsystem() {
     val teleopDrive = Lambda("teleop-drive")
         .setInit {
             follower.startTeleopDrive()
-            follower.setTeleOpMovementVectors(0.5,0.0,0.0)
-            follower.update()
-            follower.setTeleOpMovementVectors(0.0,0.0,0.0)
-            follower.update()
-            follower.setCurrentPoseWithOffset(startingPose)
+//            follower.setTeleOpMovementVectors(0.5,0.0,0.0)
+//            follower.update()
+//            follower.setTeleOpMovementVectors(0.0,0.0,0.0)
+//            follower.update()
+//            follower.setCurrentPoseWithOffset(startingPose)
             follower.setMaxPower(1.0)
         }
         .setExecute {
@@ -108,6 +101,7 @@ object followerSubsystem : SDKSubsystem() {
                 -(gamepad1.right_stick_x + 0.3*(gamepad2.right_trigger - gamepad2.left_trigger)).toDouble()
                 , gamepad1.left_trigger>0.1
             )
+            follower.telemetryDebug(MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry))
             follower.update()
         }
         .setFinish { false }

@@ -92,7 +92,7 @@ public class StraightBackAndForth extends OpMode {
     }
     @Override
     public void start(){
-        extendoCommand.getExtendoOpenCommandAuto().schedule();
+        extendoCommand.getExtendoCloseCommandAuto().schedule();
 
     }
     /**

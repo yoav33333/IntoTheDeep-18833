@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstantsBasket;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstantsBasket;
+import org.firstinspires.ftc.teamcode.subsystems.MegiddoOpModeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
 
@@ -24,9 +25,10 @@ import java.util.function.BooleanSupplier;
 
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier;
+import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
-public class AutoBaseJava extends MegiddoOpMode{
+public class AutoBaseJava extends MegiddoOpModeAuto {
     private static Telemetry telemetryA;
 
     public enum Side{
@@ -43,15 +45,15 @@ public class AutoBaseJava extends MegiddoOpMode{
     @Override
     final public void preInit(){
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        Constants.setConstants(FConstants.class, LConstants.class);
 
         switch(side){
             case basket:
-                Constants.setConstants(FConstants.class, LConstants.class);
                 follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
                 follower.setCurrentPoseWithOffset(startingPoseBasket);
                 break;
             case chamber:
-                Constants.setConstants(FConstants.class, LConstants.class);
+//                Constants.setConstants(FConstants.class, LConstants.class);
                 follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
                 follower.setCurrentPoseWithOffset(startingPoseChamber);
         }
@@ -67,7 +69,6 @@ public class AutoBaseJava extends MegiddoOpMode{
             follower.breakFollowing();
             follower.update();
             linearSlides.setStartingPose(linearSlides.getPose());
-            followerSubsystem.setStartingPose(follower.getPose());
 
         });
 
@@ -94,6 +95,11 @@ public class AutoBaseJava extends MegiddoOpMode{
         return new Lambda("Wait until")
             .setFinish(supplier::getAsBoolean);
     }
+    public static Lambda runNonBlocking(Command... commands){
+        return new Lambda("Wait until")
+            .setInit(()->{for(Command command : commands){command.schedule();}});
+    }
+
     public static Lambda setHeadingPID(double p, double d){
         return new Lambda("setHeadingPID")
             .setInit(()-> {

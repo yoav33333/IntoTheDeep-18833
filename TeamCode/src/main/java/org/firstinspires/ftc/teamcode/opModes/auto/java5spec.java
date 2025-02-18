@@ -28,19 +28,19 @@ public class java5spec extends AutoBaseJava {
     public java5spec() {super(Side.chamber);}
 
     public static Pose startPose = startingPoseChamber;
-    public static Pose chamberPose1 = new Pose(-33.2, 2, Math.toRadians(180));
-    public static Pose chamberPose2 = new Pose(-32.2, 0, Math.toRadians(180));
+    public static Pose chamberPose1 = new Pose(-33.3, -7, Math.toRadians(180));
+    public static Pose chamberPose2 = new Pose(-33.3, -8, Math.toRadians(180));
     public static Pose chamberPose3 = new Pose(-33.2, -2, Math.toRadians(180));
     public static Pose chamberPose4 = new Pose(-33.5, -4, Math.toRadians(180));
     public static Pose chamberPose5 = new Pose(-33.5, -6, Math.toRadians(180));
-    public static Pose dragPose1 = new Pose(-45.5, -27, Math.toRadians(-45));
+    public static Pose dragPose1 = new Pose(-45, -27.3, Math.toRadians(-45));
     public static Pose dragPose2 = new Pose(-46, -38.5, Math.toRadians(-45));
     public static Pose dragPose3 = new Pose(-40, -45, Math.toRadians(-45));
     public static Pose dragPoseTurn1 = new Pose(-47, -31, Math.toRadians(-45-110));
     public static Pose dragPoseTurn2 = new Pose(-45, -39.5, Math.toRadians(-45-110));
     public static Pose dragPoseTurn3 = new Pose(-40, -45, Math.toRadians(-45-110));
     public static Pose pickup1Pose = new Pose(-61, -38, Math.toRadians(0));
-    public static Pose pickup12Pose = new Pose(-61.9, -38, Math.toRadians(0));
+    public static Pose pickup12Pose = new Pose(-61, -38, Math.toRadians(0));
     public static Pose pickup13Pose = new Pose(-62, -38, Math.toRadians(0));
     public static Pose pickup2Pose = new Pose(-61.3, -33, Math.toRadians(180+80));
 
@@ -116,13 +116,13 @@ public class java5spec extends AutoBaseJava {
                     extendoCommand.getExtendoOpenCommandAuto(),
                     clawSubsystem.getTurnLeft()
                 ),
-                instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.65),
+                instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.75),
                 followPath(getToDrag1)
             ),
             new Wait(1),
             clawSubsystem.getCloseClaw(),
             new Wait(0.1),
-            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.5),
+            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.95),
             turn(110).with(new Wait(1)),
             clawSubsystem.getOpenClaw(),
 //            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.65),
@@ -264,6 +264,6 @@ public class java5spec extends AutoBaseJava {
 //                followPath(pickup3),
 //                followPath(scorePickup4),
             finishAuto
-        ).schedule();
+        ).raceWith(new Wait(30)).then(instantCommand(this::stop)).schedule();
     }
 }
