@@ -146,7 +146,7 @@ object deposit : SDKSubsystem() {
         releaseH, Wait(0.5), closeH)
     val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
-    val slamSeq = Sequential(slamArm, Wait(0.3), release,up)
+    val slamSeq = Sequential(slamArm, Wait(0.2), release,up)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {

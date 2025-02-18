@@ -64,9 +64,9 @@ object extendoSubsystem : Subsystem {
         .setExecute {
 //            extendoServoR.position+=(Mercurial.gamepad2.leftStickY.state/100.0)
 //            extendoServoL.position+=(Mercurial.gamepad2.leftStickY.state/100.0)
-            if (extendoServoL.position - Mercurial.gamepad2.leftStickY.state / 100.0 > 0.3) {
-                extendoServoL.position -= Mercurial.gamepad2.leftStickY.state / 100.0
-                extendoServoR.position -= Mercurial.gamepad2.leftStickY.state / 100.0
+            if (extendoServoL.position - Mercurial.gamepad2.leftStickY.state / 50.0 > 0.3) {
+                extendoServoL.position -= Mercurial.gamepad2.leftStickY.state / 50.0
+                extendoServoR.position -= Mercurial.gamepad2.leftStickY.state / 50.0
             }
         }
         .setFinish { false }

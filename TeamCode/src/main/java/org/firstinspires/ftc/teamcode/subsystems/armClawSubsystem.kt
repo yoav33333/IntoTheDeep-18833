@@ -51,7 +51,7 @@ object armClawSubsystem : Subsystem {
     val postTransfareState = 0.6
     val intakeState = 1.0
     override fun preUserInitHook(opMode: Wrapper) {
-         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.029 else 0.041
+         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.029 else 0.046
     }
 
     val angleTransfer = Lambda("angleTransfer")

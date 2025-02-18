@@ -198,7 +198,7 @@ object linearSlides : Subsystem {
 //        ).schedule()
     }
     @JvmStatic
-    val touchBar = goToPreset(1450.0).addInit { isSpe = true
+    val touchBar = goToPreset(1480.0).addInit { isSpe = true
         quickRC.schedule()}
     @JvmStatic
     val goToLowChamber = goToPreset(0.0).addInit { isSpe = true

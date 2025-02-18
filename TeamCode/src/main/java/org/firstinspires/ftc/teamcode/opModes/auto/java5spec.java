@@ -28,22 +28,22 @@ public class java5spec extends AutoBaseJava {
     public java5spec() {super(Side.chamber);}
 
     public static Pose startPose = startingPoseChamber;
-    public static Pose chamberPose1 = new Pose(-33.7, -7, Math.toRadians(180));
-    public static Pose chamberPose2 = new Pose(-33.7, -8, Math.toRadians(180));
-    public static Pose chamberPose3 = new Pose(-33.2, -2, Math.toRadians(180));
+    public static Pose chamberPose1 = new Pose(-34, -5, Math.toRadians(180));
+    public static Pose chamberPose2 = new Pose(-33, -7, Math.toRadians(180));
+    public static Pose chamberPose3 = new Pose(-32.8, -2, Math.toRadians(180));
     public static Pose chamberPose4 = new Pose(-33.5, -4, Math.toRadians(180));
     public static Pose chamberPose5 = new Pose(-33.5, -6, Math.toRadians(180));
-    public static Pose dragPose1 = new Pose(-45, -27.3, Math.toRadians(-45));
-    public static Pose dragPose2 = new Pose(-45, -36.7, Math.toRadians(-45));
+    public static Pose dragPose1 = new Pose(-44.5, -27, Math.toRadians(-45));
+    public static Pose dragPose2 = new Pose(-43.8, -37.2, Math.toRadians(-45));
     public static Pose dragPose3 = new Pose(-40, -45, Math.toRadians(-45));
-    public static Pose dragPoseTurn1 = new Pose(-45, -27.3, Math.toRadians(-45-110));
-    public static Pose dragPoseTurn2 = new Pose(-45, -36.8, Math.toRadians(-45-110));
+    public static Pose dragPoseTurn1 = new Pose(-44.5, -27, Math.toRadians(-45-110));
+    public static Pose dragPoseTurn2 = new Pose(-43.8, -37.2, Math.toRadians(-45-110));
     public static Pose dragPoseTurn3 = new Pose(-40, -45, Math.toRadians(-45-110));
-    public static Pose pickup1Pose = new Pose(-58, -38, Math.toRadians(0));
-    public static Pose pickup12Pose = new Pose(-58.5, -38, Math.toRadians(0));
+    public static Pose pickup1Pose = new Pose(-57, -38, Math.toRadians(0));
+    public static Pose pickup12Pose = new Pose(-58.3, -38, Math.toRadians(0));
     public static Pose pickup13Pose = new Pose(-62, -38, Math.toRadians(0));
-    public static Pose pickup2Pose = new Pose(-61.3, -33, Math.toRadians(180+80));
-    public static Pose parkPose = new Pose(-54, -33, Math.toRadians(180+40));
+    public static Pose pickup2Pose = new Pose(-61.3, -25, Math.toRadians(180+80));
+    public static Pose parkPose = new Pose(-46, -20, Math.toRadians(180+50));
 
     static PathChain scorePreload;
     static PathChain getToDrag1;
@@ -118,21 +118,21 @@ public class java5spec extends AutoBaseJava {
                     extendoCommand.getExtendoOpenCommandAuto(),
                     clawSubsystem.getTurnLeft()
                 ),
-                instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.75),
+                instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.8),
                 followPath(getToDrag1)
             ),
-            new Wait(0.3),
+            new Wait(0.25),
             clawSubsystem.getCloseClaw(),
             new Wait(0.1),
-            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.95),
+            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.9),
             turn(110).with(new Wait(1)),
             clawSubsystem.getOpenClaw(),
             instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.75),
             followPath(getToDrag2),
-            new Wait(0.3),
+            new Wait(0.25),
             clawSubsystem.getCloseClaw(),
             new Wait(0.1),
-            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.95),
+            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.9),
             turn(110).with(new Wait(1)),
             clawSubsystem.getOpenClaw(),
             extendoCommand.getExtendoCloseCommandSimple(),
@@ -149,7 +149,7 @@ public class java5spec extends AutoBaseJava {
                     deposit.getRelease(),
                     waitUntil(()-> !follower.isBusy()),
                     getCatchPixel().raceWith(slowX),
-                    new Wait(0.3),
+                    new Wait(0.2),
                     getPostIntakeState()
                 )
             ),
@@ -168,7 +168,7 @@ public class java5spec extends AutoBaseJava {
                     deposit.getRelease(),
                     waitUntil(()-> !follower.isBusy()),
                     getCatchPixel().raceWith(slowX),
-                    new Wait(0.3),
+                    new Wait(0.2),
                     getPostIntakeState()
                 )
             ),
@@ -188,7 +188,7 @@ public class java5spec extends AutoBaseJava {
                     deposit.getRelease(),
                     waitUntil(()-> !follower.isBusy()),
                     getCatchPixel().raceWith(slowX),
-                    new Wait(0.3),
+                    new Wait(0.2),
                     getPostIntakeState()
                 )
             ),
@@ -200,7 +200,7 @@ public class java5spec extends AutoBaseJava {
 //                            new Wait(0.2),
 //                        linearSlides.getGoToLowChamberNoRC()
 //                    ),
-                    getExtendoOpenCommand(),
+                    new Wait(0.4).then(getExtendoOpenCommand()),
                     followPath(park)
 
                 ),
@@ -290,5 +290,10 @@ public class java5spec extends AutoBaseJava {
 //                followPath(scorePickup4),
             finishAuto
         ).schedule();
+
+    }
+    @Override
+    public void myStop(){
+        linearSlides.setStartingPose(linearSlides.getPose());
     }
 }
