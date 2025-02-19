@@ -45,7 +45,7 @@ class BadTeleop : MegiddoOpMode() {
     override fun myInit() {
         //operator controls
         Mercurial.gamepad2.options.onTrue(deposit.armIn)
-        Mercurial.gamepad2.y.onTrue(clawSubsystem.changeClawPos)
+        Mercurial.gamepad2.y.whileTrue(clawSubsystem.changeClawPos)
         Mercurial.gamepad2.b.onTrue(deposit.changeClawPos)
         Mercurial.gamepad2.leftStickButton.onTrue(clawSubsystem.resetAngleClaw)
         Mercurial.gamepad2.a.onTrue(intakeSeq)
@@ -54,6 +54,7 @@ class BadTeleop : MegiddoOpMode() {
         Mercurial.gamepad2.x.onTrue(extendoMacro)
         Mercurial.gamepad2.dpadUp.onTrue(goToHighBasket)
         Mercurial.gamepad2.dpadDown.onTrue(goToHighChamber)
+        Mercurial.gamepad2.leftStickButton.onTrue(linearSlides.goToPreset(0.0).with(deposit.halfArmIn))
 //        Mercurial.gamepad2.dpadLeft .onTrue(goToLowBasket)
 //        Mercurial.gamepad2.dpadDown.onTrue(goToLowChamber)
         Mercurial.gamepad2.share.onTrue(quickRCSimple)
@@ -72,6 +73,9 @@ class BadTeleop : MegiddoOpMode() {
             .onTrue(followerSubsystem.secondGear)
             .onFalse(followerSubsystem.firstGear)
         Mercurial.gamepad1.rightBumper.onTrue(followerSubsystem.secondGear)
+            .onFalse(followerSubsystem.firstGear)
+        BoundBooleanSupplier(EnhancedBooleanSupplier{Mercurial.gamepad1.leftTrigger.state>0.2})
+            .onTrue(followerSubsystem.secondGear)
             .onFalse(followerSubsystem.firstGear)
         Mercurial.gamepad1.rightStickButton.onTrue(deposit.changeClawPos)
 

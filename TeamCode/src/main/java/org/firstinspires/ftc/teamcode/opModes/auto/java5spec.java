@@ -33,17 +33,17 @@ public class java5spec extends AutoBaseJava {
     public static Pose chamberPose3 = new Pose(-32.8, -2, Math.toRadians(180));
     public static Pose chamberPose4 = new Pose(-33.5, -4, Math.toRadians(180));
     public static Pose chamberPose5 = new Pose(-33.5, -6, Math.toRadians(180));
-    public static Pose dragPose1 = new Pose(-44.5, -27, Math.toRadians(-45));
-    public static Pose dragPose2 = new Pose(-43.8, -37.2, Math.toRadians(-45));
+    public static Pose dragPose1 = new Pose(-45.2, -27, Math.toRadians(-45));
+    public static Pose dragPose2 = new Pose(-44.3, -37.2, Math.toRadians(-45));
     public static Pose dragPose3 = new Pose(-40, -45, Math.toRadians(-45));
-    public static Pose dragPoseTurn1 = new Pose(-44.5, -27, Math.toRadians(-45-110));
-    public static Pose dragPoseTurn2 = new Pose(-43.8, -37.2, Math.toRadians(-45-110));
+    public static Pose dragPoseTurn1 = new Pose(-45, -27, Math.toRadians(-45-110));
+    public static Pose dragPoseTurn2 = new Pose(-44.5, -36.5, Math.toRadians(-45-110));
     public static Pose dragPoseTurn3 = new Pose(-40, -45, Math.toRadians(-45-110));
     public static Pose pickup1Pose = new Pose(-57, -38, Math.toRadians(0));
     public static Pose pickup12Pose = new Pose(-58.3, -38, Math.toRadians(0));
     public static Pose pickup13Pose = new Pose(-62, -38, Math.toRadians(0));
     public static Pose pickup2Pose = new Pose(-61.3, -25, Math.toRadians(180+80));
-    public static Pose parkPose = new Pose(-46, -20, Math.toRadians(180+50));
+    public static Pose parkPose = new Pose(-47, -22, Math.toRadians(180+40));
 
     static PathChain scorePreload;
     static PathChain getToDrag1;
@@ -175,7 +175,6 @@ public class java5spec extends AutoBaseJava {
             linearSlides.getGoToHighChamber(),
             followPath(specialHPIntake1score),
             deposit.getSlamSeq(),
-                deposit.getSlamSeq(),
                 new Parallel(
                 new Sequential(
                     new Wait(0.2),

@@ -38,10 +38,10 @@ public class java4sample extends AutoBaseJava {
     public static Pose basketPose2 = new Pose(-56.5, 56, Math.toRadians(-45));
     public static Pose basketPose3 = new Pose(-56.5, 57, Math.toRadians(-45));
     public static Pose basketPose4 = new Pose(-55, 58, Math.toRadians(-45));
-    public static Pose pickup1Pose = new Pose(-53.5, 48.1, 0);
+    public static Pose pickup1Pose = new Pose(-53.5, 48.4, 0);
     public static Pose pickup2Pose = new Pose(-54.5, 56.7, Math.toRadians(0));
-    public static Pose pickup3Pose = new Pose(-53, 60, Math.toRadians(21));
-    public static Pose parkPose = new Pose(-7, 19, Math.toRadians(90));
+    public static Pose pickup3Pose = new Pose(-54.5, 60, Math.toRadians(21));
+    public static Pose parkPose = new Pose(-8, 19, Math.toRadians(90));
     public static Pose parkControl = new Pose(-9, 49, Math.toRadians(0));
 
     static PathChain scorePreload;

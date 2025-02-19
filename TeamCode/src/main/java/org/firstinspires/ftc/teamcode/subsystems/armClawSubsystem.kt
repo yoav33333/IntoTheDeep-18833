@@ -45,13 +45,13 @@ object armClawSubsystem : Subsystem {
         s
     }
     var armOut = 0.029
-    val armIn = 0.95
+    val armIn = 0.975
     val armInFull = 1.0
     val transfareState = 0.06
     val postTransfareState = 0.6
     val intakeState = 1.0
     override fun preUserInitHook(opMode: Wrapper) {
-         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.029 else 0.046
+         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.035 else 0.046
     }
 
     val angleTransfer = Lambda("angleTransfer")
@@ -88,7 +88,7 @@ object armClawSubsystem : Subsystem {
     val closeClawArm = Sequential(
         angleTransfer,
         Wait(0.2),
-        moveArmInFull
+        moveArmIn
     )
 
 

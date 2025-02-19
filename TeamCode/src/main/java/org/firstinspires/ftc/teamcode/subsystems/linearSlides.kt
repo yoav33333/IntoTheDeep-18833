@@ -17,7 +17,9 @@ import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.subsystems.Subsystem
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.controller.PDController
+import org.firstinspires.ftc.teamcode.subsystems.BulkReads.modules
 import org.firstinspires.ftc.teamcode.subsystems.deposit.armOut
 import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRC
@@ -168,6 +170,29 @@ object linearSlides : Subsystem {
                 target = 0.0
                 isSpe = false
             }
+//    val justCloseSlides =
+//        goToPreset(0.0).setFinish { abs(getPose()) < 40 }.setEnd { runToPosition.cancel() }
+//            .addInit {
+//                runToPosition.schedule()
+//                target = 0.0
+//                isSpe = false
+//            }
+    var lastPose = 0
+    fun getVel():Int{
+        var temp = lastPose
+        lastPose = getPose()
+        return temp- getPose()
+    }
+    val closeSlidesDumb = Lambda("closeSlidesDumb")
+        .setInit{
+            runToPosition.cancel()
+
+            lastPose = 0
+        }
+        .setExecute{setPower(-1.0)}
+        .setFinish{ !magneticLimit.state}
+        .setEnd{ setPower(0.0)}
+
     val closeSlidesAuto =
         goToPreset(0.0).setFinish { abs(getPose()) < 60 }
             .addInit {

@@ -56,7 +56,7 @@ object deposit : SDKSubsystem() {
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
     val ArmInPose = 0.04
-    val ArmOutPose = 0.7
+    val ArmOutPose = 0.71
     val ArmOutPoseParallel = 0.8
     val ArmOutPose2 = 0.9
     @JvmStatic
@@ -142,7 +142,7 @@ object deposit : SDKSubsystem() {
         .setInit { depoClawServo.position = 0.42}
     val closeH = Lambda("close")
         .setInit{closeClaw()}
-    val quickRC = Sequential(utilCommands.waitUntil{ linearSlides.getPose()>500},
+    val quickRC = Sequential(utilCommands.waitUntil{ linearSlides.getPose()>1000},
         releaseH, Wait(0.5), closeH)
     val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
@@ -211,7 +211,7 @@ object deposit : SDKSubsystem() {
             checkIfSampleInPlace()
         }
     val halfArmIn = Lambda("HAI")
-        .setInit{ depoArmServo.position = 0.55}
+        .setInit{ depoArmServo.position = 0.5}
     val transferSeq = Sequential(
         transferCommand,
         Wait(0.1),

@@ -92,13 +92,14 @@ object clawSubsystem : Subsystem {
         .setEnd{closeClaw}
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit {
+        .setEnd {
             if (clawServo.position == closeingPose) {
                 openClaw()
             } else {
                 closeClaw()
             }
         }
+        .setFinish{ colorDistSensor.getDistance(DistanceUnit.MM)<38}
 //    var check = true
 //    val runCs = Lambda("rcs")
 //        .setRunStates(Wrapper.OpModeState.ACTIVE)

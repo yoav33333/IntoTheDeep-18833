@@ -10,6 +10,7 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
@@ -85,12 +86,18 @@ object antonySubsystem : SDKSubsystem() {
     val minVoltage = 10.0
 
 
-    override fun postUserInitHook(opMode: Wrapper) {
+    override fun postUserStartHook(opMode: Wrapper) {
         antony.setPattern(default)
-        BoundBooleanSupplier(EnhancedBooleanSupplier {
-            FeatureRegistrar.activeOpMode.runtime > 80 || FeatureRegistrar.activeOpMode.runtime > 110
-        })
-            .onTrue(endGameCommand.raceWith(Wait(10.0)))
+//        BoundBooleanSupplier(EnhancedBooleanSupplier {
+//            FeatureRegistrar.activeOpMode.runtime > 80 || FeatureRegistrar.activeOpMode.runtime > 110
+//        })
+//            .onTrue(endGameCommand.raceWith(Wait(10.0)))
+        Sequential(
+            Wait(80.0),
+            endGameCommand.raceWith(Wait(10.0)),
+            Wait(20.0),
+            endGameCommand.raceWith(Wait(10.0))
+        )
 
         BoundBooleanSupplier(EnhancedBooleanSupplier
         { if (modules.isEmpty()) false else modules[0].getInputVoltage(VoltageUnit.VOLTS) < 9.0 })

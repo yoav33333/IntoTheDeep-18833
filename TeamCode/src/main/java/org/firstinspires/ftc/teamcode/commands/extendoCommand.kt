@@ -55,7 +55,7 @@ object extendoCommand : Subsystem {
                 Wait(0.1),
                 Parallel(
                     linearSlides.closeSlides,
-                ).raceWith(Wait(3.0)),
+                ),
                 TransferState,
 //            Wait(0.3),
 //        clawSubsystem.runCs,
@@ -73,9 +73,9 @@ object extendoCommand : Subsystem {
             ),
             Wait(0.1),
             Parallel(
-                linearSlides.closeSlides,
+                linearSlides.closeSlidesAuto,
                 extendoSubsystem.openExtendo,
-            ).raceWith(Wait(3.0)),
+            ).raceWith(Wait(1.5)),
             TransferState,
 
         )
@@ -97,7 +97,7 @@ object extendoCommand : Subsystem {
                 TransferState,
                 Sequential(
                     Wait(0.3),
-                    armClawSubsystem.moveArmIn,
+//                    armClawSubsystem.moveArmIn,
                     clawSubsystem.closeClaw2,
                     transferSeq
                 )
@@ -113,7 +113,7 @@ object extendoCommand : Subsystem {
             ),
             Sequential(
 //                utilCommands.waitUntil{abs(Mercurial.gamepad2.rightStickY.state) >0.2 || isSpe},
-                utilCommands.waitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-300<getPose()) )},
+                utilCommands.waitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-600<getPose()) )},
                 armOut
             )
         )
