@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.rev.RevColorSensorV3
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
 import org.firstinspires.ftc.teamcode.util.utilCommands
 import java.lang.annotation.Inherited
-
+@Config
 object deposit : SDKSubsystem() {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
@@ -55,7 +56,8 @@ object deposit : SDKSubsystem() {
     var isSpe = false
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
-    val ArmInPose = 0.04
+    @JvmField
+    var ArmInPose = 0.23
     val ArmOutPose = 0.71
     val ArmOutPoseParallel = 0.8
     val ArmOutPose2 = 0.9
@@ -214,16 +216,16 @@ object deposit : SDKSubsystem() {
         .setInit{ depoArmServo.position = 0.5}
     val transferSeq = Sequential(
         transferCommand,
-        Wait(0.1),
-        clawSubsystem.openClaw,
+//        Wait(0.1),
+        utilCommands.runNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
         Wait(0.1),
         halfArmIn
     )
     val transferSeqAuto = Sequential(
         transferCommand.raceWith(Wait(1.1)),
         closeH,
-        Wait(0.1),
-        clawSubsystem.openClaw,
+//        Wait(0.1),
+        utilCommands.runNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
         Wait(0.1),
         halfArmIn
     )

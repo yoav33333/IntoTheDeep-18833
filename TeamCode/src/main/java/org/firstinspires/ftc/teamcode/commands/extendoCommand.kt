@@ -11,7 +11,7 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.anglePostTransfer
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.angleTransfer
-import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
+//import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.deposit.TransferState
 import org.firstinspires.ftc.teamcode.subsystems.deposit.armOut
@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeq
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeqAuto
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.intakeSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.nonBlockRTP
@@ -46,10 +47,10 @@ object extendoCommand : Subsystem {
 //                linearSlides.closeSlides,
                 halfArmIn,
                 deposit.release,
-                clawSubsystem.resetAngleClaw,
+//                clawSubsystem.resetAngleClaw,
                 armClawSubsystem.openClawArm,
                 extendoSubsystem.openExtendo,
-                clawSubsystem.openClaw,
+                intakeSubsystem.openIntake,
 //                TransferState,
                 ),
                 Wait(0.1),
@@ -66,9 +67,9 @@ object extendoCommand : Subsystem {
     val extendoOpenCommandAuto = Parallel(
         Sequential(
             Parallel(
-                clawSubsystem.resetAngleClaw,
+//                clawSubsystem.resetAngleClaw,
                 armClawSubsystem.openClawArm,
-                clawSubsystem.openClaw,
+                intakeSubsystem.openIntake,
                 halfArmIn
             ),
             Wait(0.1),
@@ -82,7 +83,7 @@ object extendoCommand : Subsystem {
     )
     @JvmStatic
     val extendoReset = Parallel(
-        clawSubsystem.resetAngleClaw,
+//        clawSubsystem.resetAngleClaw,
         extendoSubsystem.closeExtendo,
         armClawSubsystem.closeClawArm,
     )
@@ -90,7 +91,7 @@ object extendoCommand : Subsystem {
         Sequential(
             Parallel(
 //        clawSubsystem.stopCs,
-                clawSubsystem.resetAngleClaw,
+//                clawSubsystem.resetAngleClaw,
                 armClawSubsystem.closeClawArm,
                 Wait(0.2),
                 extendoSubsystem.closeExtendo,
@@ -98,7 +99,7 @@ object extendoCommand : Subsystem {
                 Sequential(
                     Wait(0.3),
 //                    armClawSubsystem.moveArmIn,
-                    clawSubsystem.closeClaw2,
+//                    clawSubsystem.closeClaw2,
                     transferSeq
                 )
 
@@ -122,14 +123,14 @@ object extendoCommand : Subsystem {
     val extendoCloseCommandAuto =
         Parallel(
 //        clawSubsystem.stopCs,
-            clawSubsystem.resetAngleClaw,
+//            clawSubsystem.resetAngleClaw,
             extendoSubsystem.closeExtendo,
             armClawSubsystem.closeClawArm,
             TransferState,
             Sequential(
                 Wait(0.3),
                 armClawSubsystem.moveArmIn,
-                clawSubsystem.closeClaw2,
+//                clawSubsystem.closeClaw2,
                 transferSeqAuto,
                 nonBlockRTP,
                 utilCommands.runNonBlocking(
@@ -152,7 +153,7 @@ object extendoCommand : Subsystem {
     val extendoCloseCommandSimple =
         Parallel(
 //        clawSubsystem.stopCs,
-            clawSubsystem.resetAngleClaw,
+//            clawSubsystem.resetAngleClaw,
             extendoSubsystem.closeExtendo,
             armClawSubsystem.closeClawArm,
             TransferState,

@@ -62,9 +62,9 @@ object antonySubsystem : SDKSubsystem() {
     var green = 0
     fun csColors() {
 //        data =  clawSubsystem.colorDistSensor.argb()
-        red = clawSubsystem.colorDistSensor.red()
-        blue = clawSubsystem.colorDistSensor.blue()
-        green = clawSubsystem.colorDistSensor.green()
+//        red = clawSubsystem.colorDistSensor.red()
+//        blue = clawSubsystem.colorDistSensor.blue()
+//        green = clawSubsystem.colorDistSensor.green()
 
         telemetry.update()
         if (blue > 300) {

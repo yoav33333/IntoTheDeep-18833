@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.extendoCommand;
 import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
-import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
+//import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
 
@@ -92,10 +92,10 @@ public class java5spec extends AutoBaseJava {
         pickup3 = makeLinePath(chamberPose4, pickup2Pose);
         pickup4 = makeLinePath(chamberPose5, pickup2Pose);
 //        park = makeLinePath(basketScore, parkPose);
-        clawSubsystem.getClawRotationServo().setPosition(0.5);
+//        clawSubsystem.getClawRotationServo().setPosition(0.5);
         deposit.armOutHalf();
         deposit.closeClawRaw();
-        clawSubsystem.openClaw();
+//        clawSubsystem.openClaw();
     }
 
     @Override
@@ -115,26 +115,26 @@ public class java5spec extends AutoBaseJava {
             new Parallel(
                 new Sequential(
                     waitUntil(()->follower.getCurrentTValue()>0.2),
-                    extendoCommand.getExtendoOpenCommandAuto(),
-                    clawSubsystem.getTurnLeft()
+                    extendoCommand.getExtendoOpenCommandAuto()
+//                    clawSubsystem.getTurnLeft()
                 ),
                 instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.8),
                 followPath(getToDrag1)
             ),
             new Wait(0.25),
-            clawSubsystem.getCloseClaw(),
+//            clawSubsystem.getCloseClaw(),
             new Wait(0.1),
             instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.9),
             turn(110).with(new Wait(1)),
-            clawSubsystem.getOpenClaw(),
+//            clawSubsystem.getOpenClaw(),
             instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.75),
             followPath(getToDrag2),
             new Wait(0.25),
-            clawSubsystem.getCloseClaw(),
+//            clawSubsystem.getCloseClaw(),
             new Wait(0.1),
             instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.9),
             turn(110).with(new Wait(1)),
-            clawSubsystem.getOpenClaw(),
+//            clawSubsystem.getOpenClaw(),
             extendoCommand.getExtendoCloseCommandSimple(),
 
             new Parallel(

@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.commands.extendoCommand;
 import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
+//import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
@@ -64,8 +64,8 @@ public class java4sample extends AutoBaseJava {
         scorePickup3 = makeLinePath(pickup3Pose, basketPose4);
         park = makeCurvePath(basketPose4, parkControl, parkPose);
 
-        clawSubsystem.getClawRotationServo().setPosition(0.5);
-        clawSubsystem.getClawServo().setPosition(0.0);
+//        clawSubsystem.getClawRotationServo().setPosition(0.5);
+//        clawSubsystem.getClawServo().setPosition(0.0);
         deposit.armOutHalf();
         deposit.closeClawRaw();
 
@@ -99,7 +99,7 @@ public class java4sample extends AutoBaseJava {
                 followPath(pickup1)
             ),
             new Wait(0.2),
-            clawSubsystem.getCloseClaw(),
+//            clawSubsystem.getCloseClaw(),
             new Wait(0.2),
             linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
@@ -113,7 +113,7 @@ public class java4sample extends AutoBaseJava {
                 followPath(pickup2)
             ),
             new Wait(0.3),
-            clawSubsystem.getCloseClaw(),
+//            clawSubsystem.getCloseClaw(),
             new Wait(0.2),
             linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
@@ -127,7 +127,7 @@ public class java4sample extends AutoBaseJava {
                 followPath(pickup3)
             ),
             new Wait(0.3),
-            clawSubsystem.getCloseClaw(),
+//            clawSubsystem.getCloseClaw(),
             new Wait(0.2),
             linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
