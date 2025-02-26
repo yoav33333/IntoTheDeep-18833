@@ -37,7 +37,7 @@ object armClawSubsystem : Subsystem {
         s
     }
     val angleClawServo: Servo by OpModeLazyCell {
-        val s =
+        val s = 
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 Servo::class.java, "arm s"
 
@@ -46,19 +46,17 @@ object armClawSubsystem : Subsystem {
         s
     }
     @JvmField
-    var armOut = 0.1
+    var armOut = 0.0
     @JvmField
-    var armIn = 0.39
-//    @JvmField
-//    var armInFull = 1.0
+    var armIn = 0.98
+    var armInFull = 1.0
     @JvmField
-    var transfareState = 0.11
+    var transfareState = 0.2
+    val postTransfareState = 0.6
     @JvmField
-    var postTransfareState = 0.3
-    @JvmField
-    var intakeState = 1.0
+    var intakeState = 0.75
     override fun preUserInitHook(opMode: Wrapper) {
-         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.16  else 0.15
+         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.035 else 0.046
     }
 
     val angleTransfer = Lambda("angleTransfer")
@@ -77,37 +75,26 @@ object armClawSubsystem : Subsystem {
         .setInit {
             armClawServo.setPosition(armOut)
         }
-    val moveArmOutFull = Lambda("moveArmOutFull")
-        .setInit {
-            armClawServo.position = armOut-0.02
-        }
     val moveArmIn = Lambda("moveArmIn")
         .setInit {
             armClawServo.setPosition(armIn)
         }
-//    val moveArmInFull = Lambda("moveArmInFull")
-//        .setInit {
-//            armClawServo.setPosition(armInFull)
-//        }
-    @JvmStatic
-    val extendoPushState = Lambda("eps")
-        .setInit{
-            armClawServo.position = 0.0
-            angleClawServo.position = 0.8
+    val moveArmInFull = Lambda("moveArmInFull")
+        .setInit {
+            armClawServo.setPosition(armInFull)
         }
+
+
     val openClawArm = Sequential(
         moveArmOut,
-//        Wait(0.2),
+        Wait(0.2),
         angleIntake
     )
     val closeClawArm = Sequential(
-        moveArmIn,
-        Wait(0.12),
-        angleTransfer
+        angleTransfer,
+        Wait(0.2),
+        moveArmIn
     )
-    @JvmStatic
-    val armUp = Lambda("au")
-        .setInit{ armClawServo.position = 0.15}
 
 
 }
