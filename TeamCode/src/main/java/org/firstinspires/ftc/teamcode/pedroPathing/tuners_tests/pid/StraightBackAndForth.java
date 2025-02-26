@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.subsystems.BulkReads;
 import org.firstinspires.ftc.teamcode.subsystems.antonySubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
+//import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
@@ -45,7 +45,7 @@ import dev.frozenmilk.mercurial.Mercurial;
  */
 @BulkReads.Attach
 @Mercurial.Attach
-@clawSubsystem.Attach
+//@clawSubsystem.Attach
 //@driveSubsystem.Attach
 @extendoCommand.Attach
 @antonySubsystem.Attach
