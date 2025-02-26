@@ -17,9 +17,8 @@ import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta.Flavor
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
-import org.firstinspires.ftc.teamcode.util.WaitUntil
+import org.firstinspires.ftc.teamcode.util.utilCommands
 import java.lang.annotation.Inherited
 @Config
 object deposit : SDKSubsystem() {
@@ -40,7 +39,6 @@ object deposit : SDKSubsystem() {
         )
         s
     }
-
     val depoArmServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
@@ -57,41 +55,12 @@ object deposit : SDKSubsystem() {
     }
     var isSpe = false
     val closeingClawPose = 0.0
-
-
-
-
-
     val openingClawPose = 1.0
     @JvmField
-    var ArmInPose = 0.01
-    @JvmField
-    var ArmHalfInPose = 0.6
-    @JvmField
-    var almostArmInPose = 0.065
-    @JvmField
-    var ArmOutPose = 0.71
-    @JvmField
-    var ArmOutPoseChamber = 0.86
+    var ArmInPose = 0.23
+    val ArmOutPose = 0.71
     val ArmOutPoseParallel = 0.8
-    val ArmOutPose2 = 0.82
-    var isArmOut = true
-    val armMaybeOut = Lambda("amo")
-        .setInit{
-            if (isArmOut){
-
-                armOut.schedule()
-            }
-            else{
-                armOutHalf()
-            }
-        }
-    val switchArmOut = Lambda("sao")
-        .setInit{
-            isArmOut = !isArmOut
-//            if (depoArmServo.position == ArmOutPose){
-            armMaybeOut.schedule()
-        }
+    val ArmOutPose2 = 0.9
     @JvmStatic
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
@@ -111,7 +80,7 @@ object deposit : SDKSubsystem() {
     @JvmStatic
 
     fun armOut() {
-        depoArmServo.setPosition(if (isSpe && FeatureRegistrar.activeOpModeWrapper.opModeType == Flavor.TELEOP) ArmOutPoseChamber else ArmOutPose)
+        depoArmServo.setPosition(ArmOutPose)
     }
     @JvmStatic
 
@@ -121,7 +90,7 @@ object deposit : SDKSubsystem() {
     }
     @JvmStatic
     fun armOutHalf() {
-        depoArmServo.setPosition(ArmHalfInPose)
+        depoArmServo.setPosition(0.5)
     }
 
     fun armOut2() {
@@ -149,7 +118,7 @@ object deposit : SDKSubsystem() {
             intakeSeq.schedule()
         }
 
-        if (colorSensor.getDistance(DistanceUnit.MM) < 33) {
+        if (colorSensor.getDistance(DistanceUnit.MM) < 30) {
             closeClaw()
             return true
         }
@@ -159,17 +128,8 @@ object deposit : SDKSubsystem() {
     val slamArm = Lambda("slamArm")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            depoArmServo.position = 0.2
-//            linearSlides.target += 13000
-        }
-    @JvmStatic
-    val slamArmDown = Lambda("slamArm")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit {
             depoArmServo.position = 0.9
-            linearSlides.target -= 19000
-            Sequential(Wait(0.3), release).schedule()
-
+            linearSlides.target -= 400
         }
     @JvmStatic
     val release = Lambda("release")
@@ -177,21 +137,18 @@ object deposit : SDKSubsystem() {
         .setInit { openClaw() }
     val up = Lambda("up")
         .setInit{
-            linearSlides.target += 19000
+            linearSlides.target += 200
         }
     val releaseH = Lambda("Hrelease")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit { depoClawServo.position = 0.4}
+        .setInit { depoClawServo.position = 0.42}
     val closeH = Lambda("close")
         .setInit{closeClaw()}
-    val quickRC = Sequential(WaitUntil{ linearSlides.getPose()>1000},
+    val quickRC = Sequential(utilCommands.waitUntil{ linearSlides.getPose()>1000},
         releaseH, Wait(0.5), closeH)
+    val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
-    val quickRCSimple = Sequential(releaseH, Wait(0.3), closeH)
-    @JvmStatic
-    val slamSeq = Sequential(slamArm, Wait(0.0), up, Wait(0.15), release)
-//    @JvmStatic
-//    val slamSeqDown = Sequential(slamArmDown, Wait(0.1), release)
+    val slamSeq = Sequential(slamArm, Wait(0.2), release,up)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
@@ -256,21 +213,20 @@ object deposit : SDKSubsystem() {
             checkIfSampleInPlace()
         }
     val halfArmIn = Lambda("HAI")
-        .setInit{ depoArmServo.position = 0.43}
-
-    val almostArmIn = Lambda("AAI")
-        .setInit{ depoArmServo.position = almostArmInPose}
+        .setInit{ depoArmServo.position = 0.5}
     val transferSeq = Sequential(
         transferCommand,
-        Wait(0.05),
-        clawSubsystem.openClaw,
+//        Wait(0.1),
+        utilCommands.runNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
+        Wait(0.1),
         halfArmIn
     )
     val transferSeqAuto = Sequential(
-        transferCommand.raceWith(Wait(1.0)),
+        transferCommand.raceWith(Wait(1.1)),
         closeH,
+//        Wait(0.1),
+        utilCommands.runNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
         Wait(0.1),
-        clawSubsystem.openClaw,
         halfArmIn
     )
     val TransferState = Lambda("TransferState")
