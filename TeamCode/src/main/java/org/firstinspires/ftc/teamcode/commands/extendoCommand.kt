@@ -88,7 +88,10 @@ object extendoCommand : Subsystem {
         armClawSubsystem.closeClawArm,
     )
     val extendoCloseCommand = Parallel(
+
         Sequential(
+            intakeSubsystem.closeIntake,
+            Wait(0.2),
             Parallel(
 //        clawSubsystem.stopCs,
 //                clawSubsystem.resetAngleClaw,

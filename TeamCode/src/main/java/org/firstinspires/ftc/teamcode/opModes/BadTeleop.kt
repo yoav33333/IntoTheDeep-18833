@@ -11,6 +11,7 @@ import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoMacro
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 
@@ -30,6 +31,7 @@ import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToLowChamber
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.magneticLimit
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.resetHeight
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.target
+import org.firstinspires.ftc.teamcode.util.utilCommands
 import kotlin.math.abs
 
 
@@ -62,6 +64,8 @@ class BadTeleop : MegiddoOpMode() {
 
         BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.rightStickY.state) > 0.1 })
             .onTrue(linearSlides.manualControl)
+        BoundBooleanSupplier(EnhancedBooleanSupplier { intakeSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<10 })
+            .onTrue((extendoMacro))
         BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.rightStickY.state) < 0.1 })
             .onTrue(linearSlides.runToPosition)
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
@@ -103,6 +107,7 @@ class BadTeleop : MegiddoOpMode() {
         telemetryDB.addData("delta time", runtime - lastRunTime)
         lastRunTime = runtime
         telemetryDB.addData("clawPosDepo", deposit.depoClawServo.position)
+        telemetryDB.addData("dis", intakeSubsystem.colorDistSensor.getDistance(DistanceUnit.MM))
 //        telemetryDB.addData("clawPos", clawSubsystem.clawServo.position)
         telemetryDB.addData("v4b", armClawSubsystem.armClawServo.position)
         telemetryDB.addData("v4b flip", armClawSubsystem.angleClawServo.position)
