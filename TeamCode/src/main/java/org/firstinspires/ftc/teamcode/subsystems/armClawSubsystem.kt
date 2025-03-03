@@ -51,10 +51,10 @@ object armClawSubsystem : Subsystem {
     var armIn = 0.98
     var armInFull = 1.0
     @JvmField
-    var transfareState = 0.2
+    var transfareState = 0.17
     val postTransfareState = 0.6
     @JvmField
-    var intakeState = 0.75
+    var intakeState = 0.725
     override fun preUserInitHook(opMode: Wrapper) {
          armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.035 else 0.046
     }
