@@ -21,6 +21,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
+import org.firstinspires.ftc.teamcode.util.RunNonBlocking;
+import org.firstinspires.ftc.teamcode.util.WaitUntil;
 
 import java.util.function.BooleanSupplier;
 
@@ -81,19 +83,19 @@ public class java4sample extends AutoBaseJava {
         new Sequential(
             extendoCommand.getExtendoReset(),
             linearSlides.getGoToHighBasket(),
-            runNonBlocking(
+            new RunNonBlocking(
                     new Sequential(
-                        waitUntil(()->(linearSlides.target>500 && linearSlides.target-300<getPose())) ,
+                        new WaitUntil(()->(linearSlides.target>500 && linearSlides.target-300<getPose())) ,
                         deposit.getArmOut()
                     )),
-            waitUntil(() -> getPose()>2000),
+            new WaitUntil(() -> getPose()>2000),
             followPath(scorePreload),
-            waitUntil(() -> getPose()>3400),
+            new WaitUntil(() -> getPose()>3400),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
                 new Sequential(
-                    waitUntil(()->follower.getCurrentTValue()>0.1),
+                    new WaitUntil(()->getFollower().getCurrentTValue()>0.1),
                     extendoCommand.getExtendoOpenCommandAuto()
                 ),
                 followPath(pickup1)
@@ -103,9 +105,9 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.2),
             linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
-            waitUntil(() -> getPose()>2200),
+            new WaitUntil(() -> getPose()>2200),
             followPath(scorePickup1),
-            waitUntil(() -> getPose()>3400),
+            new WaitUntil(() -> getPose()>3400),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
@@ -117,9 +119,9 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.2),
             linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
-            waitUntil(() -> getPose()>2200),
+            new WaitUntil(() -> getPose()>2200),
             followPath(scorePickup2),
-            waitUntil(() -> getPose()>3400),
+            new WaitUntil(() -> getPose()>3400),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
@@ -131,15 +133,15 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.2),
             linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
-            waitUntil(() -> getPose()>2200),
+            new WaitUntil(() -> getPose()>2200),
             followPath(scorePickup3),
-            waitUntil(() -> getPose()>3400),
+            new WaitUntil(() -> getPose()>3400),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
                 followPath(park),
                 new Sequential(
-                    waitUntil(()->follower.getCurrentTValue()>0.3),
+                    new WaitUntil(()->getFollower().getCurrentTValue()>0.3),
                     linearSlides.getTouchBar(),
                     getArmIn()
                 )
@@ -150,7 +152,6 @@ public class java4sample extends AutoBaseJava {
     }
     @Override
     public void myStop() {
-        follower.breakFollowing();
         runFollower.cancel();
         linearSlides.getRunToPosition().cancel();
         linearSlides.setStartingPose(getPose());

@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstantsBasket;
 import org.firstinspires.ftc.teamcode.subsystems.MegiddoOpModeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
+import org.firstinspires.ftc.teamcode.util.FollowerInstance;
+
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -30,41 +32,42 @@ import dev.frozenmilk.mercurial.commands.Lambda;
 
 public class AutoBaseJava extends MegiddoOpMode {
     private static Telemetry telemetryA;
+    private Follower follower;
 
     public enum Side{
         basket,
         chamber
-    }
+        }
     public static Pose startingPoseChamber = new Pose(-62, -8.5, Math.toRadians(0));
     public static Pose startingPoseBasket = new Pose(-62, 8.5+24, 0);
     Side side;
     public AutoBaseJava(Side side){
         this.side = side;
     }
-    public static Follower follower;
     @Override
-    final public void preInit(){
+    final public void preInit() {
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         Constants.setConstants(FConstants.class, LConstants.class);
 
-        switch(side){
+        switch (side) {
             case basket:
-                follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
+                FollowerInstance.reset(FeatureRegistrar.getActiveOpMode().hardwareMap);
+                follower = FollowerInstance.getInstance(FeatureRegistrar.getActiveOpMode().hardwareMap);
                 follower.setCurrentPoseWithOffset(startingPoseBasket);
                 break;
             case chamber:
-//                Constants.setConstants(FConstants.class, LConstants.class);
-                follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
+                FollowerInstance.reset(FeatureRegistrar.getActiveOpMode().hardwareMap);
+                follower = FollowerInstance.getInstance(FeatureRegistrar.getActiveOpMode().hardwareMap);
                 follower.setCurrentPoseWithOffset(startingPoseChamber);
         }
     }
-    public static Lambda runFollower = new Lambda("update Follower")
+    public Lambda runFollower = new Lambda("update Follower")
             .setFinish(()->false)
             .setExecute(()->{
                 follower.update();
                 follower.telemetryDebug(telemetryA);
             });
-    public static Lambda finishAuto = new Lambda("finishAuto")
+    public Lambda finishAuto = new Lambda("finishAuto")
         .setInit(()-> {
             follower.breakFollowing();
             follower.update();
@@ -72,11 +75,15 @@ public class AutoBaseJava extends MegiddoOpMode {
 
         });
 
+    public Follower getFollower() {
+        return follower;
+    }
+
     public static Lambda instantCommand(Runnable runnable){
         return new Lambda("instant command")
                 .setInit(runnable);
     }
-    public static Lambda followPath(PathChain chain){
+    public Lambda followPath(PathChain chain){
         return new Lambda("follow-path-chain")
             .setInit(() -> {
                 follower.followPath(chain, true);
@@ -100,7 +107,7 @@ public class AutoBaseJava extends MegiddoOpMode {
             .setInit(()->{for(Command command : commands){command.schedule();}});
     }
 
-    public static Lambda setHeadingPID(double p, double d){
+    public Lambda setHeadingPID(double p, double d){
         return new Lambda("setHeadingPID")
             .setInit(()-> {
                 FollowerConstants.headingPIDFCoefficients.D = d;
@@ -112,8 +119,8 @@ public class AutoBaseJava extends MegiddoOpMode {
     static double closeExD = 0.18;
     static double closeExP = 1.4;
 
-    public static Lambda setOpenExPid = setHeadingPID(openExP, openExD);
-    public static Lambda setCloseExPid = setHeadingPID(closeExP, closeExD);
+    public Lambda setOpenExPid = setHeadingPID(openExP, openExD);
+    public Lambda setCloseExPid = setHeadingPID(closeExP, closeExD);
     /**
      in radians
      **/
@@ -121,7 +128,7 @@ public class AutoBaseJava extends MegiddoOpMode {
 //        Pose temp = new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(degrees));
 //        follower.holdPoint(temp);
 //    }
-    public static Lambda turnTo(double angle){
+    public Lambda turnTo(double angle){
         return new Lambda("follow-path-chain")
                 .setInit(() -> follower.turnToDegrees(angle))
                 .setExecute(() ->{
@@ -134,7 +141,7 @@ public class AutoBaseJava extends MegiddoOpMode {
                     if (interrupted) follower.breakFollowing();
                 });
     }
-    public static Lambda turn(double degrees){
+    public Lambda turn(double degrees){
         return new Lambda("follow-path-chain")
                 .setInit(() -> follower.turnDegrees(degrees, false))
                 .setExecute(() ->{
@@ -148,7 +155,7 @@ public class AutoBaseJava extends MegiddoOpMode {
                 });
     }
     static PathChain slowPath;
-    public static Lambda slowX = new Lambda("slowF")
+    public Lambda slowX = new Lambda("slowF")
             .setEnd((interrupted)-> {
                 follower.breakFollowing();
                 follower.setMaxPower(1.0);
@@ -166,13 +173,13 @@ public class AutoBaseJava extends MegiddoOpMode {
             })
             .setFinish(()-> ((!follower.isBusy() ) || follower.isRobotStuck()));
 
-    public static PathChain makeLinePath(Pose startingPose, Pose endingPose){
+    public PathChain makeLinePath(Pose startingPose, Pose endingPose){
         return follower.pathBuilder().addPath(
             new BezierLine(new Point(startingPose), new Point(endingPose)))
                 .setLinearHeadingInterpolation(startingPose.getHeading(), endingPose.getHeading())
                 .build();
     }
-    public static PathChain makeCurvePath(Pose... poses) {
+    public PathChain makeCurvePath(Pose... poses) {
         ArrayList<Point> arr = new ArrayList<>();
 //        poses.forEach { arr.add(Point(it)) }
         for(Pose pose: poses){

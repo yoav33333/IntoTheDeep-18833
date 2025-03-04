@@ -24,7 +24,9 @@ import org.firstinspires.ftc.teamcode.subsystems.intakeSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.nonBlockRTP
+import org.firstinspires.ftc.teamcode.util.RunNonBlocking
 import org.firstinspires.ftc.teamcode.util.SuperAdvancing
+import org.firstinspires.ftc.teamcode.util.WaitUntil
 import org.firstinspires.ftc.teamcode.util.utilCommands
 import java.lang.annotation.Inherited
 import kotlin.math.abs
@@ -117,7 +119,7 @@ object extendoCommand : Subsystem {
             ),
             Sequential(
 //                utilCommands.waitUntil{abs(Mercurial.gamepad2.rightStickY.state) >0.2 || isSpe},
-                utilCommands.waitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-600<getPose()) )},
+                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-600<getPose()) )},
                 armOut
             )
         )
@@ -136,16 +138,16 @@ object extendoCommand : Subsystem {
 //                clawSubsystem.closeClaw2,
                 transferSeqAuto,
                 nonBlockRTP,
-                utilCommands.runNonBlocking(
+                RunNonBlocking(
                     Sequential(
                         anglePostTransfer,
                         Wait(0.2),
                         angleTransfer
                     )
                 ),
-                utilCommands.runNonBlocking(
+                RunNonBlocking(
                     Sequential(
-                        utilCommands.waitUntil{(linearSlides.target>500 && linearSlides.target-300<getPose()) },
+                        WaitUntil{(linearSlides.target>500 && linearSlides.target-300<getPose()) },
                         armOut
                     )
                 )

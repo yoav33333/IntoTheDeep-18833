@@ -23,6 +23,7 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants
+import org.firstinspires.ftc.teamcode.util.FollowerInstance
 import java.lang.annotation.Inherited
 
 
@@ -45,9 +46,8 @@ object followerSubsystem : SDKSubsystem() {
     lateinit var follower: Follower
     override fun preUserInitHook(opMode: Wrapper) {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
-        follower = Follower(FeatureRegistrar.activeOpMode.hardwareMap)
-//        (follower.poseUpdater.localizer as ThreeWheelIMULocalizer).resetEncoders()
-
+//        FollowerInstance.reset(FeatureRegistrar.activeOpMode.hardwareMap)
+        follower = FollowerInstance.getInstance(FeatureRegistrar.activeOpMode.hardwareMap)
     }
     val runFollower = Lambda("runFollower")
         .setExecute{ follower.update()}
