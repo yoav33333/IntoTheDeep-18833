@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.util
+
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.commands.Command
 import java.lang.Runnable
-import java.util.Collections.emptySet
+import java.util.function.BooleanSupplier
 
 /**
- * a command that runs a lmabda when scheduled
+ * a command that waits until the supplier returns true
  */
-class InstantCommand(val lambda: Runnable) : Command {
-
+class WaitUntil(val supplier: BooleanSupplier) : Command {
     override fun initialise() {
-        lambda.run()
     }
 
     override fun execute() {
@@ -20,10 +19,10 @@ class InstantCommand(val lambda: Runnable) : Command {
     }
 
     override fun finished(): Boolean {
-        return true
+        return supplier.asBoolean
     }
 
     override val requirements: Set<Any> = emptySet()
     override val runStates: Set<Wrapper.OpModeState> = setOf(Wrapper.OpModeState.INIT, Wrapper.OpModeState.ACTIVE)
-    override fun toString() = "InstantCommand"
+    override fun toString() = "WaitUntil"
 }
