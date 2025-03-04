@@ -18,6 +18,8 @@ import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
+import org.firstinspires.ftc.teamcode.util.RunNonBlocking
+import org.firstinspires.ftc.teamcode.util.WaitUntil
 import org.firstinspires.ftc.teamcode.util.utilCommands
 import java.lang.annotation.Inherited
 @Config
@@ -144,7 +146,8 @@ object deposit : SDKSubsystem() {
         .setInit { depoClawServo.position = 0.42}
     val closeH = Lambda("close")
         .setInit{closeClaw()}
-    val quickRC = Sequential(utilCommands.waitUntil{ linearSlides.getPose()>1000},
+    val quickRC = Sequential(
+        WaitUntil{ linearSlides.getPose()>1000},
         releaseH, Wait(0.5), closeH)
     val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
@@ -217,7 +220,7 @@ object deposit : SDKSubsystem() {
     val transferSeq = Sequential(
         transferCommand,
 //        Wait(0.1),
-        utilCommands.runNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
+        RunNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
         Wait(0.1),
         halfArmIn
     )
@@ -225,7 +228,7 @@ object deposit : SDKSubsystem() {
         transferCommand.raceWith(Wait(1.1)),
         closeH,
 //        Wait(0.1),
-        utilCommands.runNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
+        RunNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
         Wait(0.1),
         halfArmIn
     )

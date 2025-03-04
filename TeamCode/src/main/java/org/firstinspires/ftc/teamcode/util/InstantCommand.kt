@@ -5,7 +5,7 @@ import java.lang.Runnable
 import java.util.Collections.emptySet
 
 /**
- * a command that runs a lambda when scheduled
+ * a command that runs a lmabda when scheduled
  */
 class InstantCommand(val lambda: Runnable) : Command {
 

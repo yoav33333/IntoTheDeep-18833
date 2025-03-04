@@ -7,7 +7,7 @@ import java.lang.Runnable
 /**
  * a command that runs without blocking the command group
  */
-class RunNonBlocking(private val command: Command) : Command {
+class RunNonBlocking(val command: Command) : Command {
 
     override fun initialise() {
         command.schedule()
