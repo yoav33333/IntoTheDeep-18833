@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 
-import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
 import dev.frozenmilk.dairy.core.FeatureRegistrar
@@ -14,7 +13,7 @@ import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import java.lang.annotation.Inherited
 
-@Config
+
 object extendoSubsystem : Subsystem {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
@@ -41,15 +40,9 @@ object extendoSubsystem : Subsystem {
         )
         s
     }
-    val open = 0.33
-    @JvmField
-    var lilOpen = 0.75
-    val close = 0.99
-    var extendoOpen = true
+    val open = 0.3
+    val close = 1.0
 
-    override fun preUserInitHook(opMode: Wrapper) {
-        extendoOpen = true
-    }
     fun openExtendoF() {
         extendoServoR.setPosition(open)
         extendoServoL.setPosition(open)
@@ -59,8 +52,7 @@ object extendoSubsystem : Subsystem {
         extendoServoR.setPosition(close)
         extendoServoL.setPosition(close)
     }
-    val changeOpenExtendo = Lambda("coe")
-        .setInit{ extendoOpen = !extendoOpen}
+
     val moveManualO = Lambda("moveManualO")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setExecute {
@@ -87,16 +79,7 @@ object extendoSubsystem : Subsystem {
 
     val openExtendo = Lambda("openExtendo")
         .setInit {
-//            if (extendoOpen){
             openExtendoF()
-//            }
-        }
-    val openExtendoLil = Lambda("openExtendo")
-        .setInit {
-//            if (extendoOpen){
-            extendoServoR.setPosition(lilOpen)
-            extendoServoL.setPosition(lilOpen)
-//            }
         }
     val closeExtendo = Lambda("closeClawArm")
         .setInit {

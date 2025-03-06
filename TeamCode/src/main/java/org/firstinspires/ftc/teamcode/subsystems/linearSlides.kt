@@ -16,18 +16,11 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
-import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.subsystems.Subsystem
-import org.firstinspires.ftc.teamcode.util.controller.PController
-import org.firstinspires.ftc.teamcode.util.controller.PDController
-import org.firstinspires.ftc.teamcode.subsystems.deposit.ArmOutPoseChamber
-import org.firstinspires.ftc.teamcode.subsystems.deposit.armMaybeOut
-import org.firstinspires.ftc.teamcode.subsystems.deposit.depoArmServo
+import org.firstinspires.ftc.teamcode.controller.PDController
 import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRC
 import org.firstinspires.ftc.teamcode.util.Encoder
-import org.firstinspires.ftc.teamcode.commands.util.InstantCommand
-import org.firstinspires.ftc.teamcode.commands.util.WaitUntil
 import java.lang.annotation.Inherited
 import kotlin.math.abs
 
@@ -100,12 +93,10 @@ object linearSlides : Subsystem {
     var target = 0.0
 
     @JvmField
-    var Kp = 0.000095
-    @JvmField
-    var Kp2 = 0.0001
+    var Kp = 0.0045
 
     @JvmField
-    var Kd = 0.9
+    var Kd = 0.001
 
     @JvmField
     var Kf = 0.02
@@ -115,34 +106,25 @@ object linearSlides : Subsystem {
 
     @JvmField
     var threshold = 30.0
-    @JvmField
-    var g = 0.14
-    var PDController =
-        PDController(Kp, Kd)
-    var PController =
-        PController(Kp2)
+
+    var PDController = PDController(Kp, Kd)
     val closeingPose = 0.0
 
 
     fun runToPose(pose: Double) {
-        PDController =
-            PDController(Kp, Kd)
-        PController =
-            PController(Kp2)
-        setPower(PDController.calculate(getPose().toDouble(), pose)+g)
+        PDController = PDController(Kp, Kd)
+        setPower(PDController.calculate(getPoseRight().toDouble(), pose), PDController.calculate(getPoseRight().toDouble(), pose))
     }
 
     fun closeSlides() {
         runToPose(closeingPose)
     }
 
-    fun setPower(power: Double) {
-//        (powerLeft ?: power).let { leftCenter.setPower(it) }
-//        (powerLeft ?: power).let { leftSide.setPower(it) }
-        leftCenter.setPower(power)
-        leftSide.setPower(power)
-        rightSide.setPower(-power)
-        rightCenter.setPower(-power)
+    fun setPower(powerRight: Double, powerLeft: Double? = Double.NaN) {
+        (powerLeft ?: powerRight).let { leftCenter.setPower(it) }
+        (powerLeft ?: powerRight).let { leftSide.setPower(it) }
+        rightSide.setPower(powerRight)
+        rightSide.setPower(powerRight)
     }
 
     fun setZeroPowerBehavior(zeroPowerBehavior: DcMotor.ZeroPowerBehavior) {
@@ -160,13 +142,12 @@ object linearSlides : Subsystem {
     }
 
     var offset = 0
-//    fun getPoseRight() = rightEncoder.getPose()+ offset
-//    fun getPoseLeft() = -leftEncoder.getPose()+ offset
+    fun getPoseRight() = rightEncoder.getPose()
+    fun getPoseLeft() = leftEncoder.getPose()
     @JvmStatic
     fun getPose(): Int {
-        return rightEncoder.getPose()+ offset
+        return (getPoseLeft()+ getPoseRight()/2)+ offset
     }
-//    val pose = EnhancedDoubleSupplier{ getPose().toDouble()}
     @JvmStatic
     fun setPose(pose: Int) {
         offset -= getPose() - pose
@@ -180,8 +161,7 @@ object linearSlides : Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { runToPosition.cancel() }
         .setExecute {runToPosition.cancel()
-//            if(magneticLimit.state){
-            setPower(Mercurial.gamepad2.rightStickY.state)}
+            setPower(Mercurial.gamepad2.rightStickY.state) }
         .setFinish { abs(Mercurial.gamepad2.rightStickY.state) < 0.1 }
         .setEnd { target = getPose().toDouble() }
 
@@ -201,27 +181,9 @@ object linearSlides : Subsystem {
     val stopRunToPosition = Lambda("stopRunToPosition")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { runToPosition.cancel() }
-    var isHighBasket = true
-    val switchBasket = Lambda("SWB")
-        .setInit{ isHighBasket =!isHighBasket
-            deposit.halfArmIn.schedule()
-        goToBasket.schedule()
-            Sequential(
-                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(target >500 && target - 1000 <getPose()) || (isSpe && getPose()>1000) )},
-                armMaybeOut
-            ).schedule()
-        }
-    val goToBasket = Lambda("GTB")
-        .setInit{
-            if (isHighBasket){
-                goToHighBasket.schedule()
-            }
-            else{
-                goToLowBasket.schedule()
-            }
-        }
+
     val closeSlides =
-        goToPreset(0.0).setFinish { abs(getPose()) < 500 }.setEnd { runToPosition.cancel() }
+        goToPreset(0.0).setFinish { abs(getPose()) < 40 }.setEnd { runToPosition.cancel() }
             .addInit {
                 runToPosition.schedule()
                 target = 0.0
@@ -243,15 +205,15 @@ object linearSlides : Subsystem {
     val closeSlidesDumb = Lambda("closeSlidesDumb")
         .setInit{
             runToPosition.cancel()
-            linearSlides.target = 0.0
+
             lastPose = 0
         }
         .setExecute{setPower(-1.0)}
         .setFinish{ !magneticLimit.state}
         .setEnd{ setPower(0.0)}
-@JvmStatic
+
     val closeSlidesAuto =
-        goToPreset(0.0).setFinish { abs(getPose()) < 3000 }
+        goToPreset(0.0).setFinish { abs(getPose()) < 60 }
             .addInit {
                 runToPosition.schedule()
                 target = 0.0
@@ -259,29 +221,20 @@ object linearSlides : Subsystem {
             }
             .setEnd { runToPosition.cancel() }
     @JvmStatic
-    val goToHighBasket = goToPreset(80000.0).addInit { isSpe = false
+    val goToHighBasket = goToPreset(3500.0).addInit { isSpe = false
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>3300 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
 //            armOut
 //        ).schedule()
     }
-    val goToLowBasket = goToPreset(40000.0).addInit { isSpe = false
+    val goToLowBasket = goToPreset(1700.0).addInit { isSpe = false
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>1500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
 //            armOut
 //        ).schedule()
     }
     @JvmStatic
-    val goToHighChamber = goToPreset(45000.0).addInit { isSpe = true
-        quickRC.schedule()
-        Sequential(WaitUntil { getPose() > 1000 }, InstantCommand{depoArmServo.setPosition(ArmOutPoseChamber)}).schedule()
-//        Sequential(
-//            utilCommands.waitUntil{ getPose()>500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
-//            armOut
-//        ).schedule()
-    }
-    @JvmStatic
-    val goToHighChamberUp = goToPreset(31500.0).addInit { isSpe = true
+    val goToHighChamber = goToPreset(1160.0).addInit { isSpe = true
         quickRC.schedule()
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
@@ -289,12 +242,15 @@ object linearSlides : Subsystem {
 //        ).schedule()
     }
     @JvmStatic
-    val touchBar = goToPreset(35000.0).addInit { isSpe = true
+    val touchBar = goToPreset(1480.0).addInit { isSpe = true
         quickRC.schedule()}
     @JvmStatic
     val goToLowChamber = goToPreset(0.0).addInit { isSpe = true
         quickRC.schedule()
-
+//        Sequential(
+//            utilCommands.waitUntil{ Mercurial.isScheduled(runToPosition) || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
+//            armOut
+//        ).schedule()
     }
     @JvmStatic
     val goToLowChamberNoRC = goToPreset(0.0).addInit { isSpe = true }
@@ -305,9 +261,7 @@ object linearSlides : Subsystem {
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
             .whileTrue(resetHeight)
-        isHighBasket = true
         setPose(startingPose)
-        runToPosition.schedule()
 
     }
 

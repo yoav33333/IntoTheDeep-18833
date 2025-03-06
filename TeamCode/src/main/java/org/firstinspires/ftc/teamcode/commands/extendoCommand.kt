@@ -11,7 +11,7 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.anglePostTransfer
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem.angleTransfer
-//import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.deposit.TransferState
 import org.firstinspires.ftc.teamcode.subsystems.deposit.armOut
@@ -20,13 +20,10 @@ import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeq
 import org.firstinspires.ftc.teamcode.subsystems.deposit.transferSeqAuto
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
-import org.firstinspires.ftc.teamcode.subsystems.intakeSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.nonBlockRTP
-import org.firstinspires.ftc.teamcode.util.RunNonBlocking
 import org.firstinspires.ftc.teamcode.util.SuperAdvancing
-import org.firstinspires.ftc.teamcode.util.WaitUntil
 import org.firstinspires.ftc.teamcode.util.utilCommands
 import java.lang.annotation.Inherited
 import kotlin.math.abs
@@ -49,10 +46,10 @@ object extendoCommand : Subsystem {
 //                linearSlides.closeSlides,
                 halfArmIn,
                 deposit.release,
-//                clawSubsystem.resetAngleClaw,
+                clawSubsystem.resetAngleClaw,
                 armClawSubsystem.openClawArm,
                 extendoSubsystem.openExtendo,
-                intakeSubsystem.openIntake,
+                clawSubsystem.openClaw,
 //                TransferState,
                 ),
                 Wait(0.1),
@@ -69,9 +66,9 @@ object extendoCommand : Subsystem {
     val extendoOpenCommandAuto = Parallel(
         Sequential(
             Parallel(
-//                clawSubsystem.resetAngleClaw,
+                clawSubsystem.resetAngleClaw,
                 armClawSubsystem.openClawArm,
-                intakeSubsystem.openIntake,
+                clawSubsystem.openClaw,
                 halfArmIn
             ),
             Wait(0.1),
@@ -85,18 +82,15 @@ object extendoCommand : Subsystem {
     )
     @JvmStatic
     val extendoReset = Parallel(
-//        clawSubsystem.resetAngleClaw,
+        clawSubsystem.flippedCenter,
         extendoSubsystem.closeExtendo,
         armClawSubsystem.closeClawArm,
     )
     val extendoCloseCommand = Parallel(
-
         Sequential(
-            intakeSubsystem.closeIntakeFull,
-            Wait(0.05),
             Parallel(
 //        clawSubsystem.stopCs,
-//                clawSubsystem.resetAngleClaw,
+                clawSubsystem.flippedCenter,
                 armClawSubsystem.closeClawArm,
                 Wait(0.2),
                 extendoSubsystem.closeExtendo,
@@ -119,7 +113,7 @@ object extendoCommand : Subsystem {
             ),
             Sequential(
 //                utilCommands.waitUntil{abs(Mercurial.gamepad2.rightStickY.state) >0.2 || isSpe},
-                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-600<getPose()) )},
+                utilCommands.waitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-600<getPose()) )},
                 armOut
             )
         )
@@ -128,7 +122,7 @@ object extendoCommand : Subsystem {
     val extendoCloseCommandAuto =
         Parallel(
 //        clawSubsystem.stopCs,
-//            clawSubsystem.resetAngleClaw,
+            clawSubsystem.flippedCenter,
             extendoSubsystem.closeExtendo,
             armClawSubsystem.closeClawArm,
             TransferState,
@@ -138,16 +132,16 @@ object extendoCommand : Subsystem {
 //                clawSubsystem.closeClaw2,
                 transferSeqAuto,
                 nonBlockRTP,
-                RunNonBlocking(
+                utilCommands.runNonBlocking(
                     Sequential(
                         anglePostTransfer,
                         Wait(0.2),
                         angleTransfer
                     )
                 ),
-                RunNonBlocking(
+                utilCommands.runNonBlocking(
                     Sequential(
-                        WaitUntil{(linearSlides.target>500 && linearSlides.target-300<getPose()) },
+                        utilCommands.waitUntil{(linearSlides.target>500 && linearSlides.target-300<getPose()) },
                         armOut
                     )
                 )
@@ -158,7 +152,7 @@ object extendoCommand : Subsystem {
     val extendoCloseCommandSimple =
         Parallel(
 //        clawSubsystem.stopCs,
-//            clawSubsystem.resetAngleClaw,
+            clawSubsystem.flippedCenter,
             extendoSubsystem.closeExtendo,
             armClawSubsystem.closeClawArm,
             TransferState,

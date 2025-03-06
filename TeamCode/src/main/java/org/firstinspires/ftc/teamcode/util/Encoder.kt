@@ -22,9 +22,9 @@ class Encoder(name: String,
             field = value
         }
     var offset = startingPose
-    fun getPose() = motor.currentPosition+offset
+    fun getPose() = motor.currentPosition-offset
     fun setPose(value: Int) {
-        offset = value - motor.currentPosition
+        offset -= motor.currentPosition - value
     }
 
 }
