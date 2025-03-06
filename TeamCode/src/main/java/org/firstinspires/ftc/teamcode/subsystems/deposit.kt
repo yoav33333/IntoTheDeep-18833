@@ -59,7 +59,7 @@ object deposit : SDKSubsystem() {
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
     @JvmField
-    var ArmInPose = 0.15
+    var ArmInPose = 0.105
     val ArmOutPose = 0.71
     val ArmOutPoseParallel = 0.8
     val ArmOutPose2 = 0.9
