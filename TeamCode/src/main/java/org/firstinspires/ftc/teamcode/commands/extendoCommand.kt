@@ -92,8 +92,8 @@ object extendoCommand : Subsystem {
     val extendoCloseCommand = Parallel(
 
         Sequential(
-            intakeSubsystem.closeIntake,
-            Wait(0.2),
+            intakeSubsystem.closeIntakeFull,
+            Wait(0.05),
             Parallel(
 //        clawSubsystem.stopCs,
 //                clawSubsystem.resetAngleClaw,
