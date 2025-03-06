@@ -12,7 +12,9 @@ import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoCloseCommand
 import org.firstinspires.ftc.teamcode.commands.extendoCommand.extendoMacro
+import org.firstinspires.ftc.teamcode.subsystems.Robot
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
 
 import org.firstinspires.ftc.teamcode.subsystems.deposit
@@ -31,6 +33,7 @@ import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToLowChamber
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.magneticLimit
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.resetHeight
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.target
+import org.firstinspires.ftc.teamcode.util.InstantCommand
 import org.firstinspires.ftc.teamcode.util.utilCommands
 import kotlin.math.abs
 
@@ -38,10 +41,10 @@ import kotlin.math.abs
 @TeleOp
 @Config
 
-class BadTeleop : MegiddoOpMode() {
+open class BadTeleop : MegiddoOpMode() {
     lateinit var telemetryDB: MultipleTelemetry
     var lastRunTime = 0.0
-
+    open fun setAlliance(){}
     //TODO: add auto closing if pixel intaked
     override fun myInit() {
         //operator controls
@@ -64,8 +67,12 @@ class BadTeleop : MegiddoOpMode() {
 
         BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.rightStickY.state) > 0.1 })
             .onTrue(linearSlides.manualControl)
-        BoundBooleanSupplier(EnhancedBooleanSupplier { intakeSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<10 })
-            .onTrue((extendoMacro))
+        BoundBooleanSupplier(EnhancedBooleanSupplier { intakeSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<10&&!
+        Mercurial.isScheduled(
+            extendoCloseCommand) })
+            .onTrue(InstantCommand{extendoMacro.schedule()})
+//            .onTrue(InstantCommand{if (Robot.intakingColors.containsValue(intakeSubsystem.getColor())) extendoMacro.schedule()
+//            else{intakeSubsystem.ejectSeq.schedule()}})
         BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.rightStickY.state) < 0.1 })
             .onTrue(linearSlides.runToPosition)
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
@@ -81,7 +88,8 @@ class BadTeleop : MegiddoOpMode() {
             .onTrue(followerSubsystem.secondGear)
             .onFalse(followerSubsystem.firstGear)
         Mercurial.gamepad1.rightStickButton.onTrue(deposit.changeClawPos)
-
+        Mercurial.gamepad1.x.onTrue(InstantCommand{Robot.updateAllianceColor(intakeSubsystem.Color.BLUE)})
+        Mercurial.gamepad1.b.onTrue(InstantCommand{Robot.updateAllianceColor(intakeSubsystem.Color.RED)})
         Mercurial.gamepad1.dpadUp.onTrue( followerSubsystem.angleReset)
         Mercurial.gamepad1.leftBumper.onTrue( followerSubsystem.angleReset)
         Mercurial.gamepad1.leftStickButton.onTrue(
