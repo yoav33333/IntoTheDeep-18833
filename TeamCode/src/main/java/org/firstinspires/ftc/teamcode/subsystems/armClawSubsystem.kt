@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
 import dev.frozenmilk.dairy.core.FeatureRegistrar
@@ -16,7 +17,7 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
 import java.lang.annotation.Inherited
 
-
+@Config
 object armClawSubsystem : Subsystem {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
@@ -44,12 +45,18 @@ object armClawSubsystem : Subsystem {
         s.direction = Servo.Direction.REVERSE
         s
     }
-    var armOut = 0.029
-    val armIn = 0.975
-    val armInFull = 1.0
-    val transfareState = 0.06
-    val postTransfareState = 0.6
-    val intakeState = 1.0
+    @JvmField
+    var armOut = 0.055
+    @JvmField
+    var armIn = 0.3
+    @JvmField
+    var armInFull = 1.0
+    @JvmField
+    var transfareState = 0.08
+    @JvmField
+    var postTransfareState = 0.3
+    @JvmField
+    var intakeState = 1.0
     override fun preUserInitHook(opMode: Wrapper) {
          armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.035 else 0.046
     }
@@ -82,12 +89,12 @@ object armClawSubsystem : Subsystem {
 
     val openClawArm = Sequential(
         moveArmOut,
-        Wait(0.2),
+//        Wait(0.2),
         angleIntake
     )
     val closeClawArm = Sequential(
         angleTransfer,
-        Wait(0.2),
+        Wait(0.08),
         moveArmIn
     )
 

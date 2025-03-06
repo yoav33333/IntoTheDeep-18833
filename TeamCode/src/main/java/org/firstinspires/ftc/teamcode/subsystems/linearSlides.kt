@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.DigitalChannel
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx
 import dev.frozenmilk.dairy.core.FeatureRegistrar
@@ -15,15 +16,11 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
-import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.subsystems.Subsystem
-import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.controller.PDController
-import org.firstinspires.ftc.teamcode.subsystems.BulkReads.modules
-import org.firstinspires.ftc.teamcode.subsystems.deposit.armOut
 import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRC
-import org.firstinspires.ftc.teamcode.util.utilCommands
+import org.firstinspires.ftc.teamcode.util.Encoder
 import java.lang.annotation.Inherited
 import kotlin.math.abs
 
@@ -38,7 +35,7 @@ object linearSlides : Subsystem {
     @Inherited
     annotation class Attach
 
-    val motorLiftNear: CachingDcMotorEx by OpModeLazyCell {
+    val leftCenter: CachingDcMotorEx by OpModeLazyCell {
         val s = CachingDcMotorEx(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 DcMotorEx::class.java, "l1"
@@ -47,7 +44,7 @@ object linearSlides : Subsystem {
         s.cachingTolerance = 0.01
         s
     }
-    val motorLiftMiddle: CachingDcMotorEx by OpModeLazyCell {
+    val leftSide: CachingDcMotorEx by OpModeLazyCell {
         val s = CachingDcMotorEx(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 DcMotorEx::class.java, "l2"
@@ -56,14 +53,31 @@ object linearSlides : Subsystem {
         s.cachingTolerance = 0.01
         s
     }
-    val motorLiftFar: CachingDcMotorEx by OpModeLazyCell {
+    val rightCenter: CachingDcMotorEx by OpModeLazyCell {
         val s = CachingDcMotorEx(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 DcMotorEx::class.java, "l3"
             )
         )
         s.cachingTolerance = 0.01
+        s.direction = DcMotorSimple.Direction.REVERSE
         s
+    }
+    val rightSide: CachingDcMotorEx by OpModeLazyCell {
+        val s = CachingDcMotorEx(
+            FeatureRegistrar.activeOpMode.hardwareMap.get(
+                DcMotorEx::class.java, "l4"
+            )
+        )
+        s.cachingTolerance = 0.01
+        s.direction = DcMotorSimple.Direction.REVERSE
+        s
+    }
+    val leftEncoder: Encoder by OpModeLazyCell{
+        Encoder("l1")
+    }
+    val rightEncoder: Encoder by OpModeLazyCell{
+        Encoder("l4", DcMotorSimple.Direction.REVERSE)
     }
 
     val magneticLimit: DigitalChannel by OpModeLazyCell {
@@ -99,35 +113,40 @@ object linearSlides : Subsystem {
 
     fun runToPose(pose: Double) {
         PDController = PDController(Kp, Kd)
-        setPower(PDController.calculate(getPose().toDouble(), pose))
+        setPower(PDController.calculate(getPoseRight().toDouble(), pose), PDController.calculate(getPoseRight().toDouble(), pose))
     }
 
     fun closeSlides() {
         runToPose(closeingPose)
     }
 
-    fun setPower(power: Double) {
-        motorLiftNear.setPower(power)
-        motorLiftMiddle.setPower(power)
-        motorLiftFar.setPower(power)
+    fun setPower(powerRight: Double, powerLeft: Double? = Double.NaN) {
+        (powerLeft ?: powerRight).let { leftCenter.setPower(it) }
+        (powerLeft ?: powerRight).let { leftSide.setPower(it) }
+        rightSide.setPower(powerRight)
+        rightSide.setPower(powerRight)
     }
 
     fun setZeroPowerBehavior(zeroPowerBehavior: DcMotor.ZeroPowerBehavior) {
-        motorLiftNear.zeroPowerBehavior = zeroPowerBehavior
-        motorLiftMiddle.zeroPowerBehavior = zeroPowerBehavior
-        motorLiftFar.zeroPowerBehavior = zeroPowerBehavior
+        leftCenter.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        leftSide.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        rightSide.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        rightSide.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
 
     fun setRunMode(mode: RunMode) {
-        motorLiftNear.mode = mode
-        motorLiftMiddle.mode = mode
-        motorLiftFar.mode = mode
+        leftCenter.mode = mode
+        leftSide.mode = mode
+        rightSide.mode = mode
+        rightSide.mode = mode
     }
 
     var offset = 0
+    fun getPoseRight() = rightEncoder.getPose()
+    fun getPoseLeft() = leftEncoder.getPose()
     @JvmStatic
     fun getPose(): Int {
-        return motorLiftNear.currentPosition + offset
+        return (getPoseLeft()+ getPoseRight()/2)+ offset
     }
     @JvmStatic
     fun setPose(pose: Int) {

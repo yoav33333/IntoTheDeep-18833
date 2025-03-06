@@ -82,7 +82,7 @@ object extendoCommand : Subsystem {
     )
     @JvmStatic
     val extendoReset = Parallel(
-        clawSubsystem.resetAngleClaw,
+        clawSubsystem.flippedCenter,
         extendoSubsystem.closeExtendo,
         armClawSubsystem.closeClawArm,
     )
@@ -90,7 +90,7 @@ object extendoCommand : Subsystem {
         Sequential(
             Parallel(
 //        clawSubsystem.stopCs,
-                clawSubsystem.resetAngleClaw,
+                clawSubsystem.flippedCenter,
                 armClawSubsystem.closeClawArm,
                 Wait(0.2),
                 extendoSubsystem.closeExtendo,
@@ -98,7 +98,7 @@ object extendoCommand : Subsystem {
                 Sequential(
                     Wait(0.3),
 //                    armClawSubsystem.moveArmIn,
-                    clawSubsystem.closeClaw2,
+//                    clawSubsystem.closeClaw2,
                     transferSeq
                 )
 
@@ -122,14 +122,14 @@ object extendoCommand : Subsystem {
     val extendoCloseCommandAuto =
         Parallel(
 //        clawSubsystem.stopCs,
-            clawSubsystem.resetAngleClaw,
+            clawSubsystem.flippedCenter,
             extendoSubsystem.closeExtendo,
             armClawSubsystem.closeClawArm,
             TransferState,
             Sequential(
                 Wait(0.3),
                 armClawSubsystem.moveArmIn,
-                clawSubsystem.closeClaw2,
+//                clawSubsystem.closeClaw2,
                 transferSeqAuto,
                 nonBlockRTP,
                 utilCommands.runNonBlocking(
@@ -152,7 +152,7 @@ object extendoCommand : Subsystem {
     val extendoCloseCommandSimple =
         Parallel(
 //        clawSubsystem.stopCs,
-            clawSubsystem.resetAngleClaw,
+            clawSubsystem.flippedCenter,
             extendoSubsystem.closeExtendo,
             armClawSubsystem.closeClawArm,
             TransferState,

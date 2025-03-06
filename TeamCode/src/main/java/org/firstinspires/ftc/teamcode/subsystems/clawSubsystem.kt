@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
+import com.acmerobotics.dashboard.config.Config
 import com.pedropathing.follower.Follower
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.Servo
@@ -16,7 +17,7 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import java.lang.annotation.Inherited
 
-
+@Config
 object clawSubsystem : Subsystem {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
@@ -58,6 +59,14 @@ object clawSubsystem : Subsystem {
     val filter = 1
     var oldRead = 0.0
     var counter = 0
+    @JvmField
+    var maxRot = 1.0
+    @JvmField
+    var minRot = 0.0
+    @JvmField
+    var center = 0.3
+    @JvmField
+    var centerFlip = 0.9
     fun readSensorDis(): Double {
         if (counter % filter == 0)
             oldRead = colorDistSensor.getDistance(DistanceUnit.MM)
@@ -135,7 +144,9 @@ object clawSubsystem : Subsystem {
             clawRotationServo.position = (Math.toDegrees(follower.pose.heading) - angle +90)/ clawRotationRange
         }
     val resetAngleClaw = Lambda("resetAngleClaw")
-        .setInit { clawRotationServo.setPosition(0.5) }
+        .setInit { clawRotationServo.position = (center) }
+    val flippedCenter = Lambda("resetAngleClaw")
+        .setInit { clawRotationServo.position = (centerFlip) }
     @JvmStatic
     val openClaw = Lambda("openClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -152,6 +163,6 @@ object clawSubsystem : Subsystem {
 
     override fun postUserInitHook(opMode: Wrapper) {
         openClaw()
-        clawRotationServo.position = 0.5
+        clawRotationServo.position = center
     }
 }
