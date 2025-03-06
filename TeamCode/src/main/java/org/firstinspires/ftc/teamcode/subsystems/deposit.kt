@@ -18,8 +18,6 @@ import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
-import org.firstinspires.ftc.teamcode.util.RunNonBlocking
-import org.firstinspires.ftc.teamcode.util.WaitUntil
 import org.firstinspires.ftc.teamcode.util.utilCommands
 import java.lang.annotation.Inherited
 @Config
@@ -41,6 +39,7 @@ object deposit : SDKSubsystem() {
         )
         s
     }
+
     val depoArmServo: CachingServo by OpModeLazyCell {
         val s = CachingServo(
             FeatureRegistrar.activeOpMode.hardwareMap.get(
@@ -59,7 +58,8 @@ object deposit : SDKSubsystem() {
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
     @JvmField
-    var ArmInPose = 0.23
+    var ArmInPose = 0.0
+
     val ArmOutPose = 0.71
     val ArmOutPoseParallel = 0.8
     val ArmOutPose2 = 0.9
@@ -146,8 +146,7 @@ object deposit : SDKSubsystem() {
         .setInit { depoClawServo.position = 0.42}
     val closeH = Lambda("close")
         .setInit{closeClaw()}
-    val quickRC = Sequential(
-        WaitUntil{ linearSlides.getPose()>1000},
+    val quickRC = Sequential(utilCommands.waitUntil{ linearSlides.getPose()>1000},
         releaseH, Wait(0.5), closeH)
     val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
@@ -219,16 +218,16 @@ object deposit : SDKSubsystem() {
         .setInit{ depoArmServo.position = 0.5}
     val transferSeq = Sequential(
         transferCommand,
-//        Wait(0.1),
-        RunNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
+        Wait(0.1),
+        clawSubsystem.openClaw,
         Wait(0.1),
         halfArmIn
     )
     val transferSeqAuto = Sequential(
         transferCommand.raceWith(Wait(1.1)),
         closeH,
-//        Wait(0.1),
-        RunNonBlocking(intakeSubsystem.outtake.raceWith(Wait(0.5))),
+        Wait(0.1),
+        clawSubsystem.openClaw,
         Wait(0.1),
         halfArmIn
     )

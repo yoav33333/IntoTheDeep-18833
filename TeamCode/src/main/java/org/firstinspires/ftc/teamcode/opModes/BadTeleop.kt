@@ -25,8 +25,6 @@ import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToHighBasket
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToHighChamber
-import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToLowBasket
-import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToLowChamber
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.magneticLimit
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.resetHeight
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.target
@@ -111,7 +109,7 @@ class BadTeleop : MegiddoOpMode() {
         telemetryDB.addData("offset", linearSlides.offset)
         telemetryDB.addData("sensor", magneticLimit.state)
         telemetryDB.addData("sch", Mercurial.isScheduled(linearSlides.runToPosition))
-        telemetryDB.addData("l1", linearSlides.motorLiftNear.power)
+        telemetryDB.addData("l1", linearSlides.leftCenter.power)
         telemetryDB.addData("l2", linearSlides.motorLiftMiddle.power)
         telemetryDB.addData("l3", linearSlides.motorLiftFar.power)
 //        telemetryDB.addData("rotate", clawSubsystem.clawRotationServo.position)
