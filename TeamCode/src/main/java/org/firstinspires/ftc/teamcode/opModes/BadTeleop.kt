@@ -67,16 +67,15 @@ class BadTeleop : MegiddoOpMode() {
             .whileTrue(resetHeight)
 
         //drive controls
-        BoundBooleanSupplier(EnhancedBooleanSupplier { Mercurial.gamepad1.rightTrigger.state >0.2 })
-            .onTrue(followerSubsystem.secondGear)
-            .onFalse(followerSubsystem.firstGear)
+        BoundBooleanSupplier(EnhancedBooleanSupplier { Mercurial.gamepad1.leftTrigger.state >0.2 })
+            .whileTrue(followerSubsystem.runRobotCentric)
         Mercurial.gamepad1.rightBumper.onTrue(followerSubsystem.secondGear)
             .onFalse(followerSubsystem.firstGear)
-        BoundBooleanSupplier(EnhancedBooleanSupplier{Mercurial.gamepad1.leftTrigger.state>0.2})
+        BoundBooleanSupplier(EnhancedBooleanSupplier{Mercurial.gamepad1.rightTrigger.state>0.2})
             .onTrue(followerSubsystem.secondGear)
             .onFalse(followerSubsystem.firstGear)
         Mercurial.gamepad1.rightStickButton.onTrue(deposit.changeClawPos)
-
+        Mercurial.gamepad1.a.onTrue(followerSubsystem.changeCentric)
         Mercurial.gamepad1.dpadUp.onTrue( followerSubsystem.angleReset)
         Mercurial.gamepad1.leftBumper.onTrue( followerSubsystem.angleReset)
         Mercurial.gamepad1.leftStickButton.onTrue(

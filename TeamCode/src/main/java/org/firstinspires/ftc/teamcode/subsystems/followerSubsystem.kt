@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems
 
 
 import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.pedropathing.follower.Follower
 import com.pedropathing.localization.Pose
@@ -25,7 +26,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants
 import java.lang.annotation.Inherited
 
-
+@Config
 object followerSubsystem : SDKSubsystem() {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
             SingleAnnotation(Mercurial.Attach::class.java)
@@ -49,6 +50,12 @@ object followerSubsystem : SDKSubsystem() {
 //        (follower.poseUpdater.localizer as ThreeWheelIMULocalizer).resetEncoders()
 
     }
+    val changeCentric = Lambda("CC")
+        .setInit{ isCentric = !isCentric}
+    val runRobotCentric = Lambda("RBC")
+        .setInit{ isCentric = true}
+        .setFinish{false}
+        .setEnd{ isCentric = false}
     val runFollower = Lambda("runFollower")
         .setExecute{ follower.update()}
         .setFinish{false}
@@ -85,6 +92,8 @@ object followerSubsystem : SDKSubsystem() {
         .setInit { follower.setMaxPower(0.35) }
     val angleReset = Lambda("angleReset")
         .setInit{ follower.headingOffset = -follower.totalHeading}
+    @JvmField
+    var headingPow = 0.5
     val teleopDrive = Lambda("teleop-drive")
         .setInit {
             follower.startTeleopDrive()
@@ -98,8 +107,8 @@ object followerSubsystem : SDKSubsystem() {
         .setExecute {
             follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y - (gamepad1.left_trigger)).toDouble(),
                 -(gamepad1.left_stick_x).toDouble(),
-                -(gamepad1.right_stick_x + 0.3*(gamepad2.right_trigger - gamepad2.left_trigger))*(if (gamepad1.left_trigger>0.1) 0.22 else 1.0)
-                , gamepad1.left_trigger>0.1
+                -headingPow*(gamepad1.right_stick_x + 0.3*(gamepad2.right_trigger - gamepad2.left_trigger))*(if (gamepad1.right_trigger>0.1) 0.22 else 1.0)
+                , gamepad1.left_trigger>0.1|| isCentric
             )
 //            follower.telemetryDebug(MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry))
             follower.update()
