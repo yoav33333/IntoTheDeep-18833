@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
+import org.firstinspires.ftc.teamcode.util.WaitUntil;
 
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
@@ -107,14 +108,14 @@ public class java5spec extends AutoBaseJava {
             linearSlides.getGoToHighChamber(),
             followPath(scorePreload).with(
                 new Sequential(
-                    waitUntil(()->linearSlides.getPose()>500),
+                    new WaitUntil(()->linearSlides.getPose()>500),
                     deposit.getArmOut()
                 )
             ),
             deposit.getSlamSeq(),
             new Parallel(
                 new Sequential(
-                    waitUntil(()->follower.getCurrentTValue()>0.2),
+                    new WaitUntil(()->follower.getCurrentTValue()>0.2),
                     extendoCommand.getExtendoOpenCommandAuto(),
                     clawSubsystem.getTurnLeft()
                 ),
@@ -147,7 +148,7 @@ public class java5spec extends AutoBaseJava {
                     deposit.getIntakeCommand(),
                     new Wait(0.1),
                     deposit.getRelease(),
-                    waitUntil(()-> !follower.isBusy()),
+                    new WaitUntil(()-> !follower.isBusy()),
                     getCatchPixel().raceWith(slowX),
                     new Wait(0.2),
                     getPostIntakeState()
@@ -157,20 +158,20 @@ public class java5spec extends AutoBaseJava {
             followPath(scorePickup1),
             deposit.getSlamSeq(),
                 new Parallel(
-                new Sequential(
-                    new Wait(0.2),
-                    linearSlides.getGoToLowChamberNoRC()
-                ),
-                followPath(specialHPIntake1),
-                new Sequential(
-                    deposit.getIntakeCommand(),
-                    new Wait(0.1),
-                    deposit.getRelease(),
-                    waitUntil(()-> !follower.isBusy()),
-                    getCatchPixel().raceWith(slowX),
-                    new Wait(0.2),
-                    getPostIntakeState()
-                )
+                    new Sequential(
+                        new Wait(0.2),
+                        linearSlides.getGoToLowChamberNoRC()
+                    ),
+                    followPath(specialHPIntake1),
+                    new Sequential(
+                        deposit.getIntakeCommand(),
+                        new Wait(0.1),
+                        deposit.getRelease(),
+                        new WaitUntil(()-> !follower.isBusy()),
+                        getCatchPixel().raceWith(slowX),
+                        new Wait(0.2),
+                        getPostIntakeState()
+                    )
             ),
             linearSlides.getGoToHighChamber(),
             followPath(specialHPIntake1score),
@@ -185,7 +186,7 @@ public class java5spec extends AutoBaseJava {
                     deposit.getIntakeCommand(),
                     new Wait(0.1),
                     deposit.getRelease(),
-                    waitUntil(()-> !follower.isBusy()),
+                    new WaitUntil(()-> !follower.isBusy()),
                     getCatchPixel().raceWith(slowX),
                     new Wait(0.2),
                     getPostIntakeState()
@@ -250,7 +251,7 @@ public class java5spec extends AutoBaseJava {
 //                linearSlides.getGoToHighChamber(),
 //                getExtendoCloseCommandAuto()
 //            ),
-//            waitUntil(()->linearSlides.getPose()>1130),
+//            new WaitUntil(()->linearSlides.getPose()>1130),
 //            deposit.getSlamSeq(),
 //
 //            new Wait(0.2),
@@ -265,7 +266,7 @@ public class java5spec extends AutoBaseJava {
 //                        linearSlides.getGoToHighChamber(),
 //                        getExtendoCloseCommandAuto()
 //                ),
-//                waitUntil(()->linearSlides.getPose()>1130),
+//                new WaitUntil(()->linearSlides.getPose()>1130),
 //                deposit.getSlamSeq(),
 //                new Wait(0.2),
 ////            followPath(pickup2),
@@ -281,7 +282,7 @@ public class java5spec extends AutoBaseJava {
 //                        linearSlides.getGoToHighChamber(),
 //                        getExtendoCloseCommandAuto()
 //                ),
-//                waitUntil(()->linearSlides.getPose()>1130),
+//                new WaitUntil(()->linearSlides.getPose()>1130),
 //                deposit.getSlamSeq(),
 //                new Wait(0.2),
 //                followPath(pickup4),
