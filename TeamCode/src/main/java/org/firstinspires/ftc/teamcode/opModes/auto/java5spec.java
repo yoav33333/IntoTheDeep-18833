@@ -15,10 +15,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.extendoCommand;
 import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
-//import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
-import org.firstinspires.ftc.teamcode.util.InstantCommand;
 import org.firstinspires.ftc.teamcode.util.WaitUntil;
 
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
@@ -94,10 +93,10 @@ public class java5spec extends AutoBaseJava {
         pickup3 = makeLinePath(chamberPose4, pickup2Pose);
         pickup4 = makeLinePath(chamberPose5, pickup2Pose);
 //        park = makeLinePath(basketScore, parkPose);
-//        clawSubsystem.getClawRotationServo().setPosition(0.5);
+        clawSubsystem.getClawRotationServo().setPosition(0.5);
         deposit.armOutHalf();
         deposit.closeClawRaw();
-//        clawSubsystem.openClaw();
+        clawSubsystem.openClaw();
     }
 
     @Override
@@ -116,27 +115,27 @@ public class java5spec extends AutoBaseJava {
             deposit.getSlamSeq(),
             new Parallel(
                 new Sequential(
-                    new WaitUntil(()->getFollower().getCurrentTValue()>0.2),
-                    extendoCommand.getExtendoOpenCommandAuto()
-//                    clawSubsystem.getTurnLeft()
+                    new WaitUntil(()->follower.getCurrentTValue()>0.2),
+                    extendoCommand.getExtendoOpenCommandAuto(),
+                    clawSubsystem.getTurnLeft()
                 ),
-                new InstantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.8),
+                instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.8),
                 followPath(getToDrag1)
             ),
             new Wait(0.25),
-//            clawSubsystem.getCloseClaw(),
+            clawSubsystem.getCloseClaw(),
             new Wait(0.1),
-            new InstantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.9),
+            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.9),
             turn(110).with(new Wait(1)),
-//            clawSubsystem.getOpenClaw(),
-            new InstantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.75),
+            clawSubsystem.getOpenClaw(),
+            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 0.75),
             followPath(getToDrag2),
             new Wait(0.25),
-//            clawSubsystem.getCloseClaw(),
+            clawSubsystem.getCloseClaw(),
             new Wait(0.1),
-            new InstantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.9),
+            instantCommand(()-> FollowerConstants.headingPIDFCoefficients.P = 1.9),
             turn(110).with(new Wait(1)),
-//            clawSubsystem.getOpenClaw(),
+            clawSubsystem.getOpenClaw(),
             extendoCommand.getExtendoCloseCommandSimple(),
 
             new Parallel(
@@ -149,7 +148,7 @@ public class java5spec extends AutoBaseJava {
                     deposit.getIntakeCommand(),
                     new Wait(0.1),
                     deposit.getRelease(),
-                    new WaitUntil(()-> !getFollower().isBusy()),
+                    new WaitUntil(()-> !follower.isBusy()),
                     getCatchPixel().raceWith(slowX),
                     new Wait(0.2),
                     getPostIntakeState()
@@ -159,20 +158,20 @@ public class java5spec extends AutoBaseJava {
             followPath(scorePickup1),
             deposit.getSlamSeq(),
                 new Parallel(
-                new Sequential(
-                    new Wait(0.2),
-                    linearSlides.getGoToLowChamberNoRC()
-                ),
-                followPath(specialHPIntake1),
-                new Sequential(
-                    deposit.getIntakeCommand(),
-                    new Wait(0.1),
-                    deposit.getRelease(),
-                    new WaitUntil(()-> !getFollower().isBusy()),
-                    getCatchPixel().raceWith(slowX),
-                    new Wait(0.2),
-                    getPostIntakeState()
-                )
+                    new Sequential(
+                        new Wait(0.2),
+                        linearSlides.getGoToLowChamberNoRC()
+                    ),
+                    followPath(specialHPIntake1),
+                    new Sequential(
+                        deposit.getIntakeCommand(),
+                        new Wait(0.1),
+                        deposit.getRelease(),
+                        new WaitUntil(()-> !follower.isBusy()),
+                        getCatchPixel().raceWith(slowX),
+                        new Wait(0.2),
+                        getPostIntakeState()
+                    )
             ),
             linearSlides.getGoToHighChamber(),
             followPath(specialHPIntake1score),
@@ -187,7 +186,7 @@ public class java5spec extends AutoBaseJava {
                     deposit.getIntakeCommand(),
                     new Wait(0.1),
                     deposit.getRelease(),
-                    new WaitUntil(()-> !getFollower().isBusy()),
+                    new WaitUntil(()-> !follower.isBusy()),
                     getCatchPixel().raceWith(slowX),
                     new Wait(0.2),
                     getPostIntakeState()
