@@ -18,7 +18,7 @@ import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
-import org.firstinspires.ftc.teamcode.util.utilCommands
+import org.firstinspires.ftc.teamcode.util.WaitUntil
 import java.lang.annotation.Inherited
 @Config
 object deposit : SDKSubsystem() {
@@ -130,27 +130,27 @@ object deposit : SDKSubsystem() {
     val slamArm = Lambda("slamArm")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            depoArmServo.position = 0.9
-            linearSlides.target -= 400
+            depoArmServo.position = 0.5
+            linearSlides.target += 400
         }
     @JvmStatic
     val release = Lambda("release")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { openClaw() }
-    val up = Lambda("up")
+    val down = Lambda("down")
         .setInit{
-            linearSlides.target += 200
+            linearSlides.target -= 200
         }
     val releaseH = Lambda("Hrelease")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { depoClawServo.position = 0.42}
     val closeH = Lambda("close")
         .setInit{closeClaw()}
-    val quickRC = Sequential(utilCommands.waitUntil{ linearSlides.getPose()>1000},
+    val quickRC = Sequential(WaitUntil{ linearSlides.getPose()>1000},
         releaseH, Wait(0.5), closeH)
     val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
-    val slamSeq = Sequential(slamArm, Wait(0.2), release,up)
+    val slamSeq = Sequential(slamArm, Wait(0.1), release,down)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
