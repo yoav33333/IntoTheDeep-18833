@@ -96,7 +96,7 @@ object extendoCommand : Subsystem {
                 extendoSubsystem.closeExtendo,
                 TransferState,
                 Sequential(
-                    Wait(0.3),
+                    Wait(0.15),
 //                    armClawSubsystem.moveArmIn,
 //                    clawSubsystem.closeClaw2,
                     transferSeq
@@ -127,7 +127,7 @@ object extendoCommand : Subsystem {
             armClawSubsystem.closeClawArm,
             TransferState,
             Sequential(
-                Wait(0.3),
+                Wait(0.15),
                 armClawSubsystem.moveArmIn,
 //                clawSubsystem.closeClaw2,
                 transferSeqAuto,

@@ -40,8 +40,8 @@ object extendoSubsystem : Subsystem {
         )
         s
     }
-    val open = 0.3
-    val close = 1.0
+    val open = 0.33
+    val close = 0.99
 
     fun openExtendoF() {
         extendoServoR.setPosition(open)
