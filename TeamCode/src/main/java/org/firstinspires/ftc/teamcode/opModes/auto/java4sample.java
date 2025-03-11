@@ -40,9 +40,11 @@ public class java4sample extends AutoBaseJava {
     public static Pose basketPose2 = new Pose(-56.5, 56, Math.toRadians(-45));
     public static Pose basketPose3 = new Pose(-56.5, 57, Math.toRadians(-45));
     public static Pose basketPose4 = new Pose(-55, 58, Math.toRadians(-45));
-    public static Pose pickup1Pose = new Pose(-53.5, 48.4, 0);
-    public static Pose pickup2Pose = new Pose(-54.5, 56.7, Math.toRadians(0));
-    public static Pose pickup3Pose = new Pose(-54.5, 60, Math.toRadians(21));
+    public static Pose basketPose5 = new Pose(-55, 58, Math.toRadians(-45));
+    public static Pose pickup1Pose = new Pose(-53.8, 48.8, 0);
+    public static Pose pickup2Pose = new Pose(-54.5, 57.7, Math.toRadians(0));
+    public static Pose pickup3Pose = new Pose(-52.8, 60, Math.toRadians(21));
+    public static Pose pickup4Pose = new Pose(-58.8, 32, Math.toRadians(270));
     public static Pose parkPose = new Pose(-8, 19, Math.toRadians(90));
     public static Pose parkControl = new Pose(-9, 49, Math.toRadians(0));
 
@@ -50,9 +52,11 @@ public class java4sample extends AutoBaseJava {
     static PathChain scorePickup1;
     static PathChain scorePickup2;
     static PathChain scorePickup3;
+    static PathChain scorePickup4;
     static PathChain pickup1;
     static PathChain pickup2;
     static PathChain pickup3;
+    static PathChain pickup4;
     static PathChain park;
     @Override
     public void myInit() {
@@ -64,9 +68,11 @@ public class java4sample extends AutoBaseJava {
         scorePickup2 = makeLinePath(pickup2Pose, basketPose3);
         pickup3 = makeLinePath(basketPose3, pickup3Pose);
         scorePickup3 = makeLinePath(pickup3Pose, basketPose4);
-        park = makeCurvePath(basketPose4, parkControl, parkPose);
+        pickup4 = makeLinePath(basketPose4, pickup4Pose);
+        scorePickup4 = makeLinePath(pickup4Pose, basketPose5);
+        park = makeCurvePath(basketPose5, parkControl, parkPose);
 
-        clawSubsystem.getClawRotationServo().setPosition(0.5);
+//        clawSubsystem.getClawRotationServo().setPosition(0.5);
         clawSubsystem.getClawServo().setPosition(0.0);
         deposit.armOutHalf();
         deposit.closeClawRaw();
@@ -77,20 +83,20 @@ public class java4sample extends AutoBaseJava {
     @Override
     public void myStart() {
 
-        linearSlides.setPose(0);
-        linearSlides.getRunToPosition().cancel();
-        linearSlides.getRunToPosition().schedule();
+//        linearSlides.setPose(0);
+//        linearSlides.getRunToPosition().cancel();
+//        linearSlides.getRunToPosition().schedule();
         new Sequential(
             extendoCommand.getExtendoReset(),
-            linearSlides.getGoToHighBasket(),
+//            linearSlides.getGoToHighBasket(),
             new RunNonBlocking(
                     new Sequential(
-                        new WaitUntil(()->(linearSlides.target>500 && linearSlides.target-300<getPose())) ,
+//                        new WaitUntil(()->(linearSlides.target>500 && linearSlides.target-300<getPose())) ,
                         deposit.getArmOut()
                     )),
-            new WaitUntil(() -> getPose()>2000),
+//            new WaitUntil(() -> getPose()>2000),
             followPath(scorePreload),
-            new WaitUntil(() -> getPose()>3400),
+//            new WaitUntil(() -> getPose()>3400),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
@@ -103,11 +109,11 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.2),
             clawSubsystem.getCloseClaw(),
             new Wait(0.2),
-            linearSlides.getGoToHighBasket(),
+//            linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
-            new WaitUntil(() -> getPose()>2200),
+//            new WaitUntil(() -> getPose()>2200),
             followPath(scorePickup1),
-            new WaitUntil(() -> getPose()>3400),
+//            new WaitUntil(() -> getPose()>3400),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
@@ -117,11 +123,11 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.3),
             clawSubsystem.getCloseClaw(),
             new Wait(0.2),
-            linearSlides.getGoToHighBasket(),
+//            linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
-            new WaitUntil(() -> getPose()>2200),
+//            new WaitUntil(() -> getPose()>2200),
             followPath(scorePickup2),
-            new WaitUntil(() -> getPose()>3400),
+//            new WaitUntil(() -> getPose()>3400),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
@@ -131,18 +137,33 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.3),
             clawSubsystem.getCloseClaw(),
             new Wait(0.2),
-            linearSlides.getGoToHighBasket(),
+//            linearSlides.getGoToHighBasket(),
             extendoCommand.getExtendoCloseCommandAuto(),
-            new WaitUntil(() -> getPose()>2200),
+//            new WaitUntil(() -> getPose()>2200),
             followPath(scorePickup3),
-            new WaitUntil(() -> getPose()>3400),
+//            new WaitUntil(() -> getPose()>3400),
+            deposit.getRelease(),
+            new Wait(0.1),
+            new Wait(0.1),
+            new Parallel(
+                extendoCommand.getExtendoOpenCommandAuto(),
+                followPath(pickup4)
+            ),
+            new Wait(0.3),
+            clawSubsystem.getCloseClaw(),
+            new Wait(0.2),
+//            linearSlides.getGoToHighBasket(),
+            extendoCommand.getExtendoCloseCommandAuto(),
+//            new WaitUntil(() -> getPose()>2200),
+            followPath(scorePickup4),
+//            new WaitUntil(() -> getPose()>3400),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
                 followPath(park),
                 new Sequential(
                     new WaitUntil(()->follower.getCurrentTValue()>0.3),
-                    linearSlides.getTouchBar(),
+//                    linearSlides.getTouchBar(),
                     getArmIn()
                 )
             ),

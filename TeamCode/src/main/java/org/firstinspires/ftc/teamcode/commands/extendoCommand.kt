@@ -70,20 +70,20 @@ object extendoCommand : Subsystem {
                 clawSubsystem.resetAngleClaw,
                 armClawSubsystem.openClawArm,
                 clawSubsystem.openClaw,
-                halfArmIn
+                halfArmIn,
+                RunNonBlocking(linearSlides.closeSlidesAuto)
             ),
-            Wait(0.1),
+            Wait(0.3),
             Parallel(
-                linearSlides.closeSlidesAuto,
                 extendoSubsystem.openExtendo,
-            ).raceWith(Wait(1.5)),
+            ).raceWith(Wait(1.1)),
             TransferState,
 
         )
     )
     @JvmStatic
     val extendoReset = Parallel(
-        clawSubsystem.flippedCenter,
+        clawSubsystem.resetAngleClaw,
         extendoSubsystem.closeExtendo,
         armClawSubsystem.closeClawArm,
     )
@@ -92,15 +92,19 @@ object extendoCommand : Subsystem {
             Parallel(
 //        clawSubsystem.stopCs,
                 clawSubsystem.flippedCenter,
-                armClawSubsystem.closeClawArm,
-                Wait(0.2),
+
+//                Wait(0.2),
                 extendoSubsystem.closeExtendo,
-                TransferState,
+                deposit.almostArmIn,
+
                 Sequential(
-                    Wait(0.15),
+                    armClawSubsystem.closeClawArm,
+                    Wait(0.25),
 //                    armClawSubsystem.moveArmIn,
 //                    clawSubsystem.closeClaw2,
-                    transferSeq
+                    TransferState,
+                    Wait(0.1),
+                    transferSeq,
                 )
 
             ),
@@ -108,13 +112,13 @@ object extendoCommand : Subsystem {
                 linearSlides.nonBlockRTP,
                 Sequential(
                     anglePostTransfer,
-                    Wait(0.2),
+                    Wait(0.16),
                     angleTransfer
                 )
             ),
             Sequential(
 //                utilCommands.waitUntil{abs(Mercurial.gamepad2.rightStickY.state) >0.2 || isSpe},
-                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-600<getPose()) )},
+                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-4000<getPose()) )},
                 armOut
             )
         )
@@ -123,7 +127,7 @@ object extendoCommand : Subsystem {
     val extendoCloseCommandAuto =
         Parallel(
 //        clawSubsystem.stopCs,
-            clawSubsystem.flippedCenter,
+            clawSubsystem.resetAngleClaw,
             extendoSubsystem.closeExtendo,
             armClawSubsystem.closeClawArm,
             TransferState,
@@ -136,13 +140,13 @@ object extendoCommand : Subsystem {
                 RunNonBlocking(
                     Sequential(
                         anglePostTransfer,
-                        Wait(0.2),
-                        angleTransfer
+//                        Wait(0.2),
+//                        angleTransfer
                     )
                 ),
                 RunNonBlocking(
                     Sequential(
-                        WaitUntil{(linearSlides.target>500 && linearSlides.target-300<getPose()) },
+                        WaitUntil{(linearSlides.target>10000 && linearSlides.target-10000<getPose()) },
                         armOut
                     )
                 )

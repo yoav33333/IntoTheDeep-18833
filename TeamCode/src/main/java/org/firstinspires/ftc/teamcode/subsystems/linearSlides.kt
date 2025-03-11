@@ -17,6 +17,7 @@ import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.Subsystem
+import org.firstinspires.ftc.teamcode.controller.PController
 import org.firstinspires.ftc.teamcode.controller.PDController
 import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRC
@@ -93,7 +94,9 @@ object linearSlides : Subsystem {
     var target = 0.0
 
     @JvmField
-    var Kp = 0.0045
+    var Kp = 0.00015
+    @JvmField
+    var Kp2 = 0.0001
 
     @JvmField
     var Kd = 0.001
@@ -108,23 +111,27 @@ object linearSlides : Subsystem {
     var threshold = 30.0
 
     var PDController = PDController(Kp, Kd)
+    var PController = PController(Kp2)
     val closeingPose = 0.0
 
 
     fun runToPose(pose: Double) {
         PDController = PDController(Kp, Kd)
-        setPower(PDController.calculate(getPoseRight().toDouble(), pose), PDController.calculate(getPoseRight().toDouble(), pose))
+        PController = PController(Kp2)
+        setPower(PDController.calculate(getPose().toDouble(), pose))
     }
 
     fun closeSlides() {
         runToPose(closeingPose)
     }
 
-    fun setPower(powerRight: Double, powerLeft: Double? = Double.NaN) {
-        (powerLeft ?: powerRight).let { leftCenter.setPower(it) }
-        (powerLeft ?: powerRight).let { leftSide.setPower(it) }
-        rightSide.setPower(powerRight)
-        rightSide.setPower(powerRight)
+    fun setPower(power: Double) {
+//        (powerLeft ?: power).let { leftCenter.setPower(it) }
+//        (powerLeft ?: power).let { leftSide.setPower(it) }
+        leftCenter.setPower(power)
+        leftSide.setPower(power)
+        rightSide.setPower(-power)
+        rightCenter.setPower(-power)
     }
 
     fun setZeroPowerBehavior(zeroPowerBehavior: DcMotor.ZeroPowerBehavior) {
@@ -142,11 +149,11 @@ object linearSlides : Subsystem {
     }
 
     var offset = 0
-    fun getPoseRight() = rightEncoder.getPose()
-    fun getPoseLeft() = leftEncoder.getPose()
+//    fun getPoseRight() = rightEncoder.getPose()+ offset
+//    fun getPoseLeft() = -leftEncoder.getPose()+ offset
     @JvmStatic
     fun getPose(): Int {
-        return (getPoseLeft()+ getPoseRight()/2)+ offset
+        return rightEncoder.getPose()+ offset
     }
     @JvmStatic
     fun setPose(pose: Int) {
@@ -161,7 +168,7 @@ object linearSlides : Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { runToPosition.cancel() }
         .setExecute {runToPosition.cancel()
-            setPower(Mercurial.gamepad2.rightStickY.state) }
+            setPower(Mercurial.gamepad2.rightStickY.state)}
         .setFinish { abs(Mercurial.gamepad2.rightStickY.state) < 0.1 }
         .setEnd { target = getPose().toDouble() }
 
@@ -183,7 +190,7 @@ object linearSlides : Subsystem {
         .setInit { runToPosition.cancel() }
 
     val closeSlides =
-        goToPreset(0.0).setFinish { abs(getPose()) < 40 }.setEnd { runToPosition.cancel() }
+        goToPreset(0.0).setFinish { abs(getPose()) < 500 }.setEnd { runToPosition.cancel() }
             .addInit {
                 runToPosition.schedule()
                 target = 0.0
@@ -221,7 +228,7 @@ object linearSlides : Subsystem {
             }
             .setEnd { runToPosition.cancel() }
     @JvmStatic
-    val goToHighBasket = goToPreset(3500.0).addInit { isSpe = false
+    val goToHighBasket = goToPreset(80000.0).addInit { isSpe = false
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>3300 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
 //            armOut
@@ -234,7 +241,7 @@ object linearSlides : Subsystem {
 //        ).schedule()
     }
     @JvmStatic
-    val goToHighChamber = goToPreset(1160.0).addInit { isSpe = true
+    val goToHighChamber = goToPreset(30500.0).addInit { isSpe = true
         quickRC.schedule()
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },

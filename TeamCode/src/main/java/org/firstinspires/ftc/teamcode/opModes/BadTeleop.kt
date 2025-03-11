@@ -113,11 +113,16 @@ class BadTeleop : MegiddoOpMode() {
         telemetryDB.addData("leftSide", linearSlides.leftSide.power)
         telemetryDB.addData("rightSide", linearSlides.rightSide.power)
         telemetryDB.addData("rightCenter", linearSlides.rightCenter.power)
+        telemetryDB.addData("leftCenterPose", linearSlides.leftCenter.currentPosition)
+        telemetryDB.addData("leftSidePose", linearSlides.leftSide.currentPosition)
+        telemetryDB.addData("rightSidePose", linearSlides.rightSide.currentPosition)
+        telemetryDB.addData("rightCenterPose", linearSlides.rightCenter.currentPosition)
         telemetryDB.addData("rotate", clawSubsystem.clawRotationServo.position)
         telemetryDB.addData("pose", getPose())
         telemetryDB.addData("target", target)
         telemetryDB.addData("error", target - getPose())
         telemetryDB.addData("deposit claw", deposit.depoClawServo.position)
+//        telemetryDB.addData("diff", linearSlides.getPoseRight()-linearSlides.getPoseLeft())
         telemetryDB.update()
 
 

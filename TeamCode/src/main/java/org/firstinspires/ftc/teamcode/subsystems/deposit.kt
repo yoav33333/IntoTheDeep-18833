@@ -58,8 +58,9 @@ object deposit : SDKSubsystem() {
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
     @JvmField
-    var ArmInPose = 0.06
-
+    var ArmInPose = 0.005
+    @JvmField
+    var almostArmInPose = 0.18
     val ArmOutPose = 0.71
     val ArmOutPoseParallel = 0.8
     val ArmOutPose2 = 0.9
@@ -120,7 +121,7 @@ object deposit : SDKSubsystem() {
             intakeSeq.schedule()
         }
 
-        if (colorSensor.getDistance(DistanceUnit.MM) < 30) {
+        if (colorSensor.getDistance(DistanceUnit.MM) < 38) {
             closeClaw()
             return true
         }
@@ -131,7 +132,7 @@ object deposit : SDKSubsystem() {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
             depoArmServo.position = 0.5
-            linearSlides.target += 400
+            linearSlides.target += 7000
         }
     @JvmStatic
     val release = Lambda("release")
@@ -139,14 +140,14 @@ object deposit : SDKSubsystem() {
         .setInit { openClaw() }
     val down = Lambda("down")
         .setInit{
-            linearSlides.target -= 200
+            linearSlides.target -= 6000
         }
     val releaseH = Lambda("Hrelease")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { depoClawServo.position = 0.42}
     val closeH = Lambda("close")
         .setInit{closeClaw()}
-    val quickRC = Sequential(WaitUntil{ linearSlides.getPose()>1000},
+    val quickRC = Sequential(WaitUntil{ linearSlides.getPose()>10000},
         releaseH, Wait(0.5), closeH)
     val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
@@ -216,11 +217,13 @@ object deposit : SDKSubsystem() {
         }
     val halfArmIn = Lambda("HAI")
         .setInit{ depoArmServo.position = 0.5}
+
+    val almostArmIn = Lambda("AAI")
+        .setInit{ depoArmServo.position = almostArmInPose}
     val transferSeq = Sequential(
         transferCommand,
-        Wait(0.1),
+        Wait(0.05),
         clawSubsystem.openClaw,
-        Wait(0.1),
         halfArmIn
     )
     val transferSeqAuto = Sequential(
