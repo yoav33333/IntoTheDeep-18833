@@ -52,9 +52,10 @@ object clawSubsystem : Subsystem {
             ColorRangeSensor::class.java, "color claw"
         )
     }
-
-    val closeingPose = 1.0
-    val openingPose = 0.0
+    @JvmField
+    var closeingPose = 1.0
+    @JvmField
+    var openingPose = 0.3
 
     val filter = 1
     var oldRead = 0.0
@@ -64,7 +65,7 @@ object clawSubsystem : Subsystem {
     @JvmField
     var minRot = 0.0
     @JvmField
-    var center = 0.3
+    var center = 0.28
     @JvmField
     var centerFlip = 0.9
     fun readSensorDis(): Double {

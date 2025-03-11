@@ -33,6 +33,9 @@ public class basket {
                         .lineToLinearHeading(new Pose2d(-50, 59, Math.toRadians(20)))
 //                        .waitSeconds(1)
                         .lineToLinearHeading(new Pose2d(-56, 56, Math.toRadians(-45)))
+                        .lineToLinearHeading(new Pose2d(-59.4, 24, Math.toRadians(180+90)))
+                        .lineToLinearHeading(new Pose2d(-56, 56, Math.toRadians(-45)))
+
                         .lineToLinearHeading(new Pose2d(-9, 24, Math.toRadians(90)))
                         .build());
 

@@ -21,7 +21,7 @@ public class LConstants {
         ThreeWheelIMUConstants.rightY = -6.75;
 //        21.7, 43.2
 //        ThreeWheelIMUConstants.strafeX = -0.04;
-        ThreeWheelIMUConstants.strafeX = 0;
+        ThreeWheelIMUConstants.strafeX = 1.725;
         ThreeWheelIMUConstants.leftEncoder_HardwareMapName = "dfl";
         ThreeWheelIMUConstants.rightEncoder_HardwareMapName = "drl";
         ThreeWheelIMUConstants.strafeEncoder_HardwareMapName = "drr";
