@@ -20,10 +20,12 @@ import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.deposit.intakeSeq
 import org.firstinspires.ftc.teamcode.subsystems.deposit.postIntakeState
 import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRCSimple
+import org.firstinspires.ftc.teamcode.subsystems.deposit.switchArmOut
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose
+import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToBasket
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToHighBasket
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.goToHighChamber
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.magneticLimit
@@ -50,7 +52,7 @@ class BadTeleop : MegiddoOpMode() {
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
         Mercurial.gamepad2.x.onTrue(extendoMacro)
-        Mercurial.gamepad2.dpadUp.onTrue(goToHighBasket)
+        Mercurial.gamepad2.dpadUp.onTrue(goToBasket)
         Mercurial.gamepad2.dpadDown.onTrue(goToHighChamber)
         Mercurial.gamepad2.leftStickButton.onTrue(linearSlides.goToPreset(0.0).with(deposit.halfArmIn))
 //        Mercurial.gamepad2.dpadLeft .onTrue(goToLowBasket)
@@ -67,23 +69,18 @@ class BadTeleop : MegiddoOpMode() {
             .whileTrue(resetHeight)
 
         //drive controls
-        BoundBooleanSupplier(EnhancedBooleanSupplier { Mercurial.gamepad1.leftTrigger.state >0.2 })
-            .whileTrue(followerSubsystem.runRobotCentric)
-        Mercurial.gamepad1.rightBumper.onTrue(followerSubsystem.secondGear)
-            .onFalse(followerSubsystem.firstGear)
+//        BoundBooleanSupplier(EnhancedBooleanSupplier { Mercurial.gamepad1.leftTrigger.state >0.2 })
+//            .whileTrue(followerSubsystem.runRobotCentric)
+        Mercurial.gamepad1.rightBumper.onTrue(linearSlides.switchBasket)
         BoundBooleanSupplier(EnhancedBooleanSupplier{Mercurial.gamepad1.rightTrigger.state>0.2})
             .onTrue(followerSubsystem.secondGear)
             .onFalse(followerSubsystem.firstGear)
         Mercurial.gamepad1.rightStickButton.onTrue(deposit.changeClawPos)
-        Mercurial.gamepad1.a.onTrue(followerSubsystem.changeCentric)
+//        Mercurial.gamepad1.a.onTrue(followerSubsystem.changeCentric)
         Mercurial.gamepad1.dpadUp.onTrue( followerSubsystem.angleReset)
         Mercurial.gamepad1.leftBumper.onTrue( followerSubsystem.angleReset)
         Mercurial.gamepad1.leftStickButton.onTrue(
-            Sequential(
-                deposit.closeH,
-                Wait(0.3),
-                postIntakeState
-            )
+            switchArmOut
         )
 
         telemetryDB = MultipleTelemetry(
