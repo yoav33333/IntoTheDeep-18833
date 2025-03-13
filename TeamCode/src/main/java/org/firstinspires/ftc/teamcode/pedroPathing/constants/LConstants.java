@@ -21,12 +21,16 @@ public class LConstants {
         ThreeWheelIMUConstants.rightY = -6.73;
 //        21.7, 43.2
 //        ThreeWheelIMUConstants.strafeX = -0.04;
-        ThreeWheelIMUConstants.strafeX = 5.02;
+        ThreeWheelIMUConstants.strafeX = 0.618;
         ThreeWheelIMUConstants.leftEncoder_HardwareMapName = "dfl";
         ThreeWheelIMUConstants.rightEncoder_HardwareMapName = "drl";
         ThreeWheelIMUConstants.strafeEncoder_HardwareMapName = "drr";
         ThreeWheelIMUConstants.leftEncoderDirection = Encoder.FORWARD;
         ThreeWheelIMUConstants.rightEncoderDirection = Encoder.FORWARD;
-        ThreeWheelIMUConstants.strafeEncoderDirection = Encoder.FORWARD;
+        ThreeWheelIMUConstants.strafeEncoderDirection = Encoder.REVERSE;
     }
 }
+
+
+
+

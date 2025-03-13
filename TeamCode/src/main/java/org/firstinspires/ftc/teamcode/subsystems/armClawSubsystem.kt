@@ -37,7 +37,7 @@ object armClawSubsystem : Subsystem {
         s
     }
     val angleClawServo: Servo by OpModeLazyCell {
-        val s = 
+        val s =
             FeatureRegistrar.activeOpMode.hardwareMap.get(
                 Servo::class.java, "arm s"
 
@@ -46,20 +46,20 @@ object armClawSubsystem : Subsystem {
         s
     }
     @JvmField
-    var armOut = 0.065
+    var armOut = 0.092
     @JvmField
-    var armIn = 0.293
+    var armIn = 0.33
 //    @JvmField
 //    var armInFull = 1.0
     @JvmField
-    var transfareState = 0.0
+    var transfareState = 0.15
     @JvmField
     var postTransfareState = 0.3
     @JvmField
     var intakeState = 1.0
-//    override fun preUserInitHook(opMode: Wrapper) {
-////         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.035 else 0.046
-//    }
+    override fun preUserInitHook(opMode: Wrapper) {
+         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.092 else 0.11
+    }
 
     val angleTransfer = Lambda("angleTransfer")
         .setInit {
@@ -93,9 +93,9 @@ object armClawSubsystem : Subsystem {
         angleIntake
     )
     val closeClawArm = Sequential(
-        angleTransfer,
+        moveArmIn,
         Wait(0.08),
-        moveArmIn
+        angleTransfer
     )
 
 
