@@ -58,12 +58,32 @@ object deposit : SDKSubsystem() {
     val closeingClawPose = 0.0
     val openingClawPose = 1.0
     @JvmField
-    var ArmInPose = 0.005
+    var ArmInPose = 0.04
     @JvmField
-    var almostArmInPose = 0.18
-    val ArmOutPose = 0.71
+    var almostArmInPose = 0.12
+    @JvmField
+    var ArmOutPose = 0.71
+    @JvmField
+    var ArmOutPoseChamber = 0.86
     val ArmOutPoseParallel = 0.8
     val ArmOutPose2 = 0.9
+    var isArmOut = true
+    val armMaybeOut = Lambda("amo")
+        .setInit{
+            if (isArmOut){
+
+                armOut.schedule()
+            }
+            else{
+                armOutHalf()
+            }
+        }
+    val switchArmOut = Lambda("sao")
+        .setInit{
+            isArmOut = !isArmOut
+            if (depoArmServo.position == ArmOutPose){
+            armMaybeOut.schedule()}
+        }
     @JvmStatic
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
@@ -83,7 +103,7 @@ object deposit : SDKSubsystem() {
     @JvmStatic
 
     fun armOut() {
-        depoArmServo.setPosition(ArmOutPose)
+        depoArmServo.setPosition(if (isSpe) ArmOutPoseChamber else ArmOutPose)
     }
     @JvmStatic
 
@@ -121,7 +141,7 @@ object deposit : SDKSubsystem() {
             intakeSeq.schedule()
         }
 
-        if (colorSensor.getDistance(DistanceUnit.MM) < 38) {
+        if (colorSensor.getDistance(DistanceUnit.MM) < 45) {
             closeClaw()
             return true
         }
@@ -131,16 +151,16 @@ object deposit : SDKSubsystem() {
     val slamArm = Lambda("slamArm")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            depoArmServo.position = 0.5
-            linearSlides.target += 7000
+            depoArmServo.position = 0.2
+//            linearSlides.target += 13000
         }
     @JvmStatic
     val release = Lambda("release")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { openClaw() }
-    val down = Lambda("down")
+    val up = Lambda("up")
         .setInit{
-            linearSlides.target -= 6000
+            linearSlides.target += 19000
         }
     val releaseH = Lambda("Hrelease")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -151,7 +171,7 @@ object deposit : SDKSubsystem() {
         releaseH, Wait(0.5), closeH)
     val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
-    val slamSeq = Sequential(slamArm, Wait(0.1), release,down)
+    val slamSeq = Sequential(slamArm, Wait(0.0), up)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {

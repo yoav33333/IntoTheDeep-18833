@@ -188,7 +188,18 @@ object linearSlides : Subsystem {
     val stopRunToPosition = Lambda("stopRunToPosition")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { runToPosition.cancel() }
-
+    var isHighBasket = true
+    val switchBasket = Lambda("SWB")
+        .setInit{ isHighBasket =!isHighBasket}
+    val goToBasket = Lambda("GTB")
+        .setInit{
+            if (isHighBasket){
+                goToHighBasket.schedule()
+            }
+            else{
+                goToLowBasket.schedule()
+            }
+        }
     val closeSlides =
         goToPreset(0.0).setFinish { abs(getPose()) < 500 }.setEnd { runToPosition.cancel() }
             .addInit {
@@ -220,7 +231,7 @@ object linearSlides : Subsystem {
         .setEnd{ setPower(0.0)}
 
     val closeSlidesAuto =
-        goToPreset(0.0).setFinish { abs(getPose()) < 60 }
+        goToPreset(0.0).setFinish { abs(getPose()) < 500 }
             .addInit {
                 runToPosition.schedule()
                 target = 0.0
@@ -234,14 +245,14 @@ object linearSlides : Subsystem {
 //            armOut
 //        ).schedule()
     }
-    val goToLowBasket = goToPreset(1700.0).addInit { isSpe = false
+    val goToLowBasket = goToPreset(40000.0).addInit { isSpe = false
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>1500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
 //            armOut
 //        ).schedule()
     }
     @JvmStatic
-    val goToHighChamber = goToPreset(30500.0).addInit { isSpe = true
+    val goToHighChamber = goToPreset(43000.0).addInit { isSpe = true
         quickRC.schedule()
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
@@ -249,7 +260,7 @@ object linearSlides : Subsystem {
 //        ).schedule()
     }
     @JvmStatic
-    val touchBar = goToPreset(1480.0).addInit { isSpe = true
+    val touchBar = goToPreset(35000.0).addInit { isSpe = true
         quickRC.schedule()}
     @JvmStatic
     val goToLowChamber = goToPreset(0.0).addInit { isSpe = true
@@ -268,6 +279,7 @@ object linearSlides : Subsystem {
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
             .whileTrue(resetHeight)
+        isHighBasket = true
         setPose(startingPose)
 
     }

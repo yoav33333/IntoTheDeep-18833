@@ -15,13 +15,13 @@ public class LConstants {
         ThreeWheelIMUConstants.forwardTicksToInches = 2 * PI / 8192;
         ThreeWheelIMUConstants.strafeTicksToInches = 2 * PI / 8192;
         ThreeWheelIMUConstants.turnTicksToInches = 2 * PI / 8192;
-        ThreeWheelIMUConstants.leftY =7.3;
+        ThreeWheelIMUConstants.leftY =7.2;
 //        ThreeWheelIMUConstants.rightY = -6.77;
         //7.3, 6.75
-        ThreeWheelIMUConstants.rightY = -6.75;
+        ThreeWheelIMUConstants.rightY = -6.73;
 //        21.7, 43.2
 //        ThreeWheelIMUConstants.strafeX = -0.04;
-        ThreeWheelIMUConstants.strafeX = 1.725;
+        ThreeWheelIMUConstants.strafeX = 0.618;
         ThreeWheelIMUConstants.leftEncoder_HardwareMapName = "dfl";
         ThreeWheelIMUConstants.rightEncoder_HardwareMapName = "drl";
         ThreeWheelIMUConstants.strafeEncoder_HardwareMapName = "drr";

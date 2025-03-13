@@ -37,16 +37,16 @@ public class java4sample extends AutoBaseJava {
 
     public static Pose startPose = startingPoseBasket;
     public static Pose basketPose1 = new Pose(-58, 55, Math.toRadians(-45));
-    public static Pose basketPose2 = new Pose(-56.5, 56, Math.toRadians(-45));
-    public static Pose basketPose3 = new Pose(-56.5, 57, Math.toRadians(-45));
-    public static Pose basketPose4 = new Pose(-55, 58, Math.toRadians(-45));
-    public static Pose basketPose5 = new Pose(-55, 58, Math.toRadians(-45));
-    public static Pose pickup1Pose = new Pose(-53.8, 48.8, 0);
-    public static Pose pickup2Pose = new Pose(-54.5, 57.7, Math.toRadians(0));
-    public static Pose pickup3Pose = new Pose(-52.8, 60, Math.toRadians(21));
-    public static Pose pickup4Pose = new Pose(-58.8, 32, Math.toRadians(270));
-    public static Pose parkPose = new Pose(-8, 19, Math.toRadians(90));
-    public static Pose parkControl = new Pose(-9, 49, Math.toRadians(0));
+    public static Pose basketPose2 = new Pose(-56.9, 56.3, Math.toRadians(-45));
+    public static Pose basketPose3 = new Pose(-56.9, 57.3, Math.toRadians(-45));
+    public static Pose basketPose4 = new Pose(-55.5, 58.3, Math.toRadians(-45));
+    public static Pose basketPose5 = new Pose(-55.5, 58.3, Math.toRadians(-45));
+    public static Pose pickup1Pose = new Pose(-54.0, 48.8, 0);
+    public static Pose pickup2Pose = new Pose(-54.7, 57.7, Math.toRadians(0));
+    public static Pose pickup3Pose = new Pose(-53.1, 60, Math.toRadians(21));
+    public static Pose pickup4Pose = new Pose(-56.8, 31, Math.toRadians(270));
+    public static Pose parkPose = new Pose(-4, 19, Math.toRadians(90));
+    public static Pose parkControl = new Pose(-9, 52, Math.toRadians(0));
 
     static PathChain scorePreload;
     static PathChain scorePickup1;
@@ -83,87 +83,91 @@ public class java4sample extends AutoBaseJava {
     @Override
     public void myStart() {
 
-//        linearSlides.setPose(0);
-//        linearSlides.getRunToPosition().cancel();
-//        linearSlides.getRunToPosition().schedule();
+        linearSlides.setPose(0);
+        linearSlides.getRunToPosition().cancel();
+        linearSlides.getRunToPosition().schedule();
         new Sequential(
             extendoCommand.getExtendoReset(),
-//            linearSlides.getGoToHighBasket(),
+            linearSlides.getGoToHighBasket(),
             new RunNonBlocking(
                     new Sequential(
-//                        new WaitUntil(()->(linearSlides.target>500 && linearSlides.target-300<getPose())) ,
+                        new WaitUntil(()->(linearSlides.target>500 && linearSlides.target-10000<getPose())),
                         deposit.getArmOut()
                     )),
-//            new WaitUntil(() -> getPose()>2000),
+            new WaitUntil(() -> getPose()>20000),
             followPath(scorePreload),
-//            new WaitUntil(() -> getPose()>3400),
+            new WaitUntil(() -> linearSlides.target-2500<getPose()),
             deposit.getRelease(),
             new Wait(0.1),
-            new Parallel(
-                new Sequential(
-                    new WaitUntil(()->follower.getCurrentTValue()>0.1),
-                    extendoCommand.getExtendoOpenCommandAuto()
-                ),
-                followPath(pickup1)
-            ),
-            new Wait(0.2),
+//            new Parallel(
+                followPath(pickup1),
+                new WaitUntil(()->follower.getCurrentTValue()>0.3),
+                extendoCommand.getExtendoOpenCommandAuto(),
+//            ),
+            new Wait(0.25),
             clawSubsystem.getCloseClaw(),
-            new Wait(0.2),
-//            linearSlides.getGoToHighBasket(),
+            new Wait(0.15),
+            new WaitUntil(()->linearSlides.getPose()<500),
             extendoCommand.getExtendoCloseCommandAuto(),
-//            new WaitUntil(() -> getPose()>2200),
+            linearSlides.getGoToHighBasket(),
+            new WaitUntil(() -> getPose()>20000),
             followPath(scorePickup1),
-//            new WaitUntil(() -> getPose()>3400),
+            new WaitUntil(() -> linearSlides.target-2500<getPose()),
             deposit.getRelease(),
             new Wait(0.1),
-            new Parallel(
+//            new Parallel(
+                followPath(pickup2),
+                new WaitUntil(()->follower.getCurrentTValue()>0.3),
                 extendoCommand.getExtendoOpenCommandAuto(),
-                followPath(pickup2)
-            ),
-            new Wait(0.3),
+//            ),
+            new Wait(0.25),
             clawSubsystem.getCloseClaw(),
-            new Wait(0.2),
-//            linearSlides.getGoToHighBasket(),
+            new Wait(0.15),
+            new WaitUntil(()->linearSlides.getPose()<500),
             extendoCommand.getExtendoCloseCommandAuto(),
-//            new WaitUntil(() -> getPose()>2200),
+            linearSlides.getGoToHighBasket(),
+            new WaitUntil(() -> getPose()>20000),
             followPath(scorePickup2),
-//            new WaitUntil(() -> getPose()>3400),
+                new WaitUntil(() -> linearSlides.target-2500<getPose()),
             deposit.getRelease(),
             new Wait(0.1),
-            new Parallel(
+//            new Parallel(
+                followPath(pickup3),
+                new WaitUntil(()->follower.getCurrentTValue()>0.3),
                 extendoCommand.getExtendoOpenCommandAuto(),
-                followPath(pickup3)
-            ),
-            new Wait(0.3),
+//            ),
+            new Wait(0.25),
             clawSubsystem.getCloseClaw(),
-            new Wait(0.2),
-//            linearSlides.getGoToHighBasket(),
+            new Wait(0.15),
+            new WaitUntil(()->linearSlides.getPose()<500),
             extendoCommand.getExtendoCloseCommandAuto(),
-//            new WaitUntil(() -> getPose()>2200),
+            linearSlides.getGoToHighBasket(),
+            new WaitUntil(() -> getPose()>20000),
             followPath(scorePickup3),
-//            new WaitUntil(() -> getPose()>3400),
+                new WaitUntil(() -> linearSlides.target-2500<getPose()),
             deposit.getRelease(),
             new Wait(0.1),
-            new Wait(0.1),
-            new Parallel(
+//            new Parallel(
+                followPath(pickup4),
+                new WaitUntil(()->follower.getCurrentTValue()>0.95),
                 extendoCommand.getExtendoOpenCommandAuto(),
-                followPath(pickup4)
-            ),
-            new Wait(0.3),
+//            ),
+            new Wait(0.25),
             clawSubsystem.getCloseClaw(),
-            new Wait(0.2),
-//            linearSlides.getGoToHighBasket(),
+            new Wait(0.15),
+            new WaitUntil(()->linearSlides.getPose()<500),
             extendoCommand.getExtendoCloseCommandAuto(),
-//            new WaitUntil(() -> getPose()>2200),
+            linearSlides.getGoToHighBasket(),
+            new WaitUntil(() -> getPose()>20000),
             followPath(scorePickup4),
-//            new WaitUntil(() -> getPose()>3400),
+                new WaitUntil(() -> linearSlides.target-2500<getPose()),
             deposit.getRelease(),
             new Wait(0.1),
             new Parallel(
                 followPath(park),
                 new Sequential(
                     new WaitUntil(()->follower.getCurrentTValue()>0.3),
-//                    linearSlides.getTouchBar(),
+                    linearSlides.getTouchBar(),
                     getArmIn()
                 )
             ),
