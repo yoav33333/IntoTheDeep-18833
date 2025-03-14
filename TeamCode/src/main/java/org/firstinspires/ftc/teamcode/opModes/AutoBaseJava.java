@@ -29,7 +29,7 @@ import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
 public class AutoBaseJava extends MegiddoOpMode {
-    private static Telemetry telemetryA;
+    private Telemetry telemetryA;
 
     public enum Side{
         basket,
@@ -41,7 +41,7 @@ public class AutoBaseJava extends MegiddoOpMode {
     public AutoBaseJava(Side side){
         this.side = side;
     }
-    public static Follower follower;
+    protected Follower follower;
     @Override
     final public void preInit(){
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -58,13 +58,13 @@ public class AutoBaseJava extends MegiddoOpMode {
                 follower.setCurrentPoseWithOffset(startingPoseChamber);
         }
     }
-    public static Lambda runFollower = new Lambda("update Follower")
+    public Lambda runFollower = new Lambda("update Follower")
             .setFinish(()->false)
             .setExecute(()->{
                 follower.update();
                 follower.telemetryDebug(telemetryA);
             });
-    public static Lambda finishAuto = new Lambda("finishAuto")
+    public Lambda finishAuto = new Lambda("finishAuto")
         .setInit(()-> {
             follower.breakFollowing();
             follower.update();
@@ -72,11 +72,11 @@ public class AutoBaseJava extends MegiddoOpMode {
 
         });
 
-    public static Lambda instantCommand(Runnable runnable){
+    public Lambda instantCommand(Runnable runnable){
         return new Lambda("instant command")
                 .setInit(runnable);
     }
-    public static Lambda followPath(PathChain chain){
+    public Lambda followPath(PathChain chain){
         return new Lambda("follow-path-chain")
             .setInit(() -> {
                 follower.followPath(chain, true);
@@ -91,29 +91,7 @@ public class AutoBaseJava extends MegiddoOpMode {
                 if (interrupted) follower.breakFollowing();
             });
     }
-    public static Lambda waitUntil(BooleanSupplier supplier){
-        return new Lambda("Wait until")
-            .setFinish(supplier::getAsBoolean);
-    }
-    public static Lambda runNonBlocking(Command... commands){
-        return new Lambda("Wait until")
-            .setInit(()->{for(Command command : commands){command.schedule();}});
-    }
 
-    public static Lambda setHeadingPID(double p, double d){
-        return new Lambda("setHeadingPID")
-            .setInit(()-> {
-                FollowerConstants.headingPIDFCoefficients.D = d;
-                FollowerConstants.headingPIDFCoefficients.P = p;
-            });
-    }
-    static double openExD = 0.18;
-    static double openExP = 1.4;
-    static double closeExD = 0.18;
-    static double closeExP = 1.4;
-
-    public static Lambda setOpenExPid = setHeadingPID(openExP, openExD);
-    public static Lambda setCloseExPid = setHeadingPID(closeExP, closeExD);
     /**
      in radians
      **/
@@ -121,7 +99,7 @@ public class AutoBaseJava extends MegiddoOpMode {
 //        Pose temp = new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(degrees));
 //        follower.holdPoint(temp);
 //    }
-    public static Lambda turnTo(double angle){
+    public Lambda turnTo(double angle){
         return new Lambda("follow-path-chain")
                 .setInit(() -> follower.turnToDegrees(angle))
                 .setExecute(() ->{
@@ -134,7 +112,7 @@ public class AutoBaseJava extends MegiddoOpMode {
                     if (interrupted) follower.breakFollowing();
                 });
     }
-    public static Lambda turn(double degrees){
+    public Lambda turn(double degrees){
         return new Lambda("follow-path-chain")
                 .setInit(() -> follower.turnDegrees(degrees, false))
                 .setExecute(() ->{
@@ -148,13 +126,13 @@ public class AutoBaseJava extends MegiddoOpMode {
                 });
     }
     static PathChain slowPath;
-    public static Lambda slowX = new Lambda("slowF")
+    public Lambda slowX = new Lambda("slowF")
             .setEnd((interrupted)-> {
                 follower.breakFollowing();
                 follower.setMaxPower(1.0);
             })
             .setInit(()-> {
-                follower.setMaxPower(0.5);
+                follower.setMaxPower(0.9);
                 follower.followPath(makeLinePath(follower.getPose(),
                  new Pose(follower.getPose().getX()-50, follower.getPose().getY(),
                 0)));
@@ -166,13 +144,13 @@ public class AutoBaseJava extends MegiddoOpMode {
             })
             .setFinish(()-> ((!follower.isBusy() ) || follower.isRobotStuck()));
 
-    public static PathChain makeLinePath(Pose startingPose, Pose endingPose){
+    public PathChain makeLinePath(Pose startingPose, Pose endingPose){
         return follower.pathBuilder().addPath(
             new BezierLine(new Point(startingPose), new Point(endingPose)))
                 .setLinearHeadingInterpolation(startingPose.getHeading(), endingPose.getHeading())
                 .build();
     }
-    public static PathChain makeCurvePath(Pose... poses) {
+    public PathChain makeCurvePath(Pose... poses) {
         ArrayList<Point> arr = new ArrayList<>();
 //        poses.forEach { arr.add(Point(it)) }
         for(Pose pose: poses){

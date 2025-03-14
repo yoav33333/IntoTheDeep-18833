@@ -260,6 +260,14 @@ object linearSlides : Subsystem {
 //        ).schedule()
     }
     @JvmStatic
+    val goToHighChamberUp = goToPreset(35000.0).addInit { isSpe = true
+        quickRC.schedule()
+//        Sequential(
+//            utilCommands.waitUntil{ getPose()>500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
+//            armOut
+//        ).schedule()
+    }
+    @JvmStatic
     val touchBar = goToPreset(35000.0).addInit { isSpe = true
         quickRC.schedule()}
     @JvmStatic

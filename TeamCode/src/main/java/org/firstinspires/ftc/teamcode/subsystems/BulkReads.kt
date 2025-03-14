@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.qualcomm.hardware.lynx.LynxModule
+import com.qualcomm.hardware.lynx.commands.core.LynxI2cConfigureChannelCommand
+import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import dev.frozenmilk.dairy.core.Feature
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
@@ -15,6 +17,14 @@ object BulkReads : Feature {
     lateinit var modules: List<LynxModule>
 
     override fun preUserInitHook(opMode: Wrapper) {
+//        for (i in modules){
+//            for (port in 0.. LynxConstants.NUMBER_OF_I2C_BUSSES){
+//                try {
+//                    LynxI2cConfigureChannelCommand(i, port, LynxI2cConfigureChannelCommand.SpeedCode.HIGH_3_4M)
+//                }
+//                catch (_: InterruptedException){}
+//            }
+//        }
         // collect and store the modules
         modules = opMode.opMode.hardwareMap.getAll(LynxModule::class.java)
         // set them to manual

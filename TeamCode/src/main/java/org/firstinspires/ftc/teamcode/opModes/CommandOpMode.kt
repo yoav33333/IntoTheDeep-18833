@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.opModes
 
+import com.qualcomm.hardware.lynx.commands.core.LynxI2cConfigureChannelCommand
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import dev.frozenmilk.dairy.core.Feature
 import dev.frozenmilk.dairy.core.FeatureRegistrar
 
 open class CommandOpMode(vararg var features: Feature) : LinearOpMode() {
     override fun runOpMode() {
+
         FeatureRegistrar.checkFeatures(*features)
         /*init*/
         FeatureRegistrar.opModePreInit(FeatureRegistrar.activeOpModeWrapper)
