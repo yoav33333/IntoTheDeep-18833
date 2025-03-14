@@ -19,8 +19,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstantsBasket;
 import org.firstinspires.ftc.teamcode.subsystems.MegiddoOpModeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
-import org.firstinspires.ftc.teamcode.util.FollowerInstance;
-
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -31,33 +29,32 @@ import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
 public class AutoBaseJava extends MegiddoOpMode {
-    private static Telemetry telemetryA;
-    private Follower follower;
+    private Telemetry telemetryA;
 
     public enum Side{
         basket,
         chamber
-        }
+    }
     public static Pose startingPoseChamber = new Pose(-62, -8.5, Math.toRadians(0));
     public static Pose startingPoseBasket = new Pose(-62, 8.5+24, 0);
     Side side;
     public AutoBaseJava(Side side){
         this.side = side;
     }
+    protected Follower follower;
     @Override
-    final public void preInit() {
+    final public void preInit(){
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         Constants.setConstants(FConstants.class, LConstants.class);
 
-        switch (side) {
+        switch(side){
             case basket:
-                FollowerInstance.reset(FeatureRegistrar.getActiveOpMode().hardwareMap);
-                follower = FollowerInstance.getInstance(FeatureRegistrar.getActiveOpMode().hardwareMap);
+                follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
                 follower.setCurrentPoseWithOffset(startingPoseBasket);
                 break;
             case chamber:
-                FollowerInstance.reset(FeatureRegistrar.getActiveOpMode().hardwareMap);
-                follower = FollowerInstance.getInstance(FeatureRegistrar.getActiveOpMode().hardwareMap);
+//                Constants.setConstants(FConstants.class, LConstants.class);
+                follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
                 follower.setCurrentPoseWithOffset(startingPoseChamber);
         }
     }
@@ -75,11 +72,7 @@ public class AutoBaseJava extends MegiddoOpMode {
 
         });
 
-    public Follower getFollower() {
-        return follower;
-    }
-
-    public static Lambda instantCommand(Runnable runnable){
+    public Lambda instantCommand(Runnable runnable){
         return new Lambda("instant command")
                 .setInit(runnable);
     }
@@ -98,29 +91,7 @@ public class AutoBaseJava extends MegiddoOpMode {
                 if (interrupted) follower.breakFollowing();
             });
     }
-    public static Lambda waitUntil(BooleanSupplier supplier){
-        return new Lambda("Wait until")
-            .setFinish(supplier::getAsBoolean);
-    }
-    public static Lambda runNonBlocking(Command... commands){
-        return new Lambda("Wait until")
-            .setInit(()->{for(Command command : commands){command.schedule();}});
-    }
 
-    public Lambda setHeadingPID(double p, double d){
-        return new Lambda("setHeadingPID")
-            .setInit(()-> {
-                FollowerConstants.headingPIDFCoefficients.D = d;
-                FollowerConstants.headingPIDFCoefficients.P = p;
-            });
-    }
-    static double openExD = 0.18;
-    static double openExP = 1.4;
-    static double closeExD = 0.18;
-    static double closeExP = 1.4;
-
-    public Lambda setOpenExPid = setHeadingPID(openExP, openExD);
-    public Lambda setCloseExPid = setHeadingPID(closeExP, closeExD);
     /**
      in radians
      **/
@@ -161,7 +132,7 @@ public class AutoBaseJava extends MegiddoOpMode {
                 follower.setMaxPower(1.0);
             })
             .setInit(()-> {
-                follower.setMaxPower(0.5);
+                follower.setMaxPower(0.9);
                 follower.followPath(makeLinePath(follower.getPose(),
                  new Pose(follower.getPose().getX()-50, follower.getPose().getY(),
                 0)));
