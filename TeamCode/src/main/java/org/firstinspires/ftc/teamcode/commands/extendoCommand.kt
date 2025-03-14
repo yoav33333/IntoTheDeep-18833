@@ -69,8 +69,26 @@ object extendoCommand : Subsystem {
     val extendoOpenCommandAuto = Parallel(
         Sequential(
             Parallel(
-                clawSubsystem.resetAngleClaw,
+//                clawSubsystem.resetAngleClaw,
                 armClawSubsystem.openClawArm,
+                clawSubsystem.openClaw,
+                halfArmIn,
+                RunNonBlocking(linearSlides.closeSlidesAuto)
+            ),
+//            Wait(0.2),
+            Parallel(
+                extendoSubsystem.openExtendo,
+            ),
+//            TransferState,
+
+        )
+    )
+    @JvmStatic
+    val extendoOpenCommandAutoPush = Parallel(
+        Sequential(
+            Parallel(
+                clawSubsystem.resetAngleClaw,
+                armClawSubsystem.extendoPushState,
                 clawSubsystem.openClaw,
                 halfArmIn,
                 RunNonBlocking(linearSlides.closeSlidesAuto)
@@ -87,7 +105,7 @@ object extendoCommand : Subsystem {
     var openArmAtDelta = 18000
     @JvmStatic
     val extendoReset = Parallel(
-        clawSubsystem.resetAngleClaw,
+//        clawSubsystem.resetAngleClaw,
         extendoSubsystem.closeExtendo,
         armClawSubsystem.closeClawArm,
     )
@@ -122,7 +140,7 @@ object extendoCommand : Subsystem {
             ),
             Sequential(
 //                utilCommands.waitUntil{abs(Mercurial.gamepad2.rightStickY.state) >0.2 || isSpe},
-                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-openArmAtDelta<getPose()) )},
+                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-5000<getPose()) || (isSpe && getPose()>1000) )},
                 armMaybeOut
             )
         )
@@ -170,7 +188,7 @@ object extendoCommand : Subsystem {
             clawSubsystem.flippedCenter,
             extendoSubsystem.closeExtendo,
             armClawSubsystem.closeClawArm,
-            TransferState,
+            halfArmIn,
             nonBlockRTP
 
         )

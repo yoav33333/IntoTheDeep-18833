@@ -58,7 +58,7 @@ object armClawSubsystem : Subsystem {
     @JvmField
     var intakeState = 1.0
     override fun preUserInitHook(opMode: Wrapper) {
-         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.092 else 0.11
+         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.092 else 0.1
     }
 
     val angleTransfer = Lambda("angleTransfer")
@@ -85,8 +85,12 @@ object armClawSubsystem : Subsystem {
 //        .setInit {
 //            armClawServo.setPosition(armInFull)
 //        }
-
-
+    @JvmStatic
+    val extendoPushState = Lambda("eps")
+        .setInit{
+            armClawServo.position = 0.0
+            angleClawServo.position = 0.78
+        }
     val openClawArm = Sequential(
         moveArmOut,
 //        Wait(0.2),
@@ -97,6 +101,9 @@ object armClawSubsystem : Subsystem {
         Wait(0.08),
         angleTransfer
     )
+    @JvmStatic
+    val armUp = Lambda("au")
+        .setInit{ armClawServo.position = 0.15}
 
 
 }

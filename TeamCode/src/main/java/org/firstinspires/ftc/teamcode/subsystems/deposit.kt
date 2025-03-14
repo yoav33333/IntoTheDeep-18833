@@ -17,6 +17,7 @@ import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta.Flavor
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
 import org.firstinspires.ftc.teamcode.util.WaitUntil
 import java.lang.annotation.Inherited
@@ -66,7 +67,7 @@ object deposit : SDKSubsystem() {
     @JvmField
     var ArmOutPoseChamber = 0.86
     val ArmOutPoseParallel = 0.8
-    val ArmOutPose2 = 0.9
+    val ArmOutPose2 = 0.82
     var isArmOut = true
     val armMaybeOut = Lambda("amo")
         .setInit{
@@ -103,7 +104,7 @@ object deposit : SDKSubsystem() {
     @JvmStatic
 
     fun armOut() {
-        depoArmServo.setPosition(if (isSpe) ArmOutPoseChamber else ArmOutPose)
+        depoArmServo.setPosition(if (isSpe && FeatureRegistrar.activeOpModeWrapper.opModeType == Flavor.TELEOP) ArmOutPoseChamber else ArmOutPose)
     }
     @JvmStatic
 
@@ -155,6 +156,13 @@ object deposit : SDKSubsystem() {
 //            linearSlides.target += 13000
         }
     @JvmStatic
+    val slamArmDown = Lambda("slamArm")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit {
+            depoArmServo.position = 0.86
+            linearSlides.target -= 15000
+        }
+    @JvmStatic
     val release = Lambda("release")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { openClaw() }
@@ -172,6 +180,8 @@ object deposit : SDKSubsystem() {
     val quickRCSimple = Sequential(releaseH, Wait(0.5), closeH)
     @JvmStatic
     val slamSeq = Sequential(slamArm, Wait(0.0), up)
+//    @JvmStatic
+//    val slamSeqDown = Sequential(slamArmDown, Wait(0.1), release)
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
