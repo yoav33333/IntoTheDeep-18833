@@ -12,6 +12,7 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.util.Constants;
+import com.qualcomm.hardware.lynx.commands.core.LynxI2cConfigureChannelCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.extendoCommand;
@@ -44,7 +45,7 @@ public class java4sample extends AutoBaseJava {
     public static Pose pickup1Pose = new Pose(-54.0, 48.8, 0);
     public static Pose pickup2Pose = new Pose(-54.7, 57.7, Math.toRadians(0));
     public static Pose pickup3Pose = new Pose(-53.1, 60, Math.toRadians(21));
-    public static Pose pickup4Pose = new Pose(-56.8, 31, Math.toRadians(270));
+    public static Pose pickup4Pose = new Pose(-57.8, 31, Math.toRadians(270));
     public static Pose parkPose = new Pose(-4, 19, Math.toRadians(90));
     public static Pose parkControl = new Pose(-9, 52, Math.toRadians(0));
 
@@ -101,7 +102,7 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.1),
 //            new Parallel(
                 followPath(pickup1),
-                new WaitUntil(()->follower.getCurrentTValue()>0.3),
+                new WaitUntil(()->follower.getCurrentTValue()>0.5),
                 extendoCommand.getExtendoOpenCommandAuto(),
 //            ),
             new Wait(0.25),
@@ -117,12 +118,12 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.1),
 //            new Parallel(
                 followPath(pickup2),
-                new WaitUntil(()->follower.getCurrentTValue()>0.3),
+                new WaitUntil(()->follower.getCurrentTValue()>0.5),
                 extendoCommand.getExtendoOpenCommandAuto(),
 //            ),
-            new Wait(0.25),
+            new Wait(0.3),
             clawSubsystem.getCloseClaw(),
-            new Wait(0.15),
+            new Wait(0.1),
             new WaitUntil(()->linearSlides.getPose()<500),
             extendoCommand.getExtendoCloseCommandAuto(),
             linearSlides.getGoToHighBasket(),
@@ -133,12 +134,12 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.1),
 //            new Parallel(
                 followPath(pickup3),
-                new WaitUntil(()->follower.getCurrentTValue()>0.3),
+                new WaitUntil(()->follower.getCurrentTValue()>0.5),
                 extendoCommand.getExtendoOpenCommandAuto(),
 //            ),
-            new Wait(0.25),
+            new Wait(0.3),
             clawSubsystem.getCloseClaw(),
-            new Wait(0.15),
+            new Wait(0.1),
             new WaitUntil(()->linearSlides.getPose()<500),
             extendoCommand.getExtendoCloseCommandAuto(),
             linearSlides.getGoToHighBasket(),
@@ -152,9 +153,9 @@ public class java4sample extends AutoBaseJava {
                 new WaitUntil(()->follower.getCurrentTValue()>0.95),
                 extendoCommand.getExtendoOpenCommandAuto(),
 //            ),
-            new Wait(0.25),
+            new Wait(0.3),
             clawSubsystem.getCloseClaw(),
-            new Wait(0.15),
+            new Wait(0.1),
             new WaitUntil(()->linearSlides.getPose()<500),
             extendoCommand.getExtendoCloseCommandAuto(),
             linearSlides.getGoToHighBasket(),
