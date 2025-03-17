@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.acmerobotics.dashboard.config.Config
-import com.pedropathing.follower.Follower
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.cachinghardware.CachingServo
@@ -15,6 +14,8 @@ import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta.Flavor
+import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import java.lang.annotation.Inherited
 
 @Config
@@ -140,10 +141,7 @@ object clawSubsystem : Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { clawRotationServo.position = 0.0 }
     val clawRotationRange = 180.0
-    fun keepAngle(angle: Double, follower: Follower) = Lambda("keepAngle")
-        .setExecute{
-            clawRotationServo.position = (Math.toDegrees(follower.pose.heading) - angle +90)/ clawRotationRange
-        }
+    @JvmStatic
     val resetAngleClaw = Lambda("resetAngleClaw")
         .setInit { clawRotationServo.position = (center) }
     val flippedCenter = Lambda("resetAngleClaw")
@@ -164,6 +162,8 @@ object clawSubsystem : Subsystem {
 
     override fun postUserInitHook(opMode: Wrapper) {
         openClaw()
-        clawRotationServo.position = center
+        if (isSpe && FeatureRegistrar.activeOpModeWrapper.opModeType == Flavor.TELEOP){
+            clawRotationServo.position = center
+        }
     }
 }

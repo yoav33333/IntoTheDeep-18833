@@ -36,18 +36,18 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 public class java4sample extends AutoBaseJava {
     public java4sample() {super(Side.basket);}
 
-    public static Pose startPose = startingPoseBasket;
-    public static Pose basketPose1 = new Pose(-58, 55, Math.toRadians(-45));
-    public static Pose basketPose2 = new Pose(-56.9, 56.3, Math.toRadians(-45));
-    public static Pose basketPose3 = new Pose(-56.9, 57.3, Math.toRadians(-45));
-    public static Pose basketPose4 = new Pose(-55.5, 58.3, Math.toRadians(-45));
-    public static Pose basketPose5 = new Pose(-55.5, 58.3, Math.toRadians(-45));
-    public static Pose pickup1Pose = new Pose(-54.0, 48.8, 0);
-    public static Pose pickup2Pose = new Pose(-54.7, 57.7, Math.toRadians(0));
-    public static Pose pickup3Pose = new Pose(-53.1, 60, Math.toRadians(21));
-    public static Pose pickup4Pose = new Pose(-57.8, 31, Math.toRadians(270));
-    public static Pose parkPose = new Pose(-4, 19, Math.toRadians(90));
-    public static Pose parkControl = new Pose(-9, 52, Math.toRadians(0));
+    public Pose startPose = this.startingPoseBasket;
+    public Pose basketPose1 = new Pose(-58, 55, Math.toRadians(-45));
+    public Pose basketPose2 = new Pose(-56.9, 56.3, Math.toRadians(-45));
+    public Pose basketPose3 = new Pose(-56.9, 57.3, Math.toRadians(-45));
+    public Pose basketPose4 = new Pose(-55.5, 58.3, Math.toRadians(-45));
+    public Pose basketPose5 = new Pose(-55.9, 58.1, Math.toRadians(-45));
+    public Pose pickup1Pose = new Pose(-54.0, 48.8, 0);
+    public Pose pickup2Pose = new Pose(-54.7, 57.7, Math.toRadians(0));
+    public Pose pickup3Pose = new Pose(-52.7, 60, Math.toRadians(21));
+    public Pose pickup4Pose = new Pose(-57.8, 30, Math.toRadians(270));
+    public Pose parkPose = new Pose(-4, 19, Math.toRadians(90));
+    public Pose parkControl = new Pose(-9, 52, Math.toRadians(0));
 
     static PathChain scorePreload;
     static PathChain scorePickup1;
@@ -85,10 +85,12 @@ public class java4sample extends AutoBaseJava {
     public void myStart() {
 
         linearSlides.setPose(0);
-        linearSlides.getRunToPosition().cancel();
-        linearSlides.getRunToPosition().schedule();
+//        linearSlides.getRunToPosition().cancel();
+//        linearSlides.getRunToPosition().schedule();
         new Sequential(
-            extendoCommand.getExtendoReset(),
+                new RunNonBlocking(linearSlides.getRunToPosition()),
+
+                extendoCommand.getExtendoReset(),
             linearSlides.getGoToHighBasket(),
             new RunNonBlocking(
                     new Sequential(
@@ -180,7 +182,7 @@ public class java4sample extends AutoBaseJava {
     public void myStop() {
         follower.breakFollowing();
         runFollower.cancel();
-        linearSlides.getRunToPosition().cancel();
+//        linearSlides.getRunToPosition().cancel();
         linearSlides.setStartingPose(getPose());
 //        followerSubsystem.setStartingPose(follower.getPose());
     }
