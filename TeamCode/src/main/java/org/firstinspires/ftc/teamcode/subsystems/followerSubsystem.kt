@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 
-import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.pedropathing.follower.Follower
 import com.pedropathing.localization.Pose
 import com.pedropathing.pathgen.BezierCurve
 import com.pedropathing.pathgen.BezierLine
 import com.pedropathing.pathgen.PathChain
 import com.pedropathing.pathgen.Point
-import com.pedropathing.util.Constants
 import com.qualcomm.robotcore.hardware.Gamepad
 import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
@@ -21,7 +18,6 @@ import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
-import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants
 import java.lang.annotation.Inherited
@@ -43,10 +39,16 @@ object followerSubsystem : SDKSubsystem() {
     val gamepad2: Gamepad by OpModeLazyCell {
         FeatureRegistrar.activeOpMode.gamepad2
     }
-    lateinit var follower: Follower
+    @JvmStatic
+    var startingPose = Pose(0.0,0.0,0.0)
+    lateinit var
+            follower: Follower
     override fun preUserInitHook(opMode: Wrapper) {
-        Constants.setConstants(FConstants::class.java, LConstants::class.java)
-        follower = Follower(FeatureRegistrar.activeOpMode.hardwareMap)
+        //        Constants.setConstants(FConstants.class, LConstants.class);
+        follower = Follower(hardwareMap, FConstants::class.java, LConstants::class.java)
+        //                Constants.setConstants(FConstants.class, LConstants.class);
+        follower.poseUpdater.pose = startingPose
+
 //        (follower.poseUpdater.localizer as ThreeWheelIMULocalizer).resetEncoders()
 //        isCentric = false
     }
@@ -91,11 +93,15 @@ object followerSubsystem : SDKSubsystem() {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { follower.setMaxPower(0.35) }
     val angleReset = Lambda("angleReset")
-        .setInit{ follower.headingOffset = -follower.totalHeading}
+        .setInit{ follower.poseUpdater.pose = Pose(0.0,0.0,0.0)}
     @JvmField
     var headingPow = 0.5
     val teleopDrive = Lambda("teleop-drive")
         .setInit {
+            follower.setCurrentPoseWithOffset(Pose(0.0, 0.0, 0.0)) // Reset pose at the start of the path
+            //                Constants.setConstants(FConstants.class, LConstants.class);
+            follower.poseUpdater.pose = startingPose
+
             follower.startTeleopDrive()
 //            follower.setTeleOpMovementVectors(0.5,0.0,0.0)
 //            follower.update()
@@ -112,8 +118,12 @@ object followerSubsystem : SDKSubsystem() {
             )
 //            follower.telemetryDebug(MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry))
             follower.update()
+
         }
         .setFinish { false }
+        .setEnd{
+            startingPose = follower.pose
+        }
     val forward = Lambda("forward")
         .setInit {
             follower.startTeleopDrive()

@@ -36,6 +36,7 @@ open class CommandOpMode(vararg var features: Feature) : LinearOpMode() {
         FeatureRegistrar.opModePreStop(FeatureRegistrar.activeOpModeWrapper)
         myStop()
         FeatureRegistrar.opModePostStop(FeatureRegistrar.activeOpModeWrapper)
+        myFullStop()
 
     }
     /**don't use!!!**/
@@ -46,6 +47,7 @@ open class CommandOpMode(vararg var features: Feature) : LinearOpMode() {
     open fun myInitLoop() {}
     open fun myLoop() {}
     open fun myStop() {}
+    open fun myFullStop() {}
 
 
 }
