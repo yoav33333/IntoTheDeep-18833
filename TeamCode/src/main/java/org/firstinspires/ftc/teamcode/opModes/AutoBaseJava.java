@@ -38,7 +38,7 @@ public class AutoBaseJava extends MegiddoOpMode {
         basket,
         chamber
     }
-    public Pose startingPoseChamber = new Pose(-62, -8.5, Math.toRadians(0));
+    public Pose startingPoseChamber = new Pose(-62, -8.5, Math.toRadians(180));
     public Pose startingPoseBasket = new Pose(-62, 8.5+24, 0);
     Side side;
     public AutoBaseJava(Side side){
@@ -186,6 +186,16 @@ public class AutoBaseJava extends MegiddoOpMode {
         return new PathBuilder().addPath(
             new BezierLine(new Point(startingPose), new Point(endingPose)))
                 .setLinearHeadingInterpolation(startingPose.getHeading(), endingPose.getHeading())
+                .build();
+    }
+    public PathChain makeSpinHalfWayPath(Pose startingPose, Pose endingPose){
+        return new PathBuilder().addPath(
+                        new BezierLine(new Point(startingPose), new Point((startingPose.getX() + endingPose.getX())/2,
+                            (startingPose.getY() + endingPose.getY())/2)))
+                .setLinearHeadingInterpolation(startingPose.getHeading(), endingPose.getHeading())
+                .addPath(new BezierLine(new Point((startingPose.getX() + endingPose.getX())/2,
+                        (startingPose.getY() + endingPose.getY())/2), new Point(endingPose)))
+                .setConstantHeadingInterpolation(endingPose.getHeading())
                 .build();
     }
     public PathChain makeLinePathConst(Pose startingPose, Pose endingPose){

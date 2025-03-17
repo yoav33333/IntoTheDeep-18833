@@ -14,6 +14,7 @@ import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.subsystems.BulkReads.modules
 import java.lang.annotation.Inherited
@@ -42,8 +43,18 @@ object antonySubsystem : SDKSubsystem() {
     val redLED = RevBlinkinLedDriver.BlinkinPattern.RED
     val yellowLED = RevBlinkinLedDriver.BlinkinPattern.YELLOW
     val blueLED = RevBlinkinLedDriver.BlinkinPattern.BLUE
+    val greenLED = RevBlinkinLedDriver.BlinkinPattern.GREEN
 
-
+    val confirmation = Lambda("confirmation")
+        .setExecute{
+            if (clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<30){
+                antony.setPattern(greenLED)
+            }
+            else{
+                antony.setPattern(redLED)
+            }
+        }
+        .setFinish{false}
     val endGameCommand = Lambda("endGameCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { antony.setPattern(endGame) }

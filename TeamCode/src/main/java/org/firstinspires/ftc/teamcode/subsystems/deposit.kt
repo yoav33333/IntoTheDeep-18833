@@ -64,11 +64,11 @@ object deposit : SDKSubsystem() {
 
     val openingClawPose = 1.0
     @JvmField
-    var ArmInPose = 0.04
+    var ArmInPose = 0.01
     @JvmField
     var ArmHalfInPose = 0.6
     @JvmField
-    var almostArmInPose = 0.12
+    var almostArmInPose = 0.1
     @JvmField
     var ArmOutPose = 0.71
     @JvmField
@@ -149,7 +149,7 @@ object deposit : SDKSubsystem() {
             intakeSeq.schedule()
         }
 
-        if (colorSensor.getDistance(DistanceUnit.MM) < 45) {
+        if (colorSensor.getDistance(DistanceUnit.MM) < 33) {
             closeClaw()
             return true
         }
@@ -166,9 +166,9 @@ object deposit : SDKSubsystem() {
     val slamArmDown = Lambda("slamArm")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            depoArmServo.position = 0.86
-            linearSlides.target -= 15000
-            Sequential(Wait(0.2), release).schedule()
+            depoArmServo.position = 0.9
+            linearSlides.target -= 19000
+            Sequential(Wait(0.3), release).schedule()
 
         }
     @JvmStatic

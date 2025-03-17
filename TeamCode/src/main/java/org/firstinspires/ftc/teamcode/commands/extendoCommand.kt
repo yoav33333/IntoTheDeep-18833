@@ -169,19 +169,20 @@ object extendoCommand : Subsystem {
                 Sequential(
                     armClawSubsystem.closeClawArm,
                     Wait(0.25),
+                    TransferState,
 //                    armClawSubsystem.moveArmIn,
 //                    clawSubsystem.closeClaw2,
                     IfElse(
                         { doTransfer },
                         Sequential(
-                            TransferState,
+
                             Wait(0.05),
                             transferSeqAuto,
                             nonBlockRTP,
                             anglePostTransfer,
                             Wait(0.16),
                             angleTransfer,
-                            WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target- openArmAtDelta<getPose()) || (isSpe && getPose()>1000) )},
+                            WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && abs(linearSlides.target-getPose())< openArmAtDelta) || (isSpe && getPose()>1000) )},
                             armMaybeOut
                         ),
                         Wait(0.0))
