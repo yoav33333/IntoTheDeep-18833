@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.Servo
-import dev.frozenmilk.dairy.cachinghardware.CachingServo
 import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
@@ -11,6 +10,7 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
@@ -54,9 +54,9 @@ object clawSubsystem : Subsystem {
         )
     }
     @JvmField
-    var closeingPose = 1.0
+    var closingPose = 1.0
     @JvmField
-    var openingPose = 0.3
+    var openingPose = 0.0
 
     val filter = 1
     var oldRead = 0.0
@@ -77,7 +77,7 @@ object clawSubsystem : Subsystem {
     }
 
     fun closeClaw() {
-        clawServo.setPosition(closeingPose)
+        clawServo.setPosition(closingPose)
     }
 
     var semiClose = 0.545
@@ -104,10 +104,11 @@ object clawSubsystem : Subsystem {
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setEnd {
-            if (clawServo.position == closeingPose) {
+            if (clawServo.position == closingPose) {
                 openClaw()
             } else {
                 closeClaw()
+                antonySubsystem.confirmation.raceWith(Wait(0.7)).schedule()
             }
         }
         .setFinish{ colorDistSensor.getDistance(DistanceUnit.MM)<38}
@@ -125,12 +126,12 @@ object clawSubsystem : Subsystem {
     val rotateClawL = Lambda("rotate claw l")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position <= 1.0) clawRotationServo.position + 0.25 else 1.0)
+            clawRotationServo.setPosition(if (clawRotationServo.position <= 1.0) clawRotationServo.position + 0.125 else 1.0)
         }
     val rotateClawR = Lambda("rotate claw r")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position >= 0.0) clawRotationServo.position - 0.25 else 0.0)
+            clawRotationServo.setPosition(if (clawRotationServo.position >= 0.0) clawRotationServo.position - 0.125 else 0.0)
         }
     @JvmStatic
     val turnLeft = Lambda("turnLeft")

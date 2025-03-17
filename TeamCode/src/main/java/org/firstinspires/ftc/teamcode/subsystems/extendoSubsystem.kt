@@ -43,7 +43,7 @@ object extendoSubsystem : Subsystem {
     }
     val open = 0.33
     @JvmField
-    var lilOpen = 0.75
+    var lilOpen = 0.7
     val close = 0.99
     var extendoOpen = true
 

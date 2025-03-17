@@ -48,17 +48,17 @@ object armClawSubsystem : Subsystem {
     @JvmField
     var armOut = 0.087
     @JvmField
-    var armIn = 0.33
+    var armIn = 0.32
 //    @JvmField
 //    var armInFull = 1.0
     @JvmField
-    var transfareState = 0.15
+    var transfareState = 0.11
     @JvmField
     var postTransfareState = 0.3
     @JvmField
     var intakeState = 1.0
     override fun preUserInitHook(opMode: Wrapper) {
-         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.087 else 0.11
+         armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.099  else 0.11
     }
 
     val angleTransfer = Lambda("angleTransfer")

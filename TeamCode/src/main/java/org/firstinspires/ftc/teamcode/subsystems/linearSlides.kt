@@ -16,12 +16,16 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.subsystems.Subsystem
+import org.firstinspires.ftc.teamcode.commands.extendoCommand.openArmAtDelta
 import org.firstinspires.ftc.teamcode.controller.PController
 import org.firstinspires.ftc.teamcode.controller.PDController
+import org.firstinspires.ftc.teamcode.subsystems.deposit.armMaybeOut
 import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRC
 import org.firstinspires.ftc.teamcode.util.Encoder
+import org.firstinspires.ftc.teamcode.util.WaitUntil
 import java.lang.annotation.Inherited
 import kotlin.math.abs
 
@@ -192,7 +196,13 @@ object linearSlides : Subsystem {
     var isHighBasket = true
     val switchBasket = Lambda("SWB")
         .setInit{ isHighBasket =!isHighBasket
-        goToBasket.schedule()}
+            deposit.halfArmIn.schedule()
+        goToBasket.schedule()
+            Sequential(
+                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target- openArmAtDelta <getPose()) || (isSpe && getPose()>1000) )},
+                armMaybeOut
+            ).schedule()
+        }
     val goToBasket = Lambda("GTB")
         .setInit{
             if (isHighBasket){
@@ -262,7 +272,7 @@ object linearSlides : Subsystem {
 //        ).schedule()
     }
     @JvmStatic
-    val goToHighChamberUp = goToPreset(35000.0).addInit { isSpe = true
+    val goToHighChamberUp = goToPreset(31500.0).addInit { isSpe = true
         quickRC.schedule()
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },

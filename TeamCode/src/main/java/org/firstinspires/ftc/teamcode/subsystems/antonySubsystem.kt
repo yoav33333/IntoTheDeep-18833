@@ -47,12 +47,12 @@ object antonySubsystem : SDKSubsystem() {
 
     val confirmation = Lambda("confirmation")
         .setExecute{
-//            if (clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<30){
-//                antony.setPattern(greenLED)
-//            }
-//            else{
-//                antony.setPattern(redLED)
-//            }
+            if (clawSubsystem.colorDistSensor.getDistance(DistanceUnit.MM)<30){
+                antony.setPattern(greenLED)
+            }
+            else{
+                antony.setPattern(redLED)
+            }
         }
         .setFinish{false}
     val endGameCommand = Lambda("endGameCommand")
