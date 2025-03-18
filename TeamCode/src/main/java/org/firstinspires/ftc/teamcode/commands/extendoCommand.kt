@@ -168,7 +168,8 @@ object extendoCommand : Subsystem {
 
                 Sequential(
                     armClawSubsystem.closeClawArm,
-                    Wait(0.25),
+                    IfElse({ doFlip }, Wait(0.45), Wait(0.2)),
+
                     TransferState,
 //                    armClawSubsystem.moveArmIn,
 //                    clawSubsystem.closeClaw2,

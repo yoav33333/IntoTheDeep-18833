@@ -89,9 +89,10 @@ class BadTeleop : MegiddoOpMode() {
 
     override fun myStart() {
         extendoMacro.schedule()
-        followerSubsystem.teleopDrive.schedule()
     }
     override fun myLoop() {
+        followerSubsystem.teleopDrive.schedule()
+
         telemetryDB.addData("delta time", runtime - lastRunTime)
         lastRunTime = runtime
         telemetryDB.addData("clawPosDepo", deposit.depoClawServo.position)

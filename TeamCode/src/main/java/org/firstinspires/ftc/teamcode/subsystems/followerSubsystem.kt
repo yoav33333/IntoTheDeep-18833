@@ -16,10 +16,13 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Sequential
+import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants
+import org.firstinspires.ftc.teamcode.util.InstantCommand
 import java.lang.annotation.Inherited
 
 @Config
@@ -40,17 +43,23 @@ object followerSubsystem : SDKSubsystem() {
         FeatureRegistrar.activeOpMode.gamepad2
     }
     @JvmStatic
-    var startingPose = Pose(0.0,0.0,0.0)
+    var startingPose = Pose(0.0,3.0,0.0)
+//    var startingPose2 = Pose(0.0,3.0,0.0)
     lateinit var
             follower: Follower
     override fun preUserInitHook(opMode: Wrapper) {
         //        Constants.setConstants(FConstants.class, LConstants.class);
         follower = Follower(hardwareMap, FConstants::class.java, LConstants::class.java)
         //                Constants.setConstants(FConstants.class, LConstants.class);
-        follower.poseUpdater.pose = startingPose
+//        startingPose2 = startingPose
+//        follower.poseUpdater.pose = startingPose2
 
 //        (follower.poseUpdater.localizer as ThreeWheelIMULocalizer).resetEncoders()
 //        isCentric = false
+    }
+
+    override fun postUserStartHook(opMode: Wrapper) {
+//        follower.poseUpdater.setPose(startingPose)
     }
 //    val changeCentric = Lambda("CC")
 //        .setInit{ isCentric = !isCentric}
@@ -93,22 +102,44 @@ object followerSubsystem : SDKSubsystem() {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { follower.setMaxPower(0.35) }
     val angleReset = Lambda("angleReset")
-        .setInit{ follower.poseUpdater.pose = Pose(0.0,0.0,0.0)}
+        .setInit{ follower.headingOffset = -follower.totalHeading
+            follower.headingOffset = -follower.totalHeading}
+    fun setHeading(heading: Double) = Lambda("angleReset")
+        .setInit{ follower.headingOffset = -(follower.totalHeading-heading)
+         follower.headingOffset = -(follower.totalHeading-heading)}
     @JvmField
     var headingPow = 0.5
-    val teleopDrive = Lambda("teleop-drive")
-        .setInit {
-            follower.setCurrentPoseWithOffset(Pose(0.0, 0.0, 0.0)) // Reset pose at the start of the path
-            //                Constants.setConstants(FConstants.class, LConstants.class);
-            follower.poseUpdater.pose = startingPose
-
-            follower.startTeleopDrive()
+    fun initDrive(){
+//        follower.poseUpdater.setPose(startingPose)
+        follower.startTeleopDrive()
 //            follower.setTeleOpMovementVectors(0.5,0.0,0.0)
 //            follower.update()
 //            follower.setTeleOpMovementVectors(0.0,0.0,0.0)
 //            follower.update()
 //            follower.setCurrentPoseWithOffset(startingPose)
-            follower.setMaxPower(1.0)
+        follower.setMaxPower(1.0)
+        follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y + (gamepad1.left_trigger) - gamepad1.right_trigger).toDouble(),
+            -(gamepad1.left_stick_x).toDouble(),
+            -headingPow*(gamepad1.right_stick_x + 0.65*(gamepad2.right_trigger - gamepad2.left_trigger))
+            , gamepad1.left_trigger+ gamepad1.right_trigger>0.1
+        )
+        follower.update()
+//        follower.poseUpdater.setPose(startingPose)
+//        follower.poseUpdater.setPose(startingPose)
+//        Sequential(Wait(0.1), InstantCommand{
+//        follower.headingOffset = -startingPose.heading
+//        follower.yOffset = -startingPose.y
+//        follower.xOffset = -startingPose.x}).schedule()
+        follower.poseUpdater.localizer.pose = startingPose
+    }
+    val teleopDrive = Lambda("teleop-drive")
+        .setInit {
+//            follower.setCurrentPoseWithOffset(Pose(0.0, 0.0, 0.0)) // Reset pose at the start of the path
+            //Constants.setConstants(FConstants.class, LConstants.class);
+
+            initDrive()
+//            setHeading(startingPose.heading)
+
         }
         .setExecute {
             follower.setTeleOpMovementVectors(-(gamepad1.left_stick_y + (gamepad1.left_trigger) - gamepad1.right_trigger).toDouble(),
@@ -121,9 +152,9 @@ object followerSubsystem : SDKSubsystem() {
 
         }
         .setFinish { false }
-        .setEnd{
-            startingPose = follower.pose
-        }
+//        .setEnd{
+//            startingPose = follower.pose
+//        }
     val forward = Lambda("forward")
         .setInit {
             follower.startTeleopDrive()

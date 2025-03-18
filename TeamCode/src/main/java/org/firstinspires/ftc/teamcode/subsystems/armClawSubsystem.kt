@@ -48,7 +48,7 @@ object armClawSubsystem : Subsystem {
     @JvmField
     var armOut = 0.087
     @JvmField
-    var armIn = 0.32
+    var armIn = 0.33
 //    @JvmField
 //    var armInFull = 1.0
     @JvmField
@@ -89,7 +89,7 @@ object armClawSubsystem : Subsystem {
     val extendoPushState = Lambda("eps")
         .setInit{
             armClawServo.position = 0.0
-            angleClawServo.position = 0.78
+            angleClawServo.position = 0.8
         }
     val openClawArm = Sequential(
         moveArmOut,

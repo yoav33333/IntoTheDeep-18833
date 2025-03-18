@@ -68,7 +68,7 @@ object deposit : SDKSubsystem() {
     @JvmField
     var ArmHalfInPose = 0.6
     @JvmField
-    var almostArmInPose = 0.1
+    var almostArmInPose = 0.065
     @JvmField
     var ArmOutPose = 0.71
     @JvmField

@@ -68,7 +68,7 @@ object clawSubsystem : Subsystem {
     @JvmField
     var center = 0.28
     @JvmField
-    var centerFlip = 0.9
+    var centerFlip = 0.95
     fun readSensorDis(): Double {
         if (counter % filter == 0)
             oldRead = colorDistSensor.getDistance(DistanceUnit.MM)
