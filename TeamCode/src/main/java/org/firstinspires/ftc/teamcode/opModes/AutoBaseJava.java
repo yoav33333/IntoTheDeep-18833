@@ -68,6 +68,7 @@ public class AutoBaseJava extends MegiddoOpMode {
     @Override
     public void myFullStop(){
         followerSubsystem.setStartingPose(follower.getPose());
+        linearSlides.setStartingPose(linearSlides.getPose());
     }
     boolean flag = false;
     public Lambda runFollower = new Lambda("update Follower")

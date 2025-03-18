@@ -18,13 +18,18 @@ import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.subsystems.Subsystem
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta.Flavor
 import org.firstinspires.ftc.teamcode.commands.extendoCommand.openArmAtDelta
 import org.firstinspires.ftc.teamcode.controller.PController
 import org.firstinspires.ftc.teamcode.controller.PDController
+import org.firstinspires.ftc.teamcode.subsystems.deposit.ArmOutPose
+import org.firstinspires.ftc.teamcode.subsystems.deposit.ArmOutPoseChamber
 import org.firstinspires.ftc.teamcode.subsystems.deposit.armMaybeOut
+import org.firstinspires.ftc.teamcode.subsystems.deposit.depoArmServo
 import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRC
 import org.firstinspires.ftc.teamcode.util.Encoder
+import org.firstinspires.ftc.teamcode.util.InstantCommand
 import org.firstinspires.ftc.teamcode.util.WaitUntil
 import java.lang.annotation.Inherited
 import kotlin.math.abs
@@ -172,8 +177,8 @@ object linearSlides : Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { runToPosition.cancel() }
         .setExecute {runToPosition.cancel()
-            if(magneticLimit.state){
-            setPower(Mercurial.gamepad2.rightStickY.state)}}
+//            if(magneticLimit.state){
+            setPower(Mercurial.gamepad2.rightStickY.state)}
         .setFinish { abs(Mercurial.gamepad2.rightStickY.state) < 0.1 }
         .setEnd { target = getPose().toDouble() }
 
@@ -199,7 +204,7 @@ object linearSlides : Subsystem {
             deposit.halfArmIn.schedule()
         goToBasket.schedule()
             Sequential(
-                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target- openArmAtDelta <getPose()) || (isSpe && getPose()>1000) )},
+                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && abs(linearSlides.target-getPose()) <4000 ) || (isSpe && getPose()>1000) )},
                 armMaybeOut
             ).schedule()
         }
@@ -243,7 +248,7 @@ object linearSlides : Subsystem {
         .setEnd{ setPower(0.0)}
 
     val closeSlidesAuto =
-        goToPreset(0.0).setFinish { abs(getPose()) < 500 }
+        goToPreset(0.0).setFinish { abs(getPose()) < 3000 }
             .addInit {
                 runToPosition.schedule()
                 target = 0.0
@@ -257,15 +262,16 @@ object linearSlides : Subsystem {
 //            armOut
 //        ).schedule()
     }
-    val goToLowBasket = goToPreset(44000.0).addInit { isSpe = false
+    val goToLowBasket = goToPreset(40000.0).addInit { isSpe = false
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>1500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
 //            armOut
 //        ).schedule()
     }
     @JvmStatic
-    val goToHighChamber = goToPreset(40000.0).addInit { isSpe = true
+    val goToHighChamber = goToPreset(45000.0).addInit { isSpe = true
         quickRC.schedule()
+        Sequential(WaitUntil { getPose() > 1000 }, InstantCommand{depoArmServo.setPosition(ArmOutPoseChamber)}).schedule()
 //        Sequential(
 //            utilCommands.waitUntil{ getPose()>500 || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
 //            armOut
