@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.acmerobotics.dashboard.config.Config
-import com.pedropathing.follower.Follower
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.Servo
-import dev.frozenmilk.dairy.cachinghardware.CachingServo
 import dev.frozenmilk.dairy.core.FeatureRegistrar
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
@@ -12,9 +10,13 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Sequential
+import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta.Flavor
+import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import java.lang.annotation.Inherited
 
 @Config
@@ -52,9 +54,10 @@ object clawSubsystem : Subsystem {
             ColorRangeSensor::class.java, "color claw"
         )
     }
-
-    val closeingPose = 1.0
-    val openingPose = 0.0
+    @JvmField
+    var closingPose = 1.0
+    @JvmField
+    var openingPose = 0.35
 
     val filter = 1
     var oldRead = 0.0
@@ -64,9 +67,9 @@ object clawSubsystem : Subsystem {
     @JvmField
     var minRot = 0.0
     @JvmField
-    var center = 0.3
+    var center = 0.28
     @JvmField
-    var centerFlip = 0.9
+    var centerFlip = 0.95
     fun readSensorDis(): Double {
         if (counter % filter == 0)
             oldRead = colorDistSensor.getDistance(DistanceUnit.MM)
@@ -75,8 +78,9 @@ object clawSubsystem : Subsystem {
     }
 
     fun closeClaw() {
-        clawServo.setPosition(closeingPose)
+        clawServo.setPosition(closingPose)
     }
+
 
     var semiClose = 0.545
     fun closeClawP() {
@@ -102,10 +106,11 @@ object clawSubsystem : Subsystem {
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setEnd {
-            if (clawServo.position == closeingPose) {
+            if (clawServo.position == closingPose) {
                 openClaw()
             } else {
-                closeClaw()
+                clawSubsystem.closingClawSeq.schedule()
+//                antonySubsystem.confirmation.raceWith(Wait(0.7)).schedule()
             }
         }
         .setFinish{ colorDistSensor.getDistance(DistanceUnit.MM)<38}
@@ -123,12 +128,12 @@ object clawSubsystem : Subsystem {
     val rotateClawL = Lambda("rotate claw l")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position <= 1.0) clawRotationServo.position + 0.25 else 1.0)
+            clawRotationServo.setPosition(if (clawRotationServo.position <= 1.0) clawRotationServo.position + 0.125 else 1.0)
         }
     val rotateClawR = Lambda("rotate claw r")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            clawRotationServo.setPosition(if (clawRotationServo.position >= 0.0) clawRotationServo.position - 0.25 else 0.0)
+            clawRotationServo.setPosition(if (clawRotationServo.position >= 0.0) clawRotationServo.position - 0.125 else 0.0)
         }
     @JvmStatic
     val turnLeft = Lambda("turnLeft")
@@ -139,10 +144,7 @@ object clawSubsystem : Subsystem {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { clawRotationServo.position = 0.0 }
     val clawRotationRange = 180.0
-    fun keepAngle(angle: Double, follower: Follower) = Lambda("keepAngle")
-        .setExecute{
-            clawRotationServo.position = (Math.toDegrees(follower.pose.heading) - angle +90)/ clawRotationRange
-        }
+    @JvmStatic
     val resetAngleClaw = Lambda("resetAngleClaw")
         .setInit { clawRotationServo.position = (center) }
     val flippedCenter = Lambda("resetAngleClaw")
@@ -160,9 +162,17 @@ object clawSubsystem : Subsystem {
     val closeClaw2 = Lambda("closeClaw2")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { closeClawP() }
-
+    val closingClawSeq = Sequential(
+        armClawSubsystem.moveArmOutFull,
+        Wait(0.05),
+        closeClaw,
+        Wait(0.1),
+        armClawSubsystem.moveArmOut
+    )
     override fun postUserInitHook(opMode: Wrapper) {
         openClaw()
-        clawRotationServo.position = center
+        if (isSpe && FeatureRegistrar.activeOpModeWrapper.opModeType == Flavor.TELEOP){
+            clawRotationServo.position = center
+        }
     }
 }

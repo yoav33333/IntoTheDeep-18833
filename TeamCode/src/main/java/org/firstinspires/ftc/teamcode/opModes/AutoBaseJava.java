@@ -132,7 +132,7 @@ public class AutoBaseJava extends MegiddoOpMode {
                 follower.setMaxPower(1.0);
             })
             .setInit(()-> {
-                follower.setMaxPower(0.9);
+                follower.setMaxPower(1);
                 follower.followPath(makeLinePath(follower.getPose(),
                  new Pose(follower.getPose().getX()-50, follower.getPose().getY(),
                 0)));
