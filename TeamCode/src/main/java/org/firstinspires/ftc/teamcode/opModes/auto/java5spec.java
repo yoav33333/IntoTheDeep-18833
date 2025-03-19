@@ -30,23 +30,23 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @Autonomous
 public class java5spec extends AutoBaseJava {
     public java5spec() {super(Side.chamber);}
-    public static double offset = -0.9;
+    public static double offset = -1.5;
     public Pose startPose = this.startingPoseChamber;
     public Pose chamberPose1 = new Pose(-35.5, -3, Math.toRadians(180));
     public Pose chamberPose2 = new Pose(-32.0+offset, -5-1.8, Math.toRadians(179));
     public Pose chamberPose3 = new Pose(-29.6+offset, -9-1.8, Math.toRadians(179));
     public Pose chamberPose4 = new Pose(-27.5+offset, -12-1.8, Math.toRadians(179));
-    public Pose chamberPose5 = new Pose(-25.5+offset, -14-1.8, Math.toRadians(179));
-    public Pose dragPose1 = new Pose(-37, -24.8, Math.toRadians(-60));
+    public Pose chamberPose5 = new Pose(-24.5+offset, -14-1.8, Math.toRadians(179));
+    public Pose dragPose1 = new Pose(-37, -26.3, Math.toRadians(-55));
     public Pose dragPose2 = new Pose(-37, -34.2, Math.toRadians(-60));
     public Pose dragPose3 = new Pose(-37, -42.5, Math.toRadians(-60));
-    public Pose dragPoseTurn1 = new Pose(-40.2, -24, Math.toRadians(-65-60));
-    public Pose dragPoseTurn2 = new Pose(-40.3, -35.2, Math.toRadians(-65-60));
-    public Pose dragPoseTurn3 = new Pose(-45, -43.1, Math.toRadians(-65-55));
-    public Pose pickup1Pose = new Pose(-57-0.6, -39-2, Math.toRadians(0));
-    public Pose pickup2Pose = new Pose(-55-0.6, -40-2, Math.toRadians(0));
-    public Pose pickup3Pose = new Pose(-53-0.6, -41-2, Math.toRadians(0));
-    public Pose pickup4Pose = new Pose(-51-0.6, -42-2, Math.toRadians(0));
+    public Pose dragPoseTurn1 = new Pose(-40.2, -24, Math.toRadians(-65-75));
+    public Pose dragPoseTurn2 = new Pose(-40.3, -35.2, Math.toRadians(-65-75));
+    public Pose dragPoseTurn3 = new Pose(-45, -43.1, Math.toRadians(-65-65));
+    public Pose pickup1Pose = new Pose(-57-2.6, -39-2, Math.toRadians(0));
+    public Pose pickup2Pose = new Pose(-55-2.6, -40-2, Math.toRadians(0));
+    public Pose pickup3Pose = new Pose(-53-2.6, -41-2, Math.toRadians(0));
+    public Pose pickup4Pose = new Pose(-51-2.6, -42-2, Math.toRadians(0));
     public Pose pickup12Pose = new Pose(-59, -42, Math.toRadians(0));
     public Pose pickup13Pose = new Pose(-62, -38, Math.toRadians(0));
 //    public Pose pickup2Pose = new Pose(-61.3, -25, Math.toRadians(180+80));
@@ -177,19 +177,21 @@ public class java5spec extends AutoBaseJava {
             followPath(turnDrag3),
 //            clawSubsystem.getOpenClaw(),
                 new RunNonBlocking(
+
             extendoCommand.getExtendoCloseCommandSimple()),
-            new Parallel(
+            new Wait(0.05),
+                new Parallel(
                 new Sequential(
                     new Wait(0.2),
                     linearSlides.getGoToLowChamberNoRC()
                 ),
-                followPath(specialHPIntake).raceWith(new Sequential(new Wait(0.3)),getCatchPixel()),
+                followPath(specialHPIntake).raceWith(new Sequential(new Wait(0.15)),getCatchPixel()),
                 new Sequential(
                     new Wait(0.6),
                     deposit.getIntakeCommand(),
                     deposit.getRelease(),
                     new WaitUntil(()-> !follower.isBusy()),
-                    getCatchPixel().raceWith(slowX).raceWith(new Sequential(new Wait(0.8), new InstantCommand(deposit::closeClaw))),
+                    getCatchPixel().raceWith(slowX).raceWith(new Sequential(new Wait(0.4), new InstantCommand(deposit::closeClaw))),
                     new RunNonBlocking(
                             new Sequential(new Wait(0.2),
                     getPostIntakeState())
@@ -198,22 +200,22 @@ public class java5spec extends AutoBaseJava {
             ),
             linearSlides.getGoToHighChamberUp(),
                 followPath(scorePickup1),
-                new Wait(0.1),
+//                new Wait(0.1),
                 deposit.getSlamArmDown(),
-                new Wait(0.1),
+//                new Wait(0.1),
 
                 new Parallel(
                     new Sequential(
                         new Wait(0.2),
                         linearSlides.getGoToLowChamberNoRC()
                     ),
-                    followPath(pickup1).raceWith(new Sequential(new Wait(0.3)),getCatchPixel()),
+                    followPath(pickup1).raceWith(new Sequential(new Wait(0.15)),getCatchPixel()),
                         new Sequential(
                                 new Wait(0.6),
                                 deposit.getIntakeCommand(),
                                 deposit.getRelease(),
                                 new WaitUntil(()-> !follower.isBusy()),
-                                getCatchPixel().raceWith(slowX).raceWith(new Sequential(new Wait(0.8), new InstantCommand(deposit::closeClaw))),
+                                getCatchPixel().raceWith(slowX).raceWith(new Sequential(new Wait(0.4), new InstantCommand(deposit::closeClaw))),
                                 new RunNonBlocking(
                                         new Sequential(new Wait(0.2),
                                                 getPostIntakeState())
@@ -221,22 +223,22 @@ public class java5spec extends AutoBaseJava {
                     )),
             linearSlides.getGoToHighChamberUp(),
             followPath(scorePickup2),
-                new Wait(0.1),
+//                new Wait(0.1),
                 deposit.getSlamArmDown(),
-                new Wait(0.1),
+//                new Wait(0.1),
 
                 new Parallel(
                 new Sequential(
                     new Wait(0.2),
                     linearSlides.getGoToLowChamberNoRC()
                 ),
-                followPath(pickup2).raceWith(new Sequential(new Wait(0.3)),getCatchPixel()),
+                followPath(pickup2).raceWith(new Sequential(new Wait(0.15)),getCatchPixel()),
                 new Sequential(
                         new Wait(0.6),
                         deposit.getIntakeCommand(),
                         deposit.getRelease(),
                     new WaitUntil(()-> !follower.isBusy()),
-                    getCatchPixel().raceWith(slowX).raceWith(new Sequential(new Wait(0.8), new InstantCommand(deposit::closeClaw))),
+                    getCatchPixel().raceWith(slowX).raceWith(new Sequential(new Wait(0.4), new InstantCommand(deposit::closeClaw))),
                         new RunNonBlocking(
                                 new Sequential(new Wait(0.2),
                                         getPostIntakeState())
@@ -244,16 +246,16 @@ public class java5spec extends AutoBaseJava {
                 )),
             linearSlides.getGoToHighChamberUp(),
             followPath(scorePickup3),
-                new Wait(0.1),
+//                new Wait(0.1),
                 deposit.getSlamArmDown(),
-                new Wait(0.1),
+//                new Wait(0.1),
 
                 new Parallel(
                 new Sequential(
                     new Wait(0.2),
                     linearSlides.getGoToLowChamberNoRC()
                 ),
-                followPath(pickup3).raceWith(new Sequential(new Wait(0.3)),getCatchPixel()),
+                followPath(pickup3).raceWith(new Sequential(new Wait(0.15)),getCatchPixel()),
                 new Sequential(
                         new Wait(0.4),
                         deposit.getIntakeCommand(),
@@ -267,7 +269,7 @@ public class java5spec extends AutoBaseJava {
             ),
             linearSlides.getGoToHighChamberUp(),
             followPath(scorePickup4),
-                new Wait(0.1),
+//                new Wait(0.1),
                 deposit.getSlamArmDown(),
                 new Parallel(
 //                    new Sequential(
