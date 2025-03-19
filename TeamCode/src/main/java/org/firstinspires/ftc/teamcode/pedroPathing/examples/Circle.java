@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 
 /**
- * This is the Circle autonomous OpMode. It runs the robot in a PathChain that's actually not quite
+ * This is the Circle autonomous OpMode. It runs the Robot in a PathChain that's actually not quite
  * a circle, but some Bezier curves that have control points set essentially in a square. However,
  * it turns enough to tune your centripetal force correction and some of your heading. Some lag in
  * heading is to be expected.

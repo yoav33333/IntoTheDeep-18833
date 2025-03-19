@@ -1,21 +1,28 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import com.pedropathing.localization.Pose
+import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.hardware.ServoImplEx
 
+@Config
 object Robot {
-    val intakingColors = mapOf("alliance" to null, "additional" to intakeSubsystem.Color.YELLOW)
-
-    fun updateAllianceColor(color: intakeSubsystem.Color?) {
-        intakingColors["alliance"] to color
+    @JvmField
+    val slides = true
+    @JvmField
+    val claw = true
+    @JvmField
+    val armClaw = true
+    @JvmField
+    val extendo = true
+    @JvmField
+    val deposit = true
+    @JvmField
+    val drive = true
+    fun setPose(servo: ServoImplEx, pose: Double, run: Boolean) {
+        if (run){
+            servo.position = pose
+        }
+        else{
+            servo.close()
+        }
     }
-    fun updateAdditionalColor(color: intakeSubsystem.Color?) {
-        intakingColors["additional"] to color
-    }
-    fun intakeYellows() {
-        updateAdditionalColor(intakeSubsystem.Color.YELLOW)
-    }
-    fun intakeOnlyAlliance() {
-        updateAllianceColor(null)
-    }
-    val currentPose = Pose(0.0,0.0,0.0)
 }

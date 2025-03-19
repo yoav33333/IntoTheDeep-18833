@@ -31,8 +31,8 @@ import dev.frozenmilk.mercurial.Mercurial;
 
 
 /**
- * This is the StraightBackAndForth autonomous OpMode. It runs the robot in a specified distance
- * straight forward. On reaching the end of the forward Path, the robot runs the backward Path the
+ * This is the StraightBackAndForth autonomous OpMode. It runs the Robot in a specified distance
+ * straight forward. On reaching the end of the forward Path, the Robot runs the backward Path the
  * same distance back to the start. Rinse and repeat! This is good for testing a variety of Vectors,
  * like the drive Vector, the translational Vector, and the heading Vector. Remember to test your
  * tunings on CurvedBackAndForth as well, since tunings that work well for straight lines might
@@ -85,8 +85,8 @@ public class StraightBackAndForth extends OpMode {
         follower.followPath(forwards);
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetryA.addLine("This will run the robot in a straight line going " + DISTANCE
-                            + " inches forward. The robot will go forward and backward continuously"
+        telemetryA.addLine("This will run the Robot in a straight line going " + DISTANCE
+                            + " inches forward. The Robot will go forward and backward continuously"
                             + " along the path. Make sure you have enough room.");
         telemetryA.update();
     }

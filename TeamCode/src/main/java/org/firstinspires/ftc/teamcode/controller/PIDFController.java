@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.controller;
 
 /**
  * This is a PID controller (https://en.wikipedia.org/wiki/PID_controller)
- * for your robot. Internally, it performs all the calculations for you.
+ * for your Robot. Internally, it performs all the calculations for you.
  * You need to tune your values to the appropriate amounts in order
  * to properly utilize these calculations.
  * <p>

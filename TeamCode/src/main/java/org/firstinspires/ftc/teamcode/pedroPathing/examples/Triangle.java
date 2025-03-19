@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 /**
  * This is the Triangle autonomous OpMode.
- * It runs the robot in a triangle, with the starting point being the bottom-middle point.
+ * It runs the Robot in a triangle, with the starting point being the bottom-middle point.
  *
  * @author Baron Henderson - 20077 The Indubitables
  * @author Samarth Mahapatra - 1002 CircuitRunners Robotics Surge
