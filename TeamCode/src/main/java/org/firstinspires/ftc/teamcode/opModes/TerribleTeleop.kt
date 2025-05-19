@@ -27,7 +27,7 @@ import kotlin.math.abs
 
 class TerribleTeleop: NewMegiddoOpMode() {
     override fun myInit() {
-        //operator controls
+        /*operator controls*/
         Mercurial.gamepad2.options.onTrue(moveToTransfer)
         Mercurial.gamepad2.y.whileTrue(changeClawIntakePos)
         Mercurial.gamepad2.b.onTrue(doNothing)
@@ -39,26 +39,17 @@ class TerribleTeleop: NewMegiddoOpMode() {
         Mercurial.gamepad2.dpadUp.onTrue(goToBasket)
         Mercurial.gamepad2.dpadDown.onTrue(goToHighChamberUp)
         Mercurial.gamepad2.leftStickButton.onTrue(closeSlides.with(avoidBasket))
-//        Mercurial.gamepad2.dpadLeft .onTrue(goToLowBasket)
-//        Mercurial.gamepad2.dpadDown.onTrue(goToLowChamber)
         Mercurial.gamepad2.share.onTrue(quickRC())
         BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.leftStickY.state) > 0.3 })
             .whileTrue(manualMove)
-
         BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.rightStickY.state) > 0.1 })
             .onTrue(manualControl)
 
 
 
-        //drive controls
-//        BoundBooleanSupplier(EnhancedBooleanSupplier { Mercurial.gamepad1.leftTrigger.state >0.2 })
-//            .whileTrue(followerSubsystem.runRobotCentric)
+        /*drive controls*/
         Mercurial.gamepad1.rightBumper.onTrue(switchBasket)
-//        BoundBooleanSupplier(EnhancedBooleanSupplier{Mercurial.gamepad1.rightTrigger.state>0.2})
-//            .onTrue(followerSubsystem.secondGear)
-//            .onFalse(followerSubsystem.firstGear)
         Mercurial.gamepad1.rightStickButton.onTrue(changeClawIntakePos)
-//        Mercurial.gamepad1.a.onTrue(followerSubsystem.changeCentric)
         Mercurial.gamepad1.dpadUp.onTrue( resetHeading)
         Mercurial.gamepad1.leftBumper.onTrue( resetHeading)
         Mercurial.gamepad1.leftStickButton.onTrue(toggleArmTarget)
