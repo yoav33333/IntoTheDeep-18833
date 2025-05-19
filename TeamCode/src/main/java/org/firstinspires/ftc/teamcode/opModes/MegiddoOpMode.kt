@@ -6,15 +6,15 @@ import org.firstinspires.ftc.teamcode.commands.extendoCommand
 import org.firstinspires.ftc.teamcode.subsystems.BulkReads
 import org.firstinspires.ftc.teamcode.subsystems.antonySubsystem
 import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
+import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.deposit
 import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem
-import org.firstinspires.ftc.teamcode.subsystems.intakeSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 
 @BulkReads.Attach
 @Mercurial.Attach
-//@clawSubsystem.Attach
+@clawSubsystem.Attach
 //@driveSubsystem.Attach
 @extendoCommand.Attach
 @antonySubsystem.Attach
@@ -23,13 +23,11 @@ import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 @extendoSubsystem.Attach
 @deposit.Attach
 @followerSubsystem.Attach
-@intakeSubsystem.Attach
 open class MegiddoOpMode : CommandOpMode(
     BulkReads,
     Mercurial,
-//    clawSubsystem,
+    clawSubsystem,
     extendoCommand,
-    intakeSubsystem,
     linearSlides,
     armClawSubsystem,
     extendoSubsystem,

@@ -106,9 +106,9 @@ object LiftCommands {
     @JvmStatic
     val goToLowBasket = goToPreset(lowBasketPose)
         .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
-    val down = Lambda("down")
+    val up = Lambda("up")
         .setInit{
-            targetPosition -= 12000
+            targetPosition += 19000
         }
     @JvmStatic
     val goToHighChamberUp = goToPreset(highChamberPoseUp)

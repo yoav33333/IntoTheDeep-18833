@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.opModes.CommandOpMode
 
 @BulkReads.Attach
 @Mercurial.Attach
-//@clawSubsystem.Attach
+@clawSubsystem.Attach
 //@driveSubsystem.Attach
 @extendoCommand.Attach
 @antonySubsystem.Attach
@@ -19,7 +19,7 @@ open//@followerSubsystem.Attach
 class MegiddoOpModeAuto : CommandOpMode(
     BulkReads,
     Mercurial,
-//    clawSubsystem,
+    clawSubsystem,
     extendoCommand,
     linearSlides,
     armClawSubsystem,
