@@ -1,0 +1,28 @@
+package org.firstinspires.ftc.teamcode.commands.util
+
+import dev.frozenmilk.dairy.core.wrapper.Wrapper
+import dev.frozenmilk.mercurial.commands.Command
+
+/**
+ * a command that runs without blocking the command group
+ */
+class RunNonBlocking(private val command: Command) : Command {
+
+    override fun initialise() {
+        command.schedule()
+    }
+
+    override fun execute() {
+    }
+
+    override fun end(interrupted: Boolean) {
+    }
+
+    override fun finished(): Boolean {
+        return true
+    }
+
+    override val requirements: Set<Any> = emptySet()
+    override val runStates: Set<Wrapper.OpModeState> = setOf(Wrapper.OpModeState.INIT, Wrapper.OpModeState.ACTIVE)
+    override fun toString() = "RunNonBlocking"
+}

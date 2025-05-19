@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
-import org.firstinspires.ftc.teamcode.util.RunNonBlocking;
-import org.firstinspires.ftc.teamcode.util.WaitUntil;
+import org.firstinspires.ftc.teamcode.commands.util.RunNonBlocking;
+import org.firstinspires.ftc.teamcode.commands.util.WaitUntil;
 
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;

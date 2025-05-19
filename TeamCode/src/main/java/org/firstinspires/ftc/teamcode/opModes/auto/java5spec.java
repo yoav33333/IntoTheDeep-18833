@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.opModes.auto;
 
-import static org.firstinspires.ftc.teamcode.commands.extendoCommand.getExtendoCloseCommandAuto;
 import static org.firstinspires.ftc.teamcode.commands.extendoCommand.getExtendoOpenCommand;
 import static org.firstinspires.ftc.teamcode.subsystems.deposit.getCatchPixel;
 import static org.firstinspires.ftc.teamcode.subsystems.deposit.getPostIntakeState;
-import static org.firstinspires.ftc.teamcode.subsystems.deposit.getRelease;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -23,9 +20,9 @@ import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
-import org.firstinspires.ftc.teamcode.util.InstantCommand;
-import org.firstinspires.ftc.teamcode.util.RunNonBlocking;
-import org.firstinspires.ftc.teamcode.util.WaitUntil;
+import org.firstinspires.ftc.teamcode.commands.util.InstantCommand;
+import org.firstinspires.ftc.teamcode.commands.util.RunNonBlocking;
+import org.firstinspires.ftc.teamcode.commands.util.WaitUntil;
 
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
