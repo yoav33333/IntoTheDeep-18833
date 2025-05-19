@@ -16,13 +16,10 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
-import dev.frozenmilk.mercurial.commands.groups.Sequential
-import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants
-import org.firstinspires.ftc.teamcode.util.InstantCommand
 import java.lang.annotation.Inherited
 
 @Config
@@ -132,6 +129,7 @@ object followerSubsystem : SDKSubsystem() {
 //        follower.xOffset = -startingPose.x}).schedule()
 //        follower.poseUpdater.localizer.pose = startingPose
     }
+
     val teleopDrive = Lambda("teleop-drive")
         .setInit {
 //            follower.setCurrentPoseWithOffset(Pose(0.0, 0.0, 0.0)) // Reset pose at the start of the path
@@ -152,7 +150,7 @@ object followerSubsystem : SDKSubsystem() {
 
         }
         .setFinish { false }
-//        .setEnd{
+    //        .setEnd{
 //            startingPose = follower.pose
 //        }
     val forward = Lambda("forward")
@@ -186,6 +184,5 @@ object followerSubsystem : SDKSubsystem() {
             BezierCurve(*arr.toTypedArray())
         ).setLinearHeadingInterpolation(poses[0].heading, poses[poses.lastIndex].heading).build()
     }
-
 
 }

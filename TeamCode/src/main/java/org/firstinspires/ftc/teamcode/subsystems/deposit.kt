@@ -19,7 +19,7 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta.Flavor
 import org.firstinspires.ftc.teamcode.commands.extendoCommand
-import org.firstinspires.ftc.teamcode.util.WaitUntil
+import org.firstinspires.ftc.teamcode.commands.util.WaitUntil
 import java.lang.annotation.Inherited
 @Config
 object deposit : SDKSubsystem() {
@@ -62,7 +62,7 @@ object deposit : SDKSubsystem() {
 
 
 
-    val openingClawPose = 1.0
+        val openingClawPose = 1.0
     @JvmField
     var ArmInPose = 0.01
     @JvmField
@@ -184,7 +184,8 @@ object deposit : SDKSubsystem() {
         .setInit { depoClawServo.position = 0.4}
     val closeH = Lambda("close")
         .setInit{closeClaw()}
-    val quickRC = Sequential(WaitUntil{ linearSlides.getPose()>1000},
+    val quickRC = Sequential(
+        WaitUntil{ linearSlides.getPose()>1000},
         releaseH, Wait(0.5), closeH)
     @JvmStatic
     val quickRCSimple = Sequential(releaseH, Wait(0.3), closeH)

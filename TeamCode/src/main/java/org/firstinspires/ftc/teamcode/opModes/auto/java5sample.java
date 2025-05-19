@@ -1,33 +1,22 @@
 package org.firstinspires.ftc.teamcode.opModes.auto;
 
-import static org.firstinspires.ftc.teamcode.commands.extendoCommand.getExtendoOpenCommand;
 import static org.firstinspires.ftc.teamcode.subsystems.deposit.getArmIn;
-import static org.firstinspires.ftc.teamcode.subsystems.deposit.getCatchPixel;
-import static org.firstinspires.ftc.teamcode.subsystems.deposit.getPostIntakeState;
 import static org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose;
 
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
-import com.pedropathing.util.Constants;
-import com.qualcomm.hardware.lynx.commands.core.LynxI2cConfigureChannelCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.extendoCommand;
 import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.deposit;
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
-import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
-import org.firstinspires.ftc.teamcode.util.RunNonBlocking;
-import org.firstinspires.ftc.teamcode.util.WaitUntil;
+import org.firstinspires.ftc.teamcode.commands.util.RunNonBlocking;
+import org.firstinspires.ftc.teamcode.commands.util.WaitUntil;
 
-import java.util.function.BooleanSupplier;
-
-import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.Wait;

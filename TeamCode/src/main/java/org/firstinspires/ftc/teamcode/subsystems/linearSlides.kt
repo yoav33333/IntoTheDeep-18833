@@ -12,28 +12,23 @@ import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier
-import dev.frozenmilk.dairy.core.util.supplier.numeric.EnhancedDoubleSupplier
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.subsystems.Subsystem
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta.Flavor
-import org.firstinspires.ftc.teamcode.commands.extendoCommand.openArmAtDelta
-import org.firstinspires.ftc.teamcode.controller.PController
-import org.firstinspires.ftc.teamcode.controller.PDController
-import org.firstinspires.ftc.teamcode.subsystems.deposit.ArmOutPose
+import org.firstinspires.ftc.teamcode.util.controller.PController
+import org.firstinspires.ftc.teamcode.util.controller.PDController
 import org.firstinspires.ftc.teamcode.subsystems.deposit.ArmOutPoseChamber
 import org.firstinspires.ftc.teamcode.subsystems.deposit.armMaybeOut
 import org.firstinspires.ftc.teamcode.subsystems.deposit.depoArmServo
 import org.firstinspires.ftc.teamcode.subsystems.deposit.isSpe
 import org.firstinspires.ftc.teamcode.subsystems.deposit.quickRC
 import org.firstinspires.ftc.teamcode.util.Encoder
-import org.firstinspires.ftc.teamcode.util.InstantCommand
-import org.firstinspires.ftc.teamcode.util.WaitUntil
+import org.firstinspires.ftc.teamcode.commands.util.InstantCommand
+import org.firstinspires.ftc.teamcode.commands.util.WaitUntil
 import java.lang.annotation.Inherited
-import java.util.function.DoubleSupplier
 import kotlin.math.abs
 
 @Config
@@ -122,14 +117,18 @@ object linearSlides : Subsystem {
     var threshold = 30.0
     @JvmField
     var g = 0.14
-    var PDController = PDController(Kp, Kd)
-    var PController = PController(Kp2)
+    var PDController =
+        PDController(Kp, Kd)
+    var PController =
+        PController(Kp2)
     val closeingPose = 0.0
 
 
     fun runToPose(pose: Double) {
-        PDController = PDController(Kp, Kd)
-        PController = PController(Kp2)
+        PDController =
+            PDController(Kp, Kd)
+        PController =
+            PController(Kp2)
         setPower(PDController.calculate(getPose().toDouble(), pose)+g)
     }
 
@@ -208,7 +207,7 @@ object linearSlides : Subsystem {
             deposit.halfArmIn.schedule()
         goToBasket.schedule()
             Sequential(
-                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target- 1000 <getPose()) || (isSpe && getPose()>1000) )},
+                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(target >500 && target - 1000 <getPose()) || (isSpe && getPose()>1000) )},
                 armMaybeOut
             ).schedule()
         }
@@ -295,10 +294,7 @@ object linearSlides : Subsystem {
     @JvmStatic
     val goToLowChamber = goToPreset(0.0).addInit { isSpe = true
         quickRC.schedule()
-//        Sequential(
-//            utilCommands.waitUntil{ Mercurial.isScheduled(runToPosition) || abs(Mercurial.gamepad2.rightStickY.state)>0.2 },
-//            armOut
-//        ).schedule()
+
     }
     @JvmStatic
     val goToLowChamberNoRC = goToPreset(0.0).addInit { isSpe = true }

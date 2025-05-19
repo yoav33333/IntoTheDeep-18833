@@ -41,7 +41,6 @@ class BadTeleop : MegiddoOpMode() {
     lateinit var telemetryDB: MultipleTelemetry
     var lastRunTime = 0.0
 
-    //TODO: add auto closing if pixel intaked
     override fun myInit() {
         //operator controls
         Mercurial.gamepad2.options.onTrue(deposit.armIn)

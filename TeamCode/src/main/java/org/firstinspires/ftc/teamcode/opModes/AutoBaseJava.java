@@ -5,8 +5,10 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Pose;
+import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
@@ -25,6 +27,7 @@ import java.util.function.BooleanSupplier;
 
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier;
+import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
@@ -35,32 +38,68 @@ public class AutoBaseJava extends MegiddoOpMode {
         basket,
         chamber
     }
-    public static Pose startingPoseChamber = new Pose(-62, -8.5, Math.toRadians(0));
-    public static Pose startingPoseBasket = new Pose(-62, 8.5+24, 0);
+    public Pose startingPoseChamber = new Pose(-62, -8.5, Math.toRadians(180));
+    public Pose startingPoseBasket = new Pose(-62, 8.5+24, 0);
     Side side;
     public AutoBaseJava(Side side){
         this.side = side;
     }
     protected Follower follower;
     @Override
-    final public void preInit(){
+    public void preInit(){
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-        Constants.setConstants(FConstants.class, LConstants.class);
+//        Constants.setConstants(FConstants.class, LConstants.class);
+
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
 
         switch(side){
             case basket:
-                follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
-                follower.setCurrentPoseWithOffset(startingPoseBasket);
+                follower.poseUpdater.setPose(startingPoseBasket);
+//                follower.poseUpdater.setCurrentPoseWithOffset(startingPoseBasket);
+//                follower = new Follower(hardwareMap);
                 break;
             case chamber:
 //                Constants.setConstants(FConstants.class, LConstants.class);
-                follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
-                follower.setCurrentPoseWithOffset(startingPoseChamber);
+                follower.poseUpdater.setPose(startingPoseChamber);
+//                follower.poseUpdater.setCurrentPoseWithOffset(startingPoseChamber);
+
         }
     }
+    @Override
+    public void myFullStop(){
+        followerSubsystem.setStartingPose(follower.getPose());
+        linearSlides.setStartingPose(linearSlides.getPose());
+    }
+    boolean flag = false;
     public Lambda runFollower = new Lambda("update Follower")
             .setFinish(()->false)
+            .setInit(()->{
+                switch(side){
+                    case basket:
+                        follower.poseUpdater.setPose(startingPoseBasket);
+//                follower.poseUpdater.setCurrentPoseWithOffset(startingPoseBasket);
+//                follower = new Follower(hardwareMap);
+                        break;
+                    case chamber:
+//                Constants.setConstants(FConstants.class, LConstants.class);
+                        follower.poseUpdater.setPose(startingPoseChamber);
+//                follower.poseUpdater.setCurrentPoseWithOffset(startingPoseChamber);
+
+                }            })
             .setExecute(()->{
+//                if (!flag){
+//                    follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+//                    switch(side){
+//                        case basket:
+//                            follower.setCurrentPoseWithOffset(startingPoseBasket);
+////                follower = new Follower(hardwareMap);
+//                            break;
+//                        case chamber:
+////                Constants.setConstants(FConstants.class, LConstants.class);
+//                            follower.setCurrentPoseWithOffset(startingPoseChamber);
+//                    }
+//                }
+//                flag = true;
                 follower.update();
                 follower.telemetryDebug(telemetryA);
             });
@@ -72,15 +111,15 @@ public class AutoBaseJava extends MegiddoOpMode {
 
         });
 
-    public Lambda instantCommand(Runnable runnable){
-        return new Lambda("instant command")
-                .setInit(runnable);
-    }
+
     public Lambda followPath(PathChain chain){
         return new Lambda("follow-path-chain")
             .setInit(() -> {
                 follower.followPath(chain, true);
-                runFollower.schedule();
+//                if (!Mercurial.isScheduled(runFollower)){
+//                    follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+                    runFollower.schedule();
+//                }
             })
 //            .setExecute(() ->{
 //
@@ -120,7 +159,7 @@ public class AutoBaseJava extends MegiddoOpMode {
                     follower.telemetryDebug(telemetryA);
 
                 })
-                .setFinish(()-> ((!follower.isBusy() ) || follower.isRobotStuck()))
+                .setFinish(()-> ((!follower.isBusy() && !follower.isTurning()) || follower.isRobotStuck()))
                 .setEnd((interrupted) -> {
                     if (interrupted) follower.breakFollowing();
                 });
@@ -145,18 +184,53 @@ public class AutoBaseJava extends MegiddoOpMode {
             .setFinish(()-> ((!follower.isBusy() ) || follower.isRobotStuck()));
 
     public PathChain makeLinePath(Pose startingPose, Pose endingPose){
-        return follower.pathBuilder().addPath(
+        return new PathBuilder().addPath(
             new BezierLine(new Point(startingPose), new Point(endingPose)))
                 .setLinearHeadingInterpolation(startingPose.getHeading(), endingPose.getHeading())
                 .build();
     }
+    public PathChain makeSpinHalfWayPath(Pose startingPose, Pose endingPose){
+        return new PathBuilder().addPath(
+                        new BezierLine(new Point(startingPose), new Point((startingPose.getX() + endingPose.getX())/2,
+                            (startingPose.getY() + endingPose.getY())/2)))
+                .setLinearHeadingInterpolation(startingPose.getHeading(), endingPose.getHeading())
+                .addPath(new BezierLine(new Point((startingPose.getX() + endingPose.getX())/2,
+                        (startingPose.getY() + endingPose.getY())/2), new Point(endingPose)))
+                .setConstantHeadingInterpolation(endingPose.getHeading())
+                .build();
+    }
+    public PathChain makeLinePathConst(Pose startingPose, Pose endingPose){
+        return new PathBuilder().addPath(
+            new BezierLine(new Point(startingPose), new Point(endingPose)))
+                .setConstantHeadingInterpolation(endingPose.getHeading())
+                .build();
+    }
+    public PathChain makeLinePath(Pose startingPose, Pose endingPose, double spinPercentage) {
+        if (spinPercentage > 0 && spinPercentage < 1) {
+            double spinPointX = startingPose.getX() + (endingPose.getX() - startingPose.getX()) * spinPercentage;
+            double spinPointY = startingPose.getY() + (endingPose.getY() - startingPose.getY()) * spinPercentage;
+            Pose spinPose = new Pose(spinPointX, spinPointY, startingPose.getHeading());
+            return new PathBuilder().addPath(
+                            new BezierLine(new Point(startingPose), new Point(spinPose))
+                    ).setTangentHeadingInterpolation()
+                    .addPath(
+                            new BezierLine(new Point(spinPose), new Point(endingPose))
+                    ).setLinearHeadingInterpolation(startingPose.getHeading(), endingPose.getHeading())
+                    .build();
+        }
+        return new PathBuilder().addPath(
+                        new BezierLine(new Point(startingPose), new Point(endingPose))
+                ).setLinearHeadingInterpolation(startingPose.getHeading(), endingPose.getHeading())
+                .build();
+    }
+
     public PathChain makeCurvePath(Pose... poses) {
         ArrayList<Point> arr = new ArrayList<>();
 //        poses.forEach { arr.add(Point(it)) }
         for(Pose pose: poses){
             arr.add(new Point(pose));
         }
-        return follower.pathBuilder().addPath(
+        return new PathBuilder().addPath(
                 new BezierCurve(arr)
         ).setLinearHeadingInterpolation(poses[0].getHeading(), poses[poses.length-1].getHeading()).build();
     }

@@ -26,10 +26,10 @@ import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose
 import org.firstinspires.ftc.teamcode.subsystems.linearSlides.nonBlockRTP
-import org.firstinspires.ftc.teamcode.util.InstantCommand
-import org.firstinspires.ftc.teamcode.util.RunNonBlocking
-import org.firstinspires.ftc.teamcode.util.SuperAdvancing
-import org.firstinspires.ftc.teamcode.util.WaitUntil
+import org.firstinspires.ftc.teamcode.commands.util.InstantCommand
+import org.firstinspires.ftc.teamcode.commands.util.RunNonBlocking
+import org.firstinspires.ftc.teamcode.commands.util.SuperAdvancing
+import org.firstinspires.ftc.teamcode.commands.util.WaitUntil
 import java.lang.annotation.Inherited
 import kotlin.math.abs
 @Config
@@ -192,19 +192,7 @@ object extendoCommand : Subsystem {
                 )
 
             ),
-//            Parallel(
-////                linearSlides.nonBlockRTP,
-//                Sequential(
-//                    anglePostTransfer,
-//                    Wait(0.16),
-//                    angleTransfer
-//                )
-//            ),
-//            Sequential(
-////                utilCommands.waitUntil{abs(Mercurial.gamepad2.rightStickY.state) >0.2 || isSpe},
-//                WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(linearSlides.target>500 && linearSlides.target-5000<getPose()) || (isSpe && getPose()>1000) )},
-//                armMaybeOut
-//            )
+
         )
     )
     @JvmStatic
@@ -258,7 +246,7 @@ object extendoCommand : Subsystem {
         SuperAdvancing(extendoCloseCommand, extendoOpenCommand)
 
     override fun preUserInitHook(opMode: Wrapper) {
-        extendoMacro.restart()
+        extendoMacro.reset()
 //        extendoMacro.schedule()
     }
 }
