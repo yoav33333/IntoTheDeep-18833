@@ -13,6 +13,13 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class basket {
+    /**
+     * Sets up and runs a MeepMeep simulation with a custom robot trajectory and background image.
+     *
+     * Initializes the MeepMeep environment, configures a robot entity with specific motion constraints, defines a detailed trajectory sequence including multiple poses and headings, loads a custom background image, and starts the simulation.
+     *
+     * @param args command-line arguments (not used)
+     */
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(600);
 

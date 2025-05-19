@@ -60,6 +60,11 @@ object extendoCommand : Subsystem {
     val toggleFlip = Lambda("tf")
         .setInit{doFlip = !doFlip}
 
+    /**
+     * Resets the `doFlip` flag to false before each user initialization loop.
+     *
+     * This ensures that the claw flipping logic is disabled at the start of each pre-init loop cycle.
+     */
     override fun preUserInitLoopHook(opMode: Wrapper) {
         doFlip = false
     }
@@ -245,6 +250,11 @@ object extendoCommand : Subsystem {
     val extendoMacro =
         SuperAdvancing(extendoCloseCommand, extendoOpenCommand)
 
+    /**
+     * Resets the extendo macro sequence before user initialization.
+     *
+     * This prepares the extendo command sequence to start from a clean state when the user initialization phase begins.
+     */
     override fun preUserInitHook(opMode: Wrapper) {
         extendoMacro.reset()
 //        extendoMacro.schedule()

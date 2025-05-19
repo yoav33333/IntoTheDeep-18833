@@ -26,7 +26,15 @@ object ArmCommands {
         moveToDeposit
     )
 
-    fun setArmTarget(target: ArmTarget) =
+    /**
+             * Creates a command that sets the arm target state to the specified value.
+             *
+             * The command is named according to the target and is configured to run during both ACTIVE and INIT operation modes.
+             *
+             * @param target The desired arm target state to set.
+             * @return A Lambda command that updates the global armTarget variable.
+             */
+            fun setArmTarget(target: ArmTarget) =
         Lambda("Set Arm Target: {}".format(target.toString()))
             .setInit {
                 armTarget = target

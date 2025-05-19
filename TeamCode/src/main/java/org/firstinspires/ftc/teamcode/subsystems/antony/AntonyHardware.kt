@@ -38,12 +38,24 @@ object AntonyHardware: SDKSubsystem() {
         )
     }
 
+    /**
+     * Sets the LED driver to display the specified pattern.
+     *
+     * @param pattern The LED pattern to apply.
+     */
     fun setPattern(pattern: RevBlinkinLedDriver.BlinkinPattern) {
         antony.setPattern(pattern)
     }
 
     override var defaultCommand: Command? = setDefault
 
+    /**
+     * Schedules post-startup actions for the subsystem, including timed LED pattern changes and low battery monitoring.
+     *
+     * After the user start, this method schedules a sequence of commands to control LED patterns, and continuously monitors the input voltage of the first module. If the voltage drops below the minimum threshold, the low battery LED pattern is activated while the condition persists.
+     *
+     * @param opMode The current operational mode context.
+     */
     override fun postUserStartHook(opMode: Wrapper) {
         Sequential(
             Wait(80.0),

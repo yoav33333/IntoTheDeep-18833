@@ -16,6 +16,11 @@ object BulkReads : Feature {
 
     lateinit var modules: List<LynxModule>
 
+    /**
+     * Initializes the list of Lynx hardware modules and sets their bulk caching mode to manual before user initialization.
+     *
+     * @param opMode The current OpMode wrapper providing access to the hardware map.
+     */
     override fun preUserInitHook(opMode: Wrapper) {
 
         // collect and store the modules

@@ -70,6 +70,15 @@ public class SensorGoBildaPinpointExample extends LinearOpMode {
     double oldTime = 0;
 
 
+    /**
+     * Demonstrates the use of the goBILDA Pinpoint Odometry Computer for real-time robot localization in an FTC OpMode.
+     *
+     * <p>
+     * Initializes the odometry hardware, configures pod offsets and encoder settings, and manages IMU calibration.
+     * Continuously updates and displays the robot's position, velocity, device status, and update frequencies via telemetry.
+     * Allows resetting position and recalibrating the IMU using gamepad buttons during operation.
+     * </p>
+     */
     @Override
     public void runOpMode() {
 

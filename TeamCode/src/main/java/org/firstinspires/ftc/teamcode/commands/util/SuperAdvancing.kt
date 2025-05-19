@@ -31,6 +31,12 @@ class SuperAdvancing(private val commands: List<Command>) : Command {
 
     override fun initialise() {}
 
+    /**
+     * Executes the current command in the sequence, advancing to the next command if needed and handling errors.
+     *
+     * Checks if the current command has finished, ends it if so, and advances to the next command when requested.
+     * Exceptions thrown by commands are wrapped with additional context for debugging.
+     */
     override fun execute() {
         val finished = currentCommandCell.safeInvoke { command ->
             try {
@@ -67,6 +73,9 @@ class SuperAdvancing(private val commands: List<Command>) : Command {
         }
     }
 
+    /**
+     * Resets the command sequence to the beginning by invalidating the iterator.
+     */
     fun reset() {
         iteratorCell.invalidate()
     }

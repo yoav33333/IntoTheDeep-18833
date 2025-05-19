@@ -26,6 +26,11 @@ import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.doNothing
 import kotlin.math.abs
 
 class TerribleTeleop: NewMegiddoOpMode() {
+    /**
+     * Configures gamepad input bindings for teleoperated robot control.
+     *
+     * Maps various buttons and joystick movements on two gamepads to corresponding robot subsystem commands, enabling operator and driver control over mechanisms such as the claw, arm, extendo, lift, and basket during teleoperation.
+     */
     override fun myInit() {
         //operator controls
         Mercurial.gamepad2.options.onTrue(moveToTransfer)

@@ -24,7 +24,11 @@ public class ExampleRobotCentricTeleop extends OpMode {
     private Follower follower;
     private final Pose startPose = new Pose(0,0,0);
 
-    /** This method is call once when init is played, it initializes the follower **/
+    /**
+     * Initializes the Follower for robot control and sets its starting pose.
+     *
+     * Called once when the OpMode is initialized.
+     */
     @Override
     public void init() {
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
@@ -42,7 +46,12 @@ public class ExampleRobotCentricTeleop extends OpMode {
         follower.startTeleopDrive();
     }
 
-    /** This is the main loop of the opmode and runs continuously after play **/
+    /**
+     * Processes gamepad input to control the robot in robot-centric mode and updates telemetry with the current pose.
+     *
+     * Continuously reads joystick values to set movement vectors for the follower, updates the follower's state,
+     * and displays the robot's X, Y, and heading on the driver station telemetry.
+     */
     @Override
     public void loop() {
 

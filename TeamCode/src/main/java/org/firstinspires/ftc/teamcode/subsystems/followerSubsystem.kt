@@ -44,6 +44,11 @@ object followerSubsystem : SDKSubsystem() {
 //    var startingPose2 = Pose(0.0,3.0,0.0)
     lateinit var
             follower: Follower
+    /**
+     * Initializes the follower instance with hardware and constants before user initialization.
+     *
+     * Sets up the path-following subsystem by creating a new `Follower` using the hardware map and constants classes.
+     */
     override fun preUserInitHook(opMode: Wrapper) {
         //        Constants.setConstants(FConstants.class, LConstants.class);
         follower = Follower(hardwareMap, FConstants::class.java, LConstants::class.java)
@@ -55,6 +60,11 @@ object followerSubsystem : SDKSubsystem() {
 //        isCentric = false
     }
 
+    /**
+     * Hook called after the user op mode starts.
+     *
+     * Currently, this function does not perform any actions.
+     */
     override fun postUserStartHook(opMode: Wrapper) {
 //        follower.poseUpdater.setPose(startingPose)
     }
@@ -101,11 +111,22 @@ object followerSubsystem : SDKSubsystem() {
     val angleReset = Lambda("angleReset")
         .setInit{ follower.headingOffset = -follower.totalHeading
             follower.headingOffset = -follower.totalHeading}
-    fun setHeading(heading: Double) = Lambda("angleReset")
+    /**
+          * Creates a Lambda that sets the follower's heading offset to align the robot's heading with the specified value.
+          *
+          * @param heading The desired heading in radians to set as the new reference.
+          * @return A Lambda that, when initialized, updates the follower's heading offset.
+          */
+         fun setHeading(heading: Double) = Lambda("angleReset")
         .setInit{ follower.headingOffset = -(follower.totalHeading-heading)
          follower.headingOffset = -(follower.totalHeading-heading)}
     @JvmField
     var headingPow = 0.5
+    /**
+     * Initializes teleop drive mode by starting the follower's teleop drive, setting maximum power, and applying initial movement vectors based on gamepad inputs.
+     *
+     * This method prepares the robot for manual control, scaling heading input by `headingPow` and combining trigger and stick values from both gamepads to determine movement.
+     */
     fun initDrive(){
 //        follower.poseUpdater.setPose(startingPose)
         follower.startTeleopDrive()
@@ -177,6 +198,12 @@ object followerSubsystem : SDKSubsystem() {
             Point(endingPose)
             )
         ).setLinearHeadingInterpolation(startingPose.heading, endingPose.heading).build()
+    /**
+     * Creates a Bezier curve path through the given poses with linear heading interpolation from the first to the last pose.
+     *
+     * @param poses Sequence of poses defining the control points of the curve.
+     * @return A PathChain representing the constructed Bezier curve path.
+     */
     fun makeCurvePath(vararg poses: Pose) : PathChain{
         val arr = ArrayList<Point>()
         poses.forEach { arr.add(Point(it)) }

@@ -47,14 +47,25 @@ object extendoSubsystem : Subsystem {
     val close = 0.99
     var extendoOpen = true
 
+    /**
+     * Resets the extendo open state to true before user initialization.
+     *
+     * Called during the subsystem's pre-user initialization phase to ensure the extendo mechanism starts in the open state.
+     */
     override fun preUserInitHook(opMode: Wrapper) {
         extendoOpen = true
     }
+    /**
+     * Sets both extendo servos to the open position.
+     */
     fun openExtendoF() {
         extendoServoR.setPosition(open)
         extendoServoL.setPosition(open)
     }
 
+    /**
+     * Sets both extendo servos to the closed position.
+     */
     fun closeExtendoF() {
         extendoServoR.setPosition(close)
         extendoServoL.setPosition(close)

@@ -52,7 +52,13 @@ object LiftCommands {
     val resetHeight = Lambda("resetHeight")
         .setInit { LiftHardware.setPose(getPose()) }
 
-    fun goToPreset(goal: Int) = Lambda("goToPreset")
+    /**
+         * Creates a command to set the lift's target position to the specified goal.
+         *
+         * @param goal The desired lift position to move to.
+         * @return A Lambda command that sets the lift's target position when initialized.
+         */
+        fun goToPreset(goal: Int) = Lambda("goToPreset")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { targetPosition = goal }
 

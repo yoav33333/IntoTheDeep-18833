@@ -23,7 +23,10 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @Config
 @Autonomous
 public class java5sample extends AutoBaseJava {
-    public java5sample() {super(Side.basket);}
+    /**
+ * Constructs a new autonomous routine for the basket side, initializing the base class with the basket side configuration.
+ */
+public java5sample() {super(Side.basket);}
 
     public Pose startPose = this.startingPoseBasket;
     public Pose basketPose1 = new Pose(-58, 55, Math.toRadians(-45));
@@ -48,6 +51,11 @@ public class java5sample extends AutoBaseJava {
     static PathChain pickup3;
     static PathChain pickup4;
     static PathChain park;
+    /**
+     * Initializes autonomous routine paths and sets initial positions for the claw and deposit subsystems.
+     *
+     * Defines the robot's movement paths between key field positions for scoring, pickup, and parking, and prepares manipulators for the start of the autonomous sequence.
+     */
     @Override
     public void myInit() {
 
@@ -70,6 +78,11 @@ public class java5sample extends AutoBaseJava {
     }
 
 
+    /**
+     * Executes the autonomous routine by scheduling a sequence of commands for scoring, picking up, and parking.
+     *
+     * This method coordinates the robot's manipulators and drivetrain to perform multiple cycles of scoring preloaded and picked-up items, then parks the robot at the end of the autonomous period. The sequence includes moving the linear slides, operating the claw and extendo mechanisms, following predefined paths, and synchronizing actions based on subsystem states and positions.
+     */
     @Override
     public void myStart() {
 
@@ -167,6 +180,9 @@ public class java5sample extends AutoBaseJava {
             finishAuto
         ).schedule();
     }
+    /**
+     * Stops autonomous actions by halting path following, canceling follower commands, and updating the linear slides' starting pose to the current robot position.
+     */
     @Override
     public void myStop() {
         follower.breakFollowing();

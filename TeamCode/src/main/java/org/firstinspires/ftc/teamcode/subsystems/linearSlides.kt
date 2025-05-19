@@ -124,6 +124,11 @@ object linearSlides : Subsystem {
     val closeingPose = 0.0
 
 
+    /**
+     * Moves the linear slides toward the specified pose using PID control with gravity compensation.
+     *
+     * @param pose The target position for the slides.
+     */
     fun runToPose(pose: Double) {
         PDController =
             PDController(Kp, Kd)
@@ -132,10 +137,18 @@ object linearSlides : Subsystem {
         setPower(PDController.calculate(getPose().toDouble(), pose)+g)
     }
 
+    /**
+     * Moves the linear slides to the predefined closed position.
+     */
     fun closeSlides() {
         runToPose(closeingPose)
     }
 
+    /**
+     * Sets the specified power to all four slide motors, inverting the power for the right-side motors to ensure coordinated movement.
+     *
+     * @param power The power level to apply to the slide motors.
+     */
     fun setPower(power: Double) {
 //        (powerLeft ?: power).let { leftCenter.setPower(it) }
 //        (powerLeft ?: power).let { leftSide.setPower(it) }
@@ -145,6 +158,11 @@ object linearSlides : Subsystem {
         rightCenter.setPower(-power)
     }
 
+    /**
+     * Sets all slide motors to use BRAKE mode when zero power is applied.
+     *
+     * This overrides any provided zeroPowerBehavior and ensures all motors hold position when not powered.
+     */
     fun setZeroPowerBehavior(zeroPowerBehavior: DcMotor.ZeroPowerBehavior) {
         leftCenter.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         leftSide.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -152,6 +170,11 @@ object linearSlides : Subsystem {
         rightSide.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
 
+    /**
+     * Sets the run mode for all four slide motors.
+     *
+     * @param mode The desired run mode to apply to each motor.
+     */
     fun setRunMode(mode: RunMode) {
         leftCenter.mode = mode
         leftSide.mode = mode
@@ -161,12 +184,20 @@ object linearSlides : Subsystem {
 
     var offset = 0
 //    fun getPoseRight() = rightEncoder.getPose()+ offset
-//    fun getPoseLeft() = -leftEncoder.getPose()+ offset
+/**
+     * Returns the current slide position based on the right encoder reading and the applied offset.
+     *
+     * @return The current pose of the linear slides.
+     */
     @JvmStatic
     fun getPose(): Int {
         return rightEncoder.getPose()+ offset
     }
-//    val pose = EnhancedDoubleSupplier{ getPose().toDouble()}
+/**
+     * Adjusts the encoder offset so that the current slide pose is set to the specified value.
+     *
+     * @param pose The desired pose value to assign as the current slide position.
+     */
     @JvmStatic
     fun setPose(pose: Int) {
         offset -= getPose() - pose
@@ -299,6 +330,11 @@ object linearSlides : Subsystem {
     @JvmStatic
     val goToLowChamberNoRC = goToPreset(0.0).addInit { isSpe = true }
 
+    /**
+     * Initializes the linearSlides subsystem before user code runs.
+     *
+     * Resets encoders, sets motor run modes and zero power behavior, binds the magnetic limit switch to reset slide height, initializes basket state and pose, and schedules automatic slide positioning.
+     */
     override fun preUserInitHook(opMode: Wrapper) {
         setRunMode(RunMode.STOP_AND_RESET_ENCODER)
         setRunMode(RunMode.RUN_WITHOUT_ENCODER)

@@ -70,6 +70,13 @@ object clawSubsystem : Subsystem {
     var center = 0.28
     @JvmField
     var centerFlip = 0.95
+    /**
+     * Returns the filtered distance reading from the color-range sensor in millimeters.
+     *
+     * Updates the stored distance value every `filter` calls to reduce sensor noise, returning the last updated value on other calls.
+     *
+     * @return The most recently filtered distance measurement in millimeters.
+     */
     fun readSensorDis(): Double {
         if (counter % filter == 0)
             oldRead = colorDistSensor.getDistance(DistanceUnit.MM)
@@ -77,12 +84,18 @@ object clawSubsystem : Subsystem {
         return oldRead
     }
 
+    /**
+     * Closes the claw by setting the servo to the configured closing position.
+     */
     fun closeClaw() {
         clawServo.setPosition(closingPose)
     }
 
 
     var semiClose = 0.545
+    /**
+     * Moves the claw servo to a partially closed position.
+     */
     fun closeClawP() {
         clawServo.setPosition(semiClose)
     }
@@ -169,6 +182,11 @@ object clawSubsystem : Subsystem {
         Wait(0.1),
         armClawSubsystem.moveArmOut
     )
+    /**
+     * Performs initialization actions after user setup for the claw subsystem.
+     *
+     * Opens the claw and, if running in a special configuration during teleoperated mode, sets the claw rotation servo to the configured center position.
+     */
     override fun postUserInitHook(opMode: Wrapper) {
         openClaw()
         if (isSpe && FeatureRegistrar.activeOpModeWrapper.opModeType == Flavor.TELEOP){

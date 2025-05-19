@@ -73,8 +73,11 @@ public class ExampleBucketAuto extends OpMode {
     private Path scorePreload, park;
     private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
-    /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
-     * It is necessary to do this so that all the paths are built before the auto starts. **/
+    /**
+     * Constructs all autonomous paths and path chains with appropriate heading interpolations before the autonomous period begins.
+     *
+     * This method defines the robot's movement trajectories for scoring the preload, picking up and scoring three samples, and parking. It uses straight (BezierLine) and curved (BezierCurve) paths, and sets heading interpolation (linear) for each path to ensure smooth transitions between poses.
+     */
     public void buildPaths() {
 
         /* There are two major types of paths components: BezierCurves and BezierLines.
@@ -140,9 +143,11 @@ public class ExampleBucketAuto extends OpMode {
         park.setLinearHeadingInterpolation(scorePose.getHeading(), parkPose.getHeading());
     }
 
-    /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
-     * Everytime the switch changes case, it will reset the timer. (This is because of the setPathState() method)
-     * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. */
+    /**
+     * Manages the autonomous path progression state machine, commanding the Robot to follow predefined paths and advancing to the next state upon path completion.
+     *
+     * This method is called repeatedly during the autonomous period. At each state, it checks if the current path has finished and, if so, commands the next path in the sequence (scoring, picking up samples, or parking) and updates the state accordingly. The timer is reset each time the state changes.
+     */
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
@@ -245,7 +250,11 @@ public class ExampleBucketAuto extends OpMode {
         pathTimer.resetTimer();
     }
 
-    /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
+    /**
+     * Executes the main autonomous loop, updating Robot movement, managing path progression, and sending telemetry data.
+     *
+     * Called repeatedly after the OpMode starts to control path following, advance the autonomous state machine, and provide real-time feedback on Robot status.
+     */
     @Override
     public void loop() {
 
@@ -263,7 +272,9 @@ public class ExampleBucketAuto extends OpMode {
         telemetry.update();
     }
 
-    /** This method is called once at the init of the OpMode. **/
+    /**
+     * Initializes the OpMode by setting up timers, creating the path follower, setting the starting pose, and building all autonomous paths.
+     */
     @Override
     public void init() {
         pathTimer = new Timer();

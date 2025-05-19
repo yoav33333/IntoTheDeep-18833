@@ -10,6 +10,13 @@ class HardwareDevice<T>(name: String, val type: Class<T>){
         FeatureRegistrar.activeOpMode.hardwareMap.get(type, name)
     }
 
+    /**
+     * Returns the hardware device instance associated with this wrapper.
+     *
+     * The device is retrieved from the active OpMode's hardware map on first access and cached for future calls.
+     *
+     * @return The hardware device of type T.
+     */
     fun get(): T {
         return device
     }

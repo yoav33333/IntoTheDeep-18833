@@ -40,7 +40,9 @@ public class ForwardTuner extends OpMode {
     public static double DISTANCE = 48;
 
     /**
-     * This initializes the PoseUpdater as well as the FTC Dashboard telemetry.
+     * Initializes pose tracking, dashboard visualization, and combined telemetry for forward movement calibration.
+     *
+     * Sets up the pose updater, dashboard pose tracker, and telemetry output. Instructs the user to manually move the robot forward by the configured distance and displays initial guidance on the telemetry and dashboard.
      */
     @Override
     public void init() {
@@ -58,8 +60,9 @@ public class ForwardTuner extends OpMode {
     }
 
     /**
-     * This updates the Robot's pose estimate, and updates the FTC Dashboard telemetry with the
-     * calculated multiplier and draws the Robot.
+     * Periodically updates the robot's pose estimate, calculates and displays the forward ticks-to-inches multiplier, and updates dashboard telemetry and visualization.
+     *
+     * Continuously refreshes pose data, computes the multiplier needed to match the target distance, and renders the robot's pose and movement history on the FTC Dashboard.
      */
     @Override
     public void loop() {

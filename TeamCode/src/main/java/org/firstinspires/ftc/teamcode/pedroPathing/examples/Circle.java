@@ -39,8 +39,9 @@ public class Circle extends OpMode {
     private PathChain circle;
 
     /**
-     * This initializes the Follower and creates the PathChain for the "circle". Additionally, this
-     * initializes the FTC Dashboard telemetry.
+     * Initializes the path-following robot to trace a closed, approximately circular path using Bezier curves and sets up combined telemetry output.
+     *
+     * Constructs the path as a sequence of four Bezier curves forming a rounded square, starts the follower on this path, and configures telemetry to display information about the path and space requirements.
      */
     @Override
     public void init() {

@@ -40,9 +40,19 @@ object Telemetry: SDKSubsystem() {
     }
     var lastRunTime = 0.0
 
+    /**
+     * Resets the last recorded runtime to zero at the start of the user operation mode.
+     *
+     * This prepares the telemetry system to accurately track elapsed time during the operation mode loop.
+     */
     override fun postUserStartHook(opMode: Wrapper) {
         lastRunTime = 0.0
     }
+    /**
+     * Collects and reports telemetry data from various robot subsystems and hardware components during each operation mode loop.
+     *
+     * This function updates the dashboard telemetry with current readings, servo positions, motor powers and positions, sensor states, scheduling status, and pose-related information to provide real-time monitoring of the robot's state.
+     */
     override fun postUserLoopHook(opMode: Wrapper) {
         dashboardTelemetry.addData("current Control", BulkReads.modules[0].getCurrent(CurrentUnit.AMPS))
         dashboardTelemetry.addData("current Expention", BulkReads.modules[1].getCurrent(CurrentUnit.AMPS))
