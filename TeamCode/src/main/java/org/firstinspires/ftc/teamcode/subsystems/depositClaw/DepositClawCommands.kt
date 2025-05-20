@@ -34,6 +34,11 @@ object DepositClawCommands {
         }
         .setRunStates(Wrapper.OpModeState.ACTIVE, Wrapper.OpModeState.INIT)
 
+    /**
+     * Checks if a sample is within range and schedules the claw to close if so.
+     *
+     * @return `true` if the sample is detected in range and the close command is scheduled; `false` otherwise.
+     */
     fun checkIfSampleInPlace(): Boolean {
         if (Pasteurized.gamepad2.a.onTrue){
 //            intakeSeq.cancel()
@@ -69,7 +74,13 @@ object DepositClawCommands {
         .setFinish {
             checkIfSampleInPlace()
         }
-    @JvmStatic
+    /**
+         * Creates a sequential command that waits for a condition, then performs a semi-close action on the deposit claw twice with a delay.
+         *
+         * @param supplier A function that returns true when the sequence should proceed. Defaults to always true.
+         * @return A sequential command that waits until the condition is met, executes the semi-close claw command, waits 0.3 seconds, and repeats the semi-close action.
+         */
+        @JvmStatic
     fun quickRC(supplier: () -> Boolean = {true}) = Sequential(WaitUntil(supplier),
         semiCloseClaw, Wait(0.3), semiCloseClaw)
 

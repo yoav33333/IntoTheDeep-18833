@@ -92,6 +92,9 @@ object deposit : SDKSubsystem() {
 //            if (depoArmServo.position == ArmOutPose){
             armMaybeOut.schedule()
         }
+    /**
+     * Closes the deposit claw by setting the servo to the closed position.
+     */
     @JvmStatic
     fun closeClaw() {
         depoClawServo.setPosition(closeingClawPose)
@@ -108,6 +111,9 @@ object deposit : SDKSubsystem() {
     fun armIn() {
         depoArmServo.setPosition(ArmInPose)
     }
+    /**
+     * Moves the deposit arm to the out position, selecting a special chamber pose if in TELEOP mode and `isSpe` is true.
+     */
     @JvmStatic
 
     fun armOut() {
@@ -119,11 +125,19 @@ object deposit : SDKSubsystem() {
         .setInit{
         depoArmServo.setPosition(ArmOutPoseParallel)
     }
+    /**
+     * Moves the deposit arm servo to the half-in position using the configured `ArmHalfInPose` value.
+     */
     @JvmStatic
     fun armOutHalf() {
         depoArmServo.setPosition(ArmHalfInPose)
     }
 
+    /**
+     * Moves the deposit arm to the secondary out position.
+     *
+     * Sets the arm servo to the position defined by `ArmOutPose2`.
+     */
     fun armOut2() {
         depoArmServo.setPosition(ArmOutPose2)
     }
@@ -143,6 +157,13 @@ object deposit : SDKSubsystem() {
         armOut()
     }
 
+    /**
+     * Checks if a sample is detected within 33 mm by the color sensor and closes the claw if detected.
+     *
+     * If gamepad2 button A is pressed, restarts the intake sequence. Returns true if an object is detected within range; otherwise, returns false.
+     *
+     * @return True if a sample is detected and the claw is closed; false otherwise.
+     */
     fun checkIfSampleInPlace(): Boolean {
         if (Pasteurized.gamepad2.a.onTrue){
             intakeSeq.cancel()

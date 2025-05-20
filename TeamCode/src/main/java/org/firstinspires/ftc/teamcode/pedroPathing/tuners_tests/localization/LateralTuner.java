@@ -40,7 +40,9 @@ public class LateralTuner extends OpMode {
     public static double DISTANCE = 48;
 
     /**
-     * This initializes the PoseUpdater as well as the FTC Dashboard telemetry.
+     * Initializes pose tracking and telemetry for lateral movement calibration.
+     *
+     * Sets up the pose updater, dashboard pose tracker, and combined telemetry output. Instructs the user to move the robot laterally by the configured distance and visualizes the initial robot pose on the dashboard.
      */
     @Override
     public void init() {
@@ -58,8 +60,7 @@ public class LateralTuner extends OpMode {
     }
 
     /**
-     * This updates the Robot's pose estimate, and updates the FTC Dashboard telemetry with the
-     * calculated multiplier and draws the Robot.
+     * Updates the robot's pose estimate, calculates and displays the lateral strafe multiplier, and visualizes the robot's pose and history on the FTC Dashboard.
      */
     @Override
     public void loop() {

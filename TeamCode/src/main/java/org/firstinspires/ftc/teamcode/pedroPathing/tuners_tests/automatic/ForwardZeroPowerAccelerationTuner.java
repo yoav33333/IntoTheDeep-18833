@@ -73,7 +73,9 @@ public class ForwardZeroPowerAccelerationTuner extends OpMode {
     private boolean end;
 
     /**
-     * This initializes the drive motors as well as the FTC Dashboard telemetry.
+     * Initializes the drive motors, configures their settings, and sets up telemetry for the FTC Dashboard.
+     *
+     * This method prepares the Robot for the zero power acceleration tuning routine by configuring motor directions, setting all motors to float when power is zero, and displaying instructions via telemetry.
      */
     @Override
     public void init() {

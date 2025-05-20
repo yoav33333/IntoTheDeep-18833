@@ -57,6 +57,11 @@ object armClawSubsystem : Subsystem {
     var postTransfareState = 0.3
     @JvmField
     var intakeState = 1.0
+    /**
+     * Sets the `armOut` servo position based on the OpMode flavor before user initialization.
+     *
+     * If the OpMode is TELEOP, `armOut` is set to 0.16; otherwise, it is set to 0.15.
+     */
     override fun preUserInitHook(opMode: Wrapper) {
          armOut =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) 0.16  else 0.15
     }

@@ -27,6 +27,11 @@ object ExtendoHardware: SDKSubsystem() {
         BetterServo("extendo r s")
     }
 
+    /**
+     * Sets both extendo servos to the specified position.
+     *
+     * @param position The target position for both servos, typically in the range [0.0, 1.0].
+     */
     fun setPosition(position: Double) {
         extendoServoL.position = position
         extendoServoR.position = position

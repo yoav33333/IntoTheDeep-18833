@@ -69,8 +69,9 @@ public class StraightBackAndForth extends OpMode {
     private Path backwards;
 
     /**
-     * This initializes the Follower and creates the forward and backward Paths. Additionally, this
-     * initializes the FTC Dashboard telemetry.
+     * Initializes the path follower, creates forward and backward straight-line paths, and sets up combined telemetry for the OpMode.
+     *
+     * The robot is configured to move continuously forward and backward along a straight path of length {@code DISTANCE} inches, with telemetry output provided to both the driver station and FTC Dashboard.
      */
     @Override
     public void init() {

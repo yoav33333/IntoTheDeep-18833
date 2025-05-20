@@ -61,10 +61,23 @@ object DriveHardware:SDKSubsystem() {
 
     val getPureIMUHeading = { imu.robotYawPitchRollAngles.yaw }
     val getIMUHeading = { imu.robotYawPitchRollAngles.yaw + imuAngleOffset }
+    /**
+     * Adjusts the IMU heading offset so that the current IMU reading matches the specified heading.
+     *
+     * @param heading The desired heading in degrees to align the IMU to.
+     */
     fun setIMUHeading(heading: Double) {
         imuAngleOffset = heading - getIMUHeading()
     }
 
+    /**
+     * Sets the power levels for each of the four drive motors.
+     *
+     * @param leftFront Power for the left front motor.
+     * @param leftBack Power for the left back motor.
+     * @param rightFront Power for the right front motor.
+     * @param rightBack Power for the right back motor.
+     */
     fun setPower(leftFront: Double, leftBack: Double, rightFront: Double, rightBack: Double) {
         this.leftFront.power = leftFront
         this.leftBack.power = leftBack
@@ -72,6 +85,16 @@ object DriveHardware:SDKSubsystem() {
         this.rightBack.power = rightBack
     }
 
+    /**
+     * Controls the robot's mecanum drive using x (strafe), y (forward), and rotation inputs.
+     *
+     * Transforms field-centric inputs to robot-centric coordinates if `robotCentric` is false, applies mecanum drive calculations, normalizes motor powers, and sets the power for each wheel accordingly.
+     *
+     * @param x The desired strafe speed; positive values move the robot right.
+     * @param y The desired forward speed; positive values move the robot forward.
+     * @param rotation The desired rotational speed; positive values rotate the robot clockwise.
+     * @param robotCentric If true, interprets x and y as robot-centric; if false, interprets as field-centric.
+     */
     fun drive(x: Double, y: Double, rotation: Double, robotCentric: Boolean = false) {
         var heading = Math.toRadians(getIMUHeading())
         var rotX = x

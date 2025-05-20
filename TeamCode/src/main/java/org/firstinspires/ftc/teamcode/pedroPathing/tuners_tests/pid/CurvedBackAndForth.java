@@ -44,8 +44,9 @@ public class CurvedBackAndForth extends OpMode {
     private Path backwards;
 
     /**
-     * This initializes the Follower and creates the forward and backward Paths. Additionally, this
-     * initializes the FTC Dashboard telemetry.
+     * Initializes the Follower, sets up forward and backward curved paths, and configures telemetry for FTC Dashboard integration.
+     *
+     * Prepares the robot to repeatedly drive along a curved trajectory forward and backward, and displays initial instructions via telemetry.
      */
     @Override
     public void init() {

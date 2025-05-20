@@ -22,7 +22,19 @@ class Encoder(name: String,
             field = value
         }
     var offset = startingPose
-    fun getPose() = motor.currentPosition+offset
+    /**
+ * Returns the current encoder position adjusted by the internal offset.
+ *
+ * The result represents the encoder's position relative to the configured starting pose.
+ *
+ * @return The adjusted encoder position.
+ */
+fun getPose() = motor.currentPosition+offset
+    /**
+     * Adjusts the encoder offset so that the reported position matches the specified value.
+     *
+     * @param value The desired encoder position to be reported by this instance.
+     */
     fun setPose(value: Int) {
         offset = value - motor.currentPosition
     }

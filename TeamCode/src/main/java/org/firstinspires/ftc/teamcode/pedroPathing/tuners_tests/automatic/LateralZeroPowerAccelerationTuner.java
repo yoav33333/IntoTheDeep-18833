@@ -74,7 +74,7 @@ public class LateralZeroPowerAccelerationTuner extends OpMode {
     private boolean end;
 
     /**
-     * This initializes the drive motors as well as the FTC Dashboard telemetry.
+     * Initializes the drivetrain motors, configures their directions and behaviors, sets up pose tracking, and prepares telemetry for the lateral zero power acceleration tuning OpMode.
      */
     @Override
     public void init() {

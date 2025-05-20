@@ -22,12 +22,23 @@ object ArmHardware: SDKSubsystem(){
     annotation class Attach
     val armServo = HardwareDevice("flip servo", Servo::class.java).get()
 
+    /**
+     * Sets the arm servo to the specified position.
+     *
+     * @param position The target servo position, typically between 0.0 (minimum) and 1.0 (maximum).
+     */
     fun setArmPosition(position: Double) {
         armServo.position = position
     }
 
 
-    fun setArmPositionCommand(position: Double) =
+    /**
+             * Creates a command that sets the arm servo to the specified position during the INIT and ACTIVE operation modes.
+             *
+             * @param position The target position for the arm servo.
+             * @return A Lambda command that sets the arm position when initialized.
+             */
+            fun setArmPositionCommand(position: Double) =
         Lambda("ArmPosition: {}".format(position))
             .setInit {
                 setArmPosition(position)

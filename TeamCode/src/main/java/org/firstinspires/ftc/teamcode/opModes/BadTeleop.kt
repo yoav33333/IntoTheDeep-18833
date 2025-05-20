@@ -41,6 +41,11 @@ class BadTeleop : MegiddoOpMode() {
     lateinit var telemetryDB: MultipleTelemetry
     var lastRunTime = 0.0
 
+    /**
+     * Initializes teleoperated mode controls and telemetry for the robot.
+     *
+     * Binds gamepad inputs to subsystem commands for both operator and driver, enabling control over arm, claw, extendo, linear slides, and follower subsystems. Sets up manual and preset controls, as well as telemetry output to both the driver station and FTC Dashboard.
+     */
     override fun myInit() {
         //operator controls
         Mercurial.gamepad2.options.onTrue(deposit.armIn)
@@ -88,9 +93,17 @@ class BadTeleop : MegiddoOpMode() {
 
     }
 
+    /**
+     * Schedules the extendoMacro command to start when the teleop mode begins.
+     */
     override fun myStart() {
         extendoMacro.schedule()
     }
+    /**
+     * Executes the main teleop loop, scheduling drive commands and updating telemetry with subsystem states and sensor data.
+     *
+     * This method collects and reports real-time telemetry including current draw, servo positions, motor powers and positions, sensor states, and calculated values such as delta time and positional errors.
+     */
     override fun myLoop() {
         followerSubsystem.teleopDrive.schedule()
         telemetryDB.addData("current Control", BulkReads.modules[0].getCurrent(CurrentUnit.AMPS))

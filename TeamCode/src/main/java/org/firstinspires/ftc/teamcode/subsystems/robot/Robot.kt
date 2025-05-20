@@ -32,6 +32,11 @@ object Robot: Feature{
     @Inherited
     annotation class Attach
 
+    /**
+     * Initializes all robot subsystem states to their default starting values.
+     *
+     * Sets the lift, basket, game element, transfer, extendo, and arm target states to predefined enums for consistent robot behavior at startup.
+     */
     fun initRobotState(){
         liftState = LiftState.AUTO
         basketState = BasketState.HIGH
@@ -41,6 +46,11 @@ object Robot: Feature{
         armTarget = ArmTarget.LOW
     }
 
+    /**
+     * Initializes robot commands for the current operation mode.
+     *
+     * If the active operation mode is teleoperated, resets and schedules the macro command.
+     */
     fun initRobotCommands(){
         if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) {
             macro.reset()
@@ -51,6 +61,11 @@ object Robot: Feature{
         }
     }
 
+    /**
+     * Performs post-initialization setup for the robot feature after user operation mode initialization.
+     *
+     * Initializes robot subsystem states and schedules commands as needed for the current operation mode.
+     */
     override fun postUserInitHook(opMode: Wrapper) {
         initRobotState()
         initRobotCommands()

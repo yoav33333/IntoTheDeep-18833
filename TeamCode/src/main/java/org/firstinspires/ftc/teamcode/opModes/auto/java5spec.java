@@ -30,10 +30,16 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @Config
 @Autonomous
 public class java5spec extends AutoBaseJava {
-    public java5spec() {super(Side.chamber);}
+    /**
+ * Constructs a new autonomous routine for the chamber side of the field.
+ */
+public java5spec() {super(Side.chamber);}
     public static double offset = -0.6;
     public MultipleTelemetry tele = new MultipleTelemetry(telemetry,
             FtcDashboard.getInstance().getTelemetry());
+    /**
+     * Updates telemetry with the current draw from control and expansion modules and their sum.
+     */
     @Override
     public void myLoop(){
         tele.addData("current Control", BulkReads.modules.get(0).getCurrent(CurrentUnit.AMPS));
@@ -42,6 +48,9 @@ public class java5spec extends AutoBaseJava {
 
         tele.update();
     }
+    /**
+     * Periodically updates telemetry with current draw readings from control and expansion modules during the initialization loop.
+     */
     @Override
     public void myInitLoop() {
         tele.addData("current Control", BulkReads.modules.get(0).getCurrent(CurrentUnit.AMPS));
@@ -94,6 +103,11 @@ public class java5spec extends AutoBaseJava {
     static PathChain pickup4;
     static PathChain park;
     public static double power = 1.0;
+    /**
+     * Initializes autonomous routine paths, subsystem states, and follower power for the chamber side routine.
+     *
+     * Defines all motion paths between key poses, sets initial positions for deposit and claw subsystems, and configures the follower's maximum power before the autonomous period begins.
+     */
     @Override
     public void myInit() {
 
@@ -126,6 +140,13 @@ public class java5spec extends AutoBaseJava {
         follower.setMaxPower(power);
     }
 
+    /**
+     * Starts the autonomous routine by scheduling a complex sequence of robot actions.
+     *
+     * <p>
+     * This method coordinates the robot's subsystems to execute the full autonomous cycle for the "chamber" side. It resets the linear slides, follows a series of predefined paths, and synchronizes actions such as extending and retracting the arm, operating the claw, intaking and scoring game elements, and parking at the end. Actions are sequenced and run in parallel where appropriate, with conditional waits to ensure proper timing and synchronization between movement and mechanism states.
+     * </p>
+     */
     @Override
     public void myStart() {
         linearSlides.setPose(0);

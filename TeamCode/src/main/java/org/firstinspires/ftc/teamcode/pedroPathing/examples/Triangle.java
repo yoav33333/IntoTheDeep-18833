@@ -54,8 +54,9 @@ public class Triangle extends OpMode {
     }
 
     /**
-     * This initializes the Follower and creates the PathChain for the "triangle". Additionally, this
-     * initializes the FTC Dashboard telemetry.
+     * Initializes the path follower, constructs the triangular path, and sets up combined telemetry for the OpMode.
+     *
+     * Sets the robot's starting pose, builds a closed triangular path using Bezier segments with linear heading interpolation, and begins following the path. Also configures telemetry output to both the driver station and FTC Dashboard.
      */
     @Override
     public void init() {

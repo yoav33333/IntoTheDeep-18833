@@ -68,9 +68,10 @@ public class StrafeVelocityTuner extends OpMode {
 
     private boolean end;
 
-    /**
-     * This initializes the drive motors as well as the cache of velocities and the FTC Dashboard
-     * telemetry.
+    /****
+     * Initializes drivetrain motors, pose updater, velocity cache, and telemetry for the strafe velocity tuning OpMode.
+     *
+     * Configures motor directions, sets motor types for maximum RPM, initializes velocity tracking, and prepares combined telemetry with user instructions.
      */
     @Override
     public void init() {
@@ -122,10 +123,9 @@ public class StrafeVelocityTuner extends OpMode {
     }
 
     /**
-     * This runs the OpMode. At any point during the running of the OpMode, pressing CROSS or A on
-     * game pad1 will stop the OpMode. This continuously records the RECORD_NUMBER most recent
-     * velocities, and when the Robot has run sideways enough, these last velocities recorded are
-     * averaged and printed.
+     * Executes the main loop for the strafe velocity tuning OpMode.
+     *
+     * Continuously monitors the robot's strafing motion, records recent velocity samples, and stops the OpMode if the specified distance is reached or if the user presses CROSS or A on gamepad1. After completion, calculates and displays the average strafe velocity.
      */
     @Override
     public void loop() {

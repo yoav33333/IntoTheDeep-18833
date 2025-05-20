@@ -30,22 +30,47 @@ object V4bHardware: SDKSubsystem() {
     val armServo = HardwareDevice("4 bar s", Servo::class.java).get()
     val pitchServo = HardwareDevice("arm s", Servo::class.java).get()
 
+    /**
+     * Sets the position of the arm servo to the specified value.
+     *
+     * @param position The desired servo position, typically between 0.0 and 1.0.
+     */
     fun setArmPosition(position: Double) {
         armServo.position = position
     }
 
+    /**
+     * Returns the current position of the arm servo.
+     *
+     * @return The position of the arm servo as a value between 0.0 and 1.0.
+     */
     fun getArmPosition(): Double {
         return armServo.position
     }
 
+    /**
+     * Sets the position of the pitch servo controlling the four-bar linkage.
+     *
+     * @param position The target servo position, typically between 0.0 (minimum) and 1.0 (maximum).
+     */
     fun setPitchPosition(position: Double) {
         pitchServo.position = position
     }
 
+    /**
+     * Returns the current position of the pitch servo.
+     *
+     * @return The position of the pitch servo as a value between 0.0 and 1.0.
+     */
     fun getPitchPosition(): Double {
         return pitchServo.position
     }
 
+    /**
+     * Sets the global arm out position preset based on the current operation mode flavor.
+     *
+     * If the active operation mode is TeleOp, assigns the TeleOp preset; otherwise, assigns the Autonomous preset.
+     */
     override fun preUserInitHook(opMode: Wrapper) {
         armOutPosition =  if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) armOutPositionTele  else armOutPositionAuto
     }

@@ -39,7 +39,9 @@ public class TurnTuner extends OpMode {
     public static double ANGLE = 2 * Math.PI;
 
     /**
-     * This initializes the PoseUpdater as well as the FTC Dashboard telemetry.
+     * Initializes the pose updater, dashboard pose tracker, and combined telemetry for turn calibration.
+     *
+     * Sets up hardware mappings, configures telemetry output to both the driver station and FTC Dashboard, and displays initial instructions and the Robot's pose for the turn tuning process.
      */
     @Override
     public void init() {
@@ -57,8 +59,9 @@ public class TurnTuner extends OpMode {
     }
 
     /**
-     * This updates the Robot's pose estimate, and updates the FTC Dashboard telemetry with the
-     * calculated multiplier and draws the Robot.
+     * Updates the Robot's pose estimate and displays the current heading and calculated turn multiplier on the FTC Dashboard.
+     *
+     * This method refreshes the Robot's pose, outputs telemetry data including the total heading and the computed multiplier for converting turn ticks to inches, and visualizes the Robot's pose and history on the dashboard.
      */
     @Override
     public void loop() {

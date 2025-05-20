@@ -25,14 +25,35 @@ object DepositClawHardware: SDKSubsystem() {
     val depositClaw = HardwareDevice("small claw", Servo::class.java).get()
     val colorSensor = HardwareDevice("dsc", RevColorSensorV3::class.java).get()
 
+    /**
+     * Sets the position of the deposit claw servo.
+     *
+     * @param position The desired servo position, typically between 0.0 (minimum) and 1.0 (maximum).
+     */
     fun setDepositClawPosition(position: Double){
         depositClaw.position = position
     }
-    fun getDepositClawPosition() = depositClaw.position
+    /**
+ * Returns the current position of the deposit claw servo.
+ *
+ * @return The servo position as a value between 0.0 and 1.0.
+ */
+fun getDepositClawPosition() = depositClaw.position
 
-    fun getDistance(distanceUnit: DistanceUnit = DistanceUnit.MM)
+    /**
+         * Returns the distance measured by the color sensor in the specified unit.
+         *
+         * @param distanceUnit The unit in which to return the distance. Defaults to millimeters.
+         * @return The measured distance from the color sensor in the specified unit.
+         */
+        fun getDistance(distanceUnit: DistanceUnit = DistanceUnit.MM)
         = colorSensor.getDistance(distanceUnit)
 
-    fun isInRange() = getDistance()<minDistance
+    /**
+ * Determines whether the detected object is within the minimum distance threshold.
+ *
+ * @return `true` if the measured distance is less than the predefined minimum distance; otherwise, `false`.
+ */
+fun isInRange() = getDistance()<minDistance
 
 }

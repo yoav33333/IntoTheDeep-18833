@@ -72,6 +72,11 @@ object LiftHardware : SDKSubsystem() {
         s
     }
 
+    /**
+     * Sets the power level for all lift motors, applying the specified value to the left motors and the inverted value to the right motors.
+     *
+     * @param power The power level to apply to the lift motors, where positive values raise and negative values lower the lift.
+     */
     fun setPower(power: Double) {
         leftCenter.setPower(power)
         leftSide.setPower(power)
@@ -79,21 +84,44 @@ object LiftHardware : SDKSubsystem() {
         rightCenter.setPower(-power)
     }
 
+    /**
+     * Moves the lift toward the target position using PID control with gravity compensation.
+     *
+     * Calculates the required motor power based on the current encoder position, the target position, and a gravity compensation term, then applies this power to the lift motors.
+     */
     fun runToPosition(){
         setPower(SquIDController(p).calculate(
             getPose().toDouble(), targetPosition.toDouble()) + g)
     }
 
+    /**
+     * Returns the current position of the lift as measured by the encoder.
+     *
+     * @return The encoder's current pose value.
+     */
     fun getPose(): Int{
         return encoder.getPose()
     }
 
+    /**
+     * Sets the encoder's current pose to the specified value.
+     *
+     * @param pose The new pose value to assign to the encoder.
+     */
     fun setPose(pose: Int){
         encoder.setPose(pose)
     }
 
     override var defaultCommand: Command? = LiftCommands.PIDCommand
 
+    /**
+     * Performs pre-initialization setup for the lift subsystem before user code runs.
+     *
+     * Binds the lift reset command to the magnetic limit switch, initializes the basket and lift states,
+     * and sets the encoder pose to the starting position.
+     *
+     * @param opMode The current operational mode context.
+     */
     override fun preUserInitHook(opMode: Wrapper) {
 
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })

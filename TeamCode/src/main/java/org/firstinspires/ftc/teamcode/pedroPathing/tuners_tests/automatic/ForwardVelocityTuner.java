@@ -69,8 +69,9 @@ public class ForwardVelocityTuner extends OpMode {
     private boolean end;
 
     /**
-     * This initializes the drive motors as well as the cache of velocities and the FTC Dashboard
-     * telemetry.
+     * Initializes drive motors, velocity cache, pose updater, and telemetry for the forward velocity tuning OpMode.
+     *
+     * Configures motor directions, sets maximum achievable RPM, and prepares telemetry with instructions and initial pose data.
      */
     @Override
     public void init() {
@@ -125,10 +126,9 @@ public class ForwardVelocityTuner extends OpMode {
     }
 
     /**
-     * This runs the OpMode. At any point during the running of the OpMode, pressing CROSS or A on
-     * game pad 1 will stop the OpMode. This continuously records the RECORD_NUMBER most recent
-     * velocities, and when the Robot has run forward enough, these last velocities recorded are
-     * averaged and printed.
+     * Executes the main OpMode loop, handling forward motion, velocity recording, and stopping conditions.
+     *
+     * Continuously drives the Robot forward, recording the most recent velocity samples. When the Robot reaches the target distance or a manual stop is triggered via gamepad1 CROSS or A, stops all motors, computes the average of the last recorded velocities, and outputs the result via telemetry.
      */
     @Override
     public void loop() {

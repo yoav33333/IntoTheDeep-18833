@@ -22,18 +22,38 @@ object IntakeClawHardware: SDKSubsystem() {
     val intakeClaw = HardwareDevice("intake claw", Servo::class.java).get()
     val rotationServo = HardwareDevice("rotate servo", Servo::class.java).get()
 
+    /**
+     * Sets the position of the intake claw servo.
+     *
+     * @param position The desired servo position, typically between 0.0 (minimum) and 1.0 (maximum).
+     */
     fun setIntakeClawPosition(position: Double) {
         intakeClaw.position = position
     }
 
+    /**
+     * Returns the current position of the intake claw servo.
+     *
+     * @return The position value of the intake claw servo.
+     */
     fun getIntakeClawPosition(): Double {
         return intakeClaw.position
     }
 
+    /**
+     * Sets the position of the rotation servo.
+     *
+     * @param position The desired servo position, typically between 0.0 and 1.0.
+     */
     fun setRotationPosition(position: Double) {
         rotationServo.position = position
     }
 
+    /**
+     * Returns the current position of the rotation servo.
+     *
+     * @return The position of the rotation servo as a value between 0.0 and 1.0.
+     */
     fun getRotationPosition(): Double {
         return rotationServo.position
     }
