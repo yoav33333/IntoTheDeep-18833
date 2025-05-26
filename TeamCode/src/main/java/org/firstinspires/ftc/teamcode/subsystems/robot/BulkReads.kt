@@ -1,8 +1,6 @@
-package org.firstinspires.ftc.teamcode.subsystems
+package org.firstinspires.ftc.teamcode.subsystems.robot
 
 import com.qualcomm.hardware.lynx.LynxModule
-import com.qualcomm.hardware.lynx.commands.core.LynxI2cConfigureChannelCommand
-import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import dev.frozenmilk.dairy.core.Feature
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation

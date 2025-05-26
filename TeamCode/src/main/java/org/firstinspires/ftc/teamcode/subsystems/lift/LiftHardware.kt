@@ -40,27 +40,27 @@ object LiftHardware : SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val leftCenter = SuperMotor("l1")
+    val leftCenter by OpModeLazyCell{SuperMotor("l1")
         .setMode(RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
-        .get()
+        .get()}
 
-    val leftSide = SuperMotor("l2")
+    val leftSide by OpModeLazyCell{SuperMotor("l2")
         .setMode(RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
-        .get()
+        .get()}
 
-    val rightCenter = SuperMotor("l3")
+    val rightCenter by OpModeLazyCell{SuperMotor("l3")
         .setMode(RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .setDirection(DcMotorSimple.Direction.REVERSE)
-        .get()
+        .get()}
 
-    val rightSide = SuperMotor("l4")
+    val rightSide by OpModeLazyCell{SuperMotor("l4")
         .setMode(RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .setDirection(DcMotorSimple.Direction.REVERSE)
-        .get()
+        .get()}
 
     val encoder: Encoder by OpModeLazyCell{
         Encoder("l4", DcMotorSimple.Direction.REVERSE)
@@ -80,7 +80,7 @@ object LiftHardware : SDKSubsystem() {
     }
 
     fun runToPosition(){
-        setPower(SquIDController(p).calculate(
+        setPower(PDController(p,d).calculate(
             getPose().toDouble(), targetPosition.toDouble()) + g)
     }
 
@@ -92,15 +92,21 @@ object LiftHardware : SDKSubsystem() {
         encoder.setPose(pose)
     }
 
-    override var defaultCommand: Command? = LiftCommands.PIDCommand
 
-    override fun preUserInitHook(opMode: Wrapper) {
+    override fun postUserInitHook(opMode: Wrapper) {
 
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
             .whileTrue(LiftCommands.resetHeight)
-        basketState = BasketState.HIGH
-        liftState = LiftState.AUTO
         setPose(LiftVariables.startingPose)
 
+    }
+
+    override fun postUserStartHook(opMode: Wrapper) {
+//        defaultCommand = LiftCommands.PIDCommand
+        LiftCommands.PIDCommand.schedule()
+    }
+
+    override fun cleanup(opMode: Wrapper) {
+        LiftCommands.PIDCommand.cancel()
     }
 }

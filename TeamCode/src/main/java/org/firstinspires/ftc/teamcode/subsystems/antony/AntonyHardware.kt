@@ -13,7 +13,7 @@ import dev.frozenmilk.mercurial.commands.util.Wait
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
-import org.firstinspires.ftc.teamcode.subsystems.BulkReads.modules
+import org.firstinspires.ftc.teamcode.subsystems.robot.BulkReads.modules
 import org.firstinspires.ftc.teamcode.subsystems.antony.AntonyCommands.setEndGame
 import org.firstinspires.ftc.teamcode.subsystems.antony.AntonyCommands.setLowBattery
 import java.lang.annotation.Inherited
@@ -21,6 +21,7 @@ import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier
 import dev.frozenmilk.mercurial.commands.Command
 import org.firstinspires.ftc.teamcode.subsystems.antony.AntonyCommands.setDefault
 import org.firstinspires.ftc.teamcode.subsystems.antony.AntonyVariables.minVoltThreshold
+import org.firstinspires.ftc.teamcode.util.HardwareDevice
 
 object AntonyHardware: SDKSubsystem() {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
@@ -32,11 +33,7 @@ object AntonyHardware: SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val antony: RevBlinkinLedDriver by OpModeLazyCell {
-        hardwareMap.get(
-            RevBlinkinLedDriver::class.java, "LED"
-        )
-    }
+    val antony by OpModeLazyCell{ HardwareDevice("LED", RevBlinkinLedDriver::class.java).get() }
 
     fun setPattern(pattern: RevBlinkinLedDriver.BlinkinPattern) {
         antony.setPattern(pattern)

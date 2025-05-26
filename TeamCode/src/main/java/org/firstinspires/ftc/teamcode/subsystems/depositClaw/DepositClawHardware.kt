@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
+import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
@@ -22,8 +23,8 @@ object DepositClawHardware: SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val depositClaw = HardwareDevice("small claw", Servo::class.java).get()
-    val colorSensor = HardwareDevice("dsc", RevColorSensorV3::class.java).get()
+    val depositClaw by OpModeLazyCell{HardwareDevice("small claw", Servo::class.java).get()}
+    val colorSensor by OpModeLazyCell{HardwareDevice("dsc", RevColorSensorV3::class.java).get()}
 
     fun setDepositClawPosition(position: Double){
         depositClaw.position = position

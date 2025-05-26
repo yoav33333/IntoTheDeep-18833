@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests.pid;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.follower.FollowerConstants;
-import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -14,18 +12,18 @@ import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.Point;
 
-import org.firstinspires.ftc.teamcode.commands.extendoCommand;
+//import org.firstinspires.ftc.teamcode.commands.extendoCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
-import org.firstinspires.ftc.teamcode.subsystems.BulkReads;
-import org.firstinspires.ftc.teamcode.subsystems.antonySubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.robot.BulkReads;
+//import org.firstinspires.ftc.teamcode.subsystems.antonySubsystem;
+//import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem;
 //import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.deposit;
-import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem.Attach;
-import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
+//import org.firstinspires.ftc.teamcode.subsystems.deposit;
+//import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem;
+//import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
+//import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem.Attach;
+//import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
 
 import dev.frozenmilk.mercurial.Mercurial;
 
@@ -47,12 +45,12 @@ import dev.frozenmilk.mercurial.Mercurial;
 @Mercurial.Attach
 //@clawSubsystem.Attach
 //@driveSubsystem.Attach
-@extendoCommand.Attach
-@antonySubsystem.Attach
-@linearSlides.Attach
-@armClawSubsystem.Attach
-@extendoSubsystem.Attach
-@deposit.Attach
+//@extendoCommand.Attach
+//@antonySubsystem.Attach
+//@linearSlides.Attach
+//@armClawSubsystem.Attach
+//@extendoSubsystem.Attach
+//@deposit.Attach
 
 @Config
 @Autonomous (name = "Straight Back And Forth", group = "PIDF Tuning")
@@ -92,7 +90,7 @@ public class StraightBackAndForth extends OpMode {
     }
     @Override
     public void start(){
-        extendoCommand.getExtendoCloseCommandAuto().schedule();
+//        closeCommandAuto().schedule();
 
     }
     /**

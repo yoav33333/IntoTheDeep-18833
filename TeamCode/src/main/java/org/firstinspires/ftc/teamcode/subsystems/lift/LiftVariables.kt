@@ -26,7 +26,8 @@ object LiftVariables {
 }
 enum class LiftState{
     AUTO,
-    DISABLED
+    DISABLED,
+    MANUAL,
 }
 
 enum class BasketState{

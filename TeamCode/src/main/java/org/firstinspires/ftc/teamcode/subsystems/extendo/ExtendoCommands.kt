@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoHardware.extendo
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoHardware.extendoServoR
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoHardware.setPosition
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoVariables.extendoState
-import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem.openExtendoF
 
 
 object ExtendoCommands {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.arm
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
+import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.commands.Lambda
@@ -20,7 +21,7 @@ object ArmHardware: SDKSubsystem(){
     @MustBeDocumented
     @Inherited
     annotation class Attach
-    val armServo = HardwareDevice("flip servo", Servo::class.java).get()
+    val armServo by OpModeLazyCell{ HardwareDevice("flip servo", Servo::class.java).get() }
 
     fun setArmPosition(position: Double) {
         armServo.position = position

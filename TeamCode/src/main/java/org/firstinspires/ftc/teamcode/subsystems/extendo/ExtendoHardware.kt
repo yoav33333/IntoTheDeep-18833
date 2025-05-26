@@ -7,7 +7,7 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
-import org.firstinspires.ftc.teamcode.util.BetterServo
+import org.firstinspires.ftc.teamcode.util.HardwareDevice
 import java.lang.annotation.Inherited
 
 object ExtendoHardware: SDKSubsystem() {
@@ -20,12 +20,8 @@ object ExtendoHardware: SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val extendoServoL: Servo by OpModeLazyCell {
-        BetterServo("extendo l s")
-    }
-    val extendoServoR: Servo by OpModeLazyCell {
-        BetterServo("extendo r s")
-    }
+    val extendoServoL by OpModeLazyCell{HardwareDevice("extendo l s", Servo::class.java).get()}
+    val extendoServoR by OpModeLazyCell{HardwareDevice("extendo r s", Servo::class.java).get()}
 
     fun setPosition(position: Double) {
         extendoServoL.position = position

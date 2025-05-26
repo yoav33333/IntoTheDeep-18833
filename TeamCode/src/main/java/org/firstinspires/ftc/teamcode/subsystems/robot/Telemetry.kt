@@ -11,15 +11,13 @@ import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
-import org.firstinspires.ftc.teamcode.subsystems.BulkReads
-import org.firstinspires.ftc.teamcode.subsystems.armClawSubsystem
-import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem
-import org.firstinspires.ftc.teamcode.subsystems.deposit
-import org.firstinspires.ftc.teamcode.subsystems.extendoSubsystem
-import org.firstinspires.ftc.teamcode.subsystems.linearSlides
-import org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose
-import org.firstinspires.ftc.teamcode.subsystems.linearSlides.magneticLimit
-import org.firstinspires.ftc.teamcode.subsystems.linearSlides.target
+import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawHardware
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.getPose
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.magneticLimit
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.targetPosition
+
 import java.lang.annotation.Inherited
 
 object Telemetry: SDKSubsystem() {
@@ -34,7 +32,7 @@ object Telemetry: SDKSubsystem() {
 
     val dashboardTelemetry: MultipleTelemetry by OpModeLazyCell {
         MultipleTelemetry(
-            telemetry,
+            FeatureRegistrar.activeOpMode.telemetry,
             FtcDashboard.getInstance().telemetry
         )
     }
@@ -48,29 +46,23 @@ object Telemetry: SDKSubsystem() {
         dashboardTelemetry.addData("current Expention", BulkReads.modules[1].getCurrent(CurrentUnit.AMPS))
         dashboardTelemetry.addData("delta time", FeatureRegistrar.activeOpMode.runtime - lastRunTime)
         lastRunTime = FeatureRegistrar.activeOpMode.runtime
-        dashboardTelemetry.addData("clawPosDepo", deposit.depoClawServo.position)
-        dashboardTelemetry.addData("clawPos", clawSubsystem.clawServo.position)
-        dashboardTelemetry.addData("v4b", armClawSubsystem.armClawServo.position)
-        dashboardTelemetry.addData("v4b flip", armClawSubsystem.angleClawServo.position)
-        dashboardTelemetry.addData("ex r", extendoSubsystem.extendoServoR.position)
-        dashboardTelemetry.addData("ex l", extendoSubsystem.extendoServoL.position)
-        dashboardTelemetry.addData("offset", linearSlides.offset)
+        dashboardTelemetry.addData("offset", LiftVariables.offset)
         dashboardTelemetry.addData("sensor", magneticLimit.state)
-        dashboardTelemetry.addData("sch", Mercurial.isScheduled(linearSlides.runToPosition))
-        dashboardTelemetry.addData("leftCenter", linearSlides.leftCenter.power)
-        dashboardTelemetry.addData("leftSide", linearSlides.leftSide.power)
-        dashboardTelemetry.addData("rightSide", linearSlides.rightSide.power)
-        dashboardTelemetry.addData("rightCenter", linearSlides.rightCenter.power)
-        dashboardTelemetry.addData("leftCenterPose", linearSlides.leftCenter.currentPosition)
-        dashboardTelemetry.addData("leftSidePose", linearSlides.leftSide.currentPosition)
-        dashboardTelemetry.addData("rightSidePose", linearSlides.rightSide.currentPosition)
-        dashboardTelemetry.addData("rightCenterPose", linearSlides.rightCenter.currentPosition)
-        dashboardTelemetry.addData("rotate", clawSubsystem.clawRotationServo.position)
+        dashboardTelemetry.addData("leftCenter", LiftHardware.leftCenter.power)
+        dashboardTelemetry.addData("leftSide", LiftHardware.leftSide.power)
+        dashboardTelemetry.addData("rightSide", LiftHardware.rightSide.power)
+        dashboardTelemetry.addData("rightCenter", LiftHardware.rightCenter.power)
+        dashboardTelemetry.addData("leftCenterPose", LiftHardware.leftCenter.currentPosition)
+        dashboardTelemetry.addData("leftSidePose", LiftHardware.leftSide.currentPosition)
+        dashboardTelemetry.addData("rightSidePose", LiftHardware.rightSide.currentPosition)
+        dashboardTelemetry.addData("rightCenterPose", LiftHardware.rightCenter.currentPosition)
+        dashboardTelemetry.addData("rotate", IntakeClawHardware.rotationServo.position)
         dashboardTelemetry.addData("pose", getPose())
-        dashboardTelemetry.addData("target", target)
-        dashboardTelemetry.addData("error", target - getPose())
-        dashboardTelemetry.addData("deposit claw", deposit.depoClawServo.position)
-//      dashboardTelemetry.addData("diff", linearSlides.getPoseRight()-linearSlides.getPoseLeft())
+        dashboardTelemetry.addData("target", targetPosition)
+        dashboardTelemetry.addData("error", targetPosition - getPose())
+
+
+      dashboardTelemetry.addData("lift state", LiftVariables.liftState.name)
         dashboardTelemetry.update()
     }
 }

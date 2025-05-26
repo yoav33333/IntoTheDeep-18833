@@ -18,9 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstantsBasket;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstantsBasket;
-import org.firstinspires.ftc.teamcode.subsystems.MegiddoOpModeAuto;
-import org.firstinspires.ftc.teamcode.subsystems.followerSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
+
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -31,7 +29,7 @@ import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
-public class AutoBaseJava extends MegiddoOpMode {
+public class AutoBaseJava extends NewMegiddoOpMode {
     private Telemetry telemetryA;
 
     public enum Side{
@@ -67,8 +65,8 @@ public class AutoBaseJava extends MegiddoOpMode {
     }
     @Override
     public void myFullStop(){
-        followerSubsystem.setStartingPose(follower.getPose());
-        linearSlides.setStartingPose(linearSlides.getPose());
+//        followerSubsystem.setStartingPose(follower.getPose());
+//        linearSlides.setStartingPose(linearSlides.getPose());
     }
     boolean flag = false;
     public Lambda runFollower = new Lambda("update Follower")
@@ -107,7 +105,7 @@ public class AutoBaseJava extends MegiddoOpMode {
         .setInit(()-> {
             follower.breakFollowing();
             follower.update();
-            linearSlides.setStartingPose(linearSlides.getPose());
+//            linearSlides.setStartingPose(linearSlides.getPose());
 
         });
 

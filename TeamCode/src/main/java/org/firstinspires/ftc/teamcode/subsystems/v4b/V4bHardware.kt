@@ -27,8 +27,8 @@ object V4bHardware: SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val armServo = HardwareDevice("4 bar s", Servo::class.java).get()
-    val pitchServo = HardwareDevice("arm s", Servo::class.java).get()
+    val armServo by OpModeLazyCell{ HardwareDevice("4 bar s", Servo::class.java).get() }
+    val pitchServo by OpModeLazyCell{ HardwareDevice("arm s", Servo::class.java).get()}
 
     fun setArmPosition(position: Double) {
         armServo.position = position

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.intakeClaw
 import com.qualcomm.robotcore.hardware.Servo
 import dev.frozenmilk.dairy.core.dependency.Dependency
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation
+import dev.frozenmilk.dairy.core.util.OpModeLazyCell
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
@@ -19,8 +20,8 @@ object IntakeClawHardware: SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val intakeClaw = HardwareDevice("intake claw", Servo::class.java).get()
-    val rotationServo = HardwareDevice("rotate servo", Servo::class.java).get()
+    val intakeClaw by OpModeLazyCell{HardwareDevice("claw servo", Servo::class.java).get()}
+    val rotationServo by OpModeLazyCell{HardwareDevice("rotate servo", Servo::class.java).get()}
 
     fun setIntakeClawPosition(position: Double) {
         intakeClaw.position = position

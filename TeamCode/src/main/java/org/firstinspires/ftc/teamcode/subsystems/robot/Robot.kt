@@ -51,7 +51,7 @@ object Robot: Feature{
         }
     }
 
-    override fun postUserInitHook(opMode: Wrapper) {
+    override fun preUserInitHook(opMode: Wrapper) {
         initRobotState()
         initRobotCommands()
     }

@@ -28,7 +28,7 @@ object LiftCommands {
     val PIDCommand = Lambda("LiftPIDCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE, Wrapper.OpModeState.INIT)
         .setInit{
-            LiftVariables.liftState = LiftState.AUTO
+            liftState = LiftState.AUTO
         }
         .setExecute{
             if (liftState == LiftState.AUTO) {
@@ -36,18 +36,22 @@ object LiftCommands {
             }
         }
         .setFinish{false}
-        .addRequirements(LiftHardware)
-        .setInterruptible(true)
+
 
     val manualControl = Lambda("manualLiftControl")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit{ liftState = LiftState.MANUAL}
         .setExecute{
             setPower(Mercurial.gamepad2.rightStickY.state)
         }
         .setFinish{
-            Mercurial.gamepad2.rightStickY.state<0.2
+            abs(Mercurial.gamepad2.rightStickY.state) <0.2
         }
-        .addRequirements(LiftHardware)
+        .setEnd{ liftState = LiftState.AUTO
+        targetPosition = getPose()
+        }
+
+
 
     val resetHeight = Lambda("resetHeight")
         .setInit { LiftHardware.setPose(getPose()) }
@@ -58,10 +62,10 @@ object LiftCommands {
 
     val switchBasket = Lambda("SWB")
         .setInit{
-            if (LiftVariables.basketState == BasketState.HIGH) {
-                LiftVariables.basketState = BasketState.LOW
+            if (basketState == BasketState.HIGH) {
+                basketState = BasketState.LOW
             } else {
-                LiftVariables.basketState = BasketState.HIGH
+                basketState = BasketState.HIGH
             }
             avoidBasket.schedule()
             goToBasket.schedule()
@@ -86,12 +90,15 @@ object LiftCommands {
     val closeSlides = Lambda("close slides")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{
+            liftState = LiftState.DISABLED
             targetPosition = 0
             liftState = LiftState.DISABLED
             setPower(-1.0)
         }
         .setFinish{!magneticLimit.state}
-        .addRequirements(LiftHardware)
+        .setEnd{ liftState = LiftState.AUTO
+            setPower(0.0)
+        }
 
     @JvmStatic val enablePID = Lambda("enablePID")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -124,6 +131,9 @@ object LiftCommands {
             quickRC { true }.schedule()
 
         }
+
+    val down = Lambda("down")
+        .setInit{ targetPosition-=10000}
 
 
 }

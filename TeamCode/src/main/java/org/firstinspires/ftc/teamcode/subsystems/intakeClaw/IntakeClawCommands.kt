@@ -4,8 +4,6 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.commands.Lambda
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.Wait
-import org.firstinspires.ftc.teamcode.subsystems.deposit.closeH
-import org.firstinspires.ftc.teamcode.subsystems.deposit.releaseH
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawHardware.getIntakeClawPosition
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawHardware.getRotationPosition
 
