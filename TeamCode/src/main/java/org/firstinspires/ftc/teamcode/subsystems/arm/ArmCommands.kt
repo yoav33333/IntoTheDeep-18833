@@ -2,29 +2,50 @@ package org.firstinspires.ftc.teamcode.subsystems.arm
 
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.IfElse
+import dev.frozenmilk.mercurial.commands.util.Wait
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setArmPositionCommand
-import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.DepositArmPosition
-import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.DepositHighArmPosition
-import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.SlamArmPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setExtendingArmPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setExtensionPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositArmPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositHighArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.armTarget
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.avoidBasketExtensionPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.avoidBasketPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.closeExtensionPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositExtensionPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositHighExtensionPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.openExtensionPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.slamArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.transferArmPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.transferExtensionPosition
 
 object ArmCommands {
-    val moveToTransfer = setArmPositionCommand(transferArmPosition)
-    val moveArmToHighDeposit = setArmPositionCommand(DepositHighArmPosition)
-    val avoidBasket = setArmPositionCommand(avoidBasketPosition)
-    val moveToDeposit = setArmPositionCommand(DepositArmPosition)
-    val moveToDepositHigh = setArmPositionCommand(DepositArmPosition)
-    val moveToSlam = setArmPositionCommand(SlamArmPosition)
+    val moveToTransfer = Sequential(
+        setExtendingArmPosition({ transferArmPosition},{ transferExtensionPosition}),
+    )
+    val moveArmToTransfer = setArmPositionCommand { transferArmPosition }
+    @JvmStatic val avoidBasket = setExtendingArmPosition({ avoidBasketPosition },
+        { avoidBasketExtensionPosition })
+    val moveToDeposit = setExtendingArmPosition({ depositArmPosition }, { depositExtensionPosition })
+    val moveToDepositHigh = setExtendingArmPosition(
+        { depositHighArmPosition },
+        { depositHighExtensionPosition })
+    val moveToSlam = setExtendingArmPosition({ slamArmPosition })
 
     val smartDeposit = IfElse(
         { armTarget == ArmTarget.HIGH },
         moveToDepositHigh,
         moveToDeposit
     )
+
+    val closeExtension = Lambda("closeExtension")
+        .setInit{setExtensionPosition( closeExtensionPosition)}
+
+    val openExtension = Lambda("openExtension")
+        .setInit{setExtensionPosition(openExtensionPosition)}
 
     fun setArmTarget(target: ArmTarget) =
         Lambda("Set Arm Target: {}".format(target.toString()))

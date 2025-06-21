@@ -21,33 +21,33 @@ import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.transferPositi
 object V4bCommands {
     val pitchTransfer = Lambda("angleTransfer")
         .setInit {
-            setPitchPosition(transferPosition)
+            setPitchPosition { transferPosition }
         }
     val pitchPostTransfer = Lambda("anglePostTransfer")
         .setInit {
-            setPitchPosition(postTransferPosition)
+            setPitchPosition { postTransferPosition }
         }
     val pitchIntake = Lambda("angleIntake")
         .setInit {
-            setPitchPosition(intakePosition)
+            setPitchPosition { intakePosition }
         }
     val moveArmOut = Lambda("moveArmOut")
         .setInit {
-            setArmPosition(armOutPosition)
+            setArmPosition { armOutPosition }
         }
     val moveArmOutIntake = Lambda("moveArmOutIntake")
         .setInit {
-            setArmPosition(armOutPosition -0.02)
+            setArmPosition { armOutPosition - 0.02 }
         }
     val moveArmIn = Lambda("moveArmIn")
         .setInit {
-            setArmPosition(armInPosition)
+            setArmPosition { armInPosition }
         }
 
     val extendoPush = Lambda("eps")
         .setInit{
-            setArmPosition(armPushPosition)
-            setPitchPosition(pitchPushPosition)
+            setArmPosition { armPushPosition }
+            setPitchPosition { pitchPushPosition }
         }
     val openIntakeArm = Parallel(
         moveArmOut,
@@ -55,7 +55,6 @@ object V4bCommands {
     )
     val closeIntakeArm = Sequential(
         moveArmIn,
-        Wait(0.12),
         pitchTransfer
     )
 
@@ -66,5 +65,5 @@ object V4bCommands {
     )
     @JvmStatic
     val armUp = Lambda("au")
-        .setInit{ setArmPosition(armUpPosition)}
+        .setInit{ setArmPosition { armUpPosition } }
 }

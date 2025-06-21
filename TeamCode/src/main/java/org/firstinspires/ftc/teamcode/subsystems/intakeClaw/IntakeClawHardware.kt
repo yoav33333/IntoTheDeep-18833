@@ -9,6 +9,7 @@ import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.util.HardwareDevice
 import java.lang.annotation.Inherited
+import java.util.function.DoubleSupplier
 
 object IntakeClawHardware: SDKSubsystem() {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
@@ -20,7 +21,7 @@ object IntakeClawHardware: SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val intakeClaw by OpModeLazyCell{HardwareDevice("claw servo", Servo::class.java).get()}
+    val intakeClaw by OpModeLazyCell{HardwareDevice("intake claw", Servo::class.java).get()}
     val rotationServo by OpModeLazyCell{HardwareDevice("rotate servo", Servo::class.java).get()}
 
     fun setIntakeClawPosition(position: Double) {
@@ -31,8 +32,8 @@ object IntakeClawHardware: SDKSubsystem() {
         return intakeClaw.position
     }
 
-    fun setRotationPosition(position: Double) {
-        rotationServo.position = position
+    fun setRotationPosition(position: DoubleSupplier) {
+        rotationServo.position = position.asDouble
     }
 
     fun getRotationPosition(): Double {

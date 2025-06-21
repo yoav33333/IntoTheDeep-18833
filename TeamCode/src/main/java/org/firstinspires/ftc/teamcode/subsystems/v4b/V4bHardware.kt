@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.armOutPosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.armOutPositionTele
 import org.firstinspires.ftc.teamcode.util.HardwareDevice
 import java.lang.annotation.Inherited
+import java.util.function.DoubleSupplier
 
 object V4bHardware: SDKSubsystem() {
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
@@ -27,19 +28,19 @@ object V4bHardware: SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val armServo by OpModeLazyCell{ HardwareDevice("4 bar s", Servo::class.java).get() }
-    val pitchServo by OpModeLazyCell{ HardwareDevice("arm s", Servo::class.java).get()}
+    val armServo by OpModeLazyCell{ HardwareDevice("4 bar", Servo::class.java).get() }
+    val pitchServo by OpModeLazyCell{ HardwareDevice("arm", Servo::class.java).get()}
 
-    fun setArmPosition(position: Double) {
-        armServo.position = position
+    fun setArmPosition(position: DoubleSupplier) {
+        armServo.position = position.asDouble
     }
 
     fun getArmPosition(): Double {
         return armServo.position
     }
 
-    fun setPitchPosition(position: Double) {
-        pitchServo.position = position
+    fun setPitchPosition(position: DoubleSupplier) {
+        pitchServo.position = position.asDouble
     }
 
     fun getPitchPosition(): Double {

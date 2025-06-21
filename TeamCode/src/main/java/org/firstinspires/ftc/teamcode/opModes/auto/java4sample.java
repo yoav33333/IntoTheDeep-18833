@@ -1,18 +1,20 @@
 //package org.firstinspires.ftc.teamcode.opModes.auto;
 //
-//import static org.firstinspires.ftc.teamcode.subsystems.deposit.getArmIn;
-//import static org.firstinspires.ftc.teamcode.subsystems.linearSlides.getPose;
+//
+//
+//import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.avoidBasket;
+//import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getAvoidBasket;
+//import static org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.getCloseIntakeClaw;
+//import static org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.getResetAngleClaw;
+//import static org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.resetAngleClaw;
 //
 //import com.acmerobotics.dashboard.config.Config;
 //import com.pedropathing.localization.Pose;
 //import com.pedropathing.pathgen.PathChain;
 //import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 //
-//import org.firstinspires.ftc.teamcode.commands.extendoCommand;
 //import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
-//import org.firstinspires.ftc.teamcode.subsystems.clawSubsystem;
-//import org.firstinspires.ftc.teamcode.subsystems.deposit;
-//import org.firstinspires.ftc.teamcode.subsystems.linearSlides;
+//
 //import org.firstinspires.ftc.teamcode.commands.util.RunNonBlocking;
 //import org.firstinspires.ftc.teamcode.commands.util.WaitUntil;
 //
@@ -61,11 +63,13 @@
 ////        pickup4 = makeSpinHalfWayPath(basketPose4, pickup4Pose);
 ////        scorePickup4 = makeSpinHalfWayPath(pickup4Pose, basketPose5);
 //        park = makeCurvePath(basketPose4, parkControl, parkPose);
+//        new Parallel(
+//            getResetAngleClaw(),
+//            getCloseIntakeClaw(),
+//            getAvoidBasket(),
+//            getResetAngleClaw()
+//        ).schedule();
 //
-//        clawSubsystem.getClawRotationServo().setPosition(clawSubsystem.center);
-//        clawSubsystem.getClawServo().setPosition(0.0);
-//        deposit.armOutHalf();
-//        deposit.closeClawRaw();
 //
 //    }
 //
@@ -73,11 +77,9 @@
 //    @Override
 //    public void myStart() {
 //
-////        linearSlides.setPose(0);
-////        linearSlides.getRunToPosition().cancel();
-////        linearSlides.getRunToPosition().schedule();
+//
 //        new Sequential(
-//                new RunNonBlocking(linearSlides.getRunToPosition()),
+//            enableP
 //
 //                extendoCommand.getExtendoReset(),
 //            linearSlides.getGoToHighBasket(),
@@ -142,22 +144,6 @@
 //                new WaitUntil(() -> linearSlides.target-3000<getPose()),
 //                new Wait(0.3),
 //            deposit.getRelease(),
-////            new Wait(0.1),
-//////            new Parallel(
-////                followPath(pickup4),
-////                new WaitUntil(()->follower.getCurrentTValue()>0.95),
-////                extendoCommand.getExtendoOpenCommandAuto(),
-//////            ),
-////            new Wait(0.3),
-////            clawSubsystem.getCloseClaw(),
-////            new Wait(0.1),
-////            new WaitUntil(()->linearSlides.getPose()<3000),
-////            extendoCommand.getExtendoCloseCommandAuto(),
-////            linearSlides.getGoToHighBasket(),
-////            new WaitUntil(() -> getPose()>20000),
-////            followPath(scorePickup4),
-////                new WaitUntil(() -> linearSlides.target-2500<getPose()),
-////            deposit.getRelease(),
 //            new Wait(0.1),
 //            new Parallel(
 //                followPath(park),
@@ -176,8 +162,6 @@
 //        follower.breakFollowing();
 //        runFollower.cancel();
 //
-////        linearSlides.getRunToPosition().cancel();
 //        linearSlides.setStartingPose(getPose());
-////        followerSubsystem.setStartingPose(follower.getPose());
 //    }
 //}

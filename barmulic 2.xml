@@ -1,0 +1,31 @@
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <Motor name="lift 4" port="0"/>
+            <Motor name="lift 3" port="1"/>
+            <Motor name="lift 2" port="2"/>
+            <Motor name="lift 1" port="3"/>
+            <RevBlinkinLedDriver name="LED" port="0"/>
+            <Servo name="deposit extention" port="1"/>
+            <Servo name="deposit claw" port="2"/>
+            <Servo name="deposit arm r" port="3"/>
+            <Servo name="deposit arm l" port="4"/>
+            <Servo name="extendo l" port="5"/>
+            <DigitalDevice name="magneticLimit" port="0"/>
+            <LynxEmbeddedIMU name="imu" port="0" bus="0"/>
+            <RevColorSensorV3 name="dsc" port="1" bus="3"/>
+        </LynxModule>
+        <LynxModule name="Control Hub" port="173">
+            <Motor name="drive 4" port="0"/>
+            <Motor name="drive 3" port="1"/>
+            <Motor name="drive 2" port="2"/>
+            <Motor name="drive 1" port="3"/>
+            <Servo name="extendo r" port="0"/>
+            <Servo name="arm" port="1"/>
+            <Servo name="4 bar" port="2"/>
+            <Servo name="rotate servo" port="4"/>
+            <Servo name="intake claw" port="5"/>
+            <RevColorSensorV3 name="color claw" port="0" bus="0"/>
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>

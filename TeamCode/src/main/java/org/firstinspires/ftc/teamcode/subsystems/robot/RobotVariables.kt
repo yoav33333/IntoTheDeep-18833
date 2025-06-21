@@ -7,6 +7,7 @@ object RobotVariables {
     @JvmField var gameElement = GameElement.SAMPLE
     @JvmField var transferState = TransferState.TRANSFER
     @JvmField var deltaToReopenAfterSwitch = 16000
+    var extendo = "close"
 }
 
 enum class GameElement{

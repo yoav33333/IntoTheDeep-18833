@@ -39,8 +39,6 @@ object AntonyHardware: SDKSubsystem() {
         antony.setPattern(pattern)
     }
 
-    override var defaultCommand: Command? = setDefault
-
     override fun postUserStartHook(opMode: Wrapper) {
         Sequential(
             Wait(80.0),

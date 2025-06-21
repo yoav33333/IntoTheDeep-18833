@@ -7,6 +7,7 @@ import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.avoidBasket
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToTransfer
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.toggleArmTarget
+import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.changeClawPos
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.quickRC
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveCommands.resetHeading
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.manualMove
@@ -35,7 +36,7 @@ class TerribleTeleop: NewMegiddoOpMode() {
     override fun myInit() {
         /*operator controls*/
         Mercurial.gamepad2.options.onTrue(moveToTransfer)
-        Mercurial.gamepad2.y.whileTrue(changeClawIntakePos)
+        Mercurial.gamepad2.y.onTrue(changeClawIntakePos)
         Mercurial.gamepad2.b.onTrue(fullOpenNoTransfer)
         Mercurial.gamepad2.leftStickButton.onTrue(resetAngleClaw)
         Mercurial.gamepad2.a.onTrue(partialTransfer)
@@ -53,7 +54,7 @@ class TerribleTeleop: NewMegiddoOpMode() {
 
         /*drive controls*/
         Mercurial.gamepad1.rightBumper.onTrue(switchBasket)
-        Mercurial.gamepad1.rightStickButton.onTrue(changeClawIntakePos)
+        Mercurial.gamepad1.rightStickButton.onTrue(changeClawPos)
         Mercurial.gamepad1.dpadUp.onTrue( resetHeading)
         Mercurial.gamepad1.leftBumper.onTrue( resetHeading)
         Mercurial.gamepad1.leftStickButton.onTrue(toggleArmTarget)

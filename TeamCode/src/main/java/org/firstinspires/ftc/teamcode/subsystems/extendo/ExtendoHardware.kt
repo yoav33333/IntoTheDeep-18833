@@ -20,8 +20,8 @@ object ExtendoHardware: SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val extendoServoL by OpModeLazyCell{HardwareDevice("extendo l s", Servo::class.java).get()}
-    val extendoServoR by OpModeLazyCell{HardwareDevice("extendo r s", Servo::class.java).get()}
+    val extendoServoL by OpModeLazyCell{HardwareDevice("extendo l", Servo::class.java).get()}
+    val extendoServoR by OpModeLazyCell{HardwareDevice("extendo r", Servo::class.java).get()}
 
     fun setPosition(position: Double) {
         extendoServoL.position = position

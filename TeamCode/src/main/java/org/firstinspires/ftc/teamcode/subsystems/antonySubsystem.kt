@@ -16,7 +16,6 @@
 //import dev.frozenmilk.mercurial.subsystems.Subsystem
 //import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 //import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
-//import org.firstinspires.ftc.teamcode.subsystems.robot.BulkReads.modules
 //import java.lang.annotation.Inherited
 //
 //
@@ -67,25 +66,6 @@
 //        .setFinish{false}
 //        .setEnd { antony.setPattern(default) }
 //
-//    var data = 0
-//    var red = 0
-//    var blue = 0
-//    var green = 0
-//    fun csColors() {
-////        data =  clawSubsystem.colorDistSensor.argb()
-//        red = clawSubsystem.colorDistSensor.red()
-//        blue = clawSubsystem.colorDistSensor.blue()
-//        green = clawSubsystem.colorDistSensor.green()
-//
-//        telemetry.update()
-//        if (blue > 300) {
-//            antony.setPattern(blueLED)
-//        } else if (green > 300) {
-//            antony.setPattern(yellowLED)
-//        } else if (red > 290) {
-//            antony.setPattern(redLED)
-//        } else antony.setPattern(default)
-//    }
 //
 //    val colorSensorData = Lambda("colorSensorData")
 //        .setExecute {

@@ -23,7 +23,7 @@ object DepositClawHardware: SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val depositClaw by OpModeLazyCell{HardwareDevice("small claw", Servo::class.java).get()}
+    val depositClaw by OpModeLazyCell{HardwareDevice("deposit claw", Servo::class.java).get()}
     val colorSensor by OpModeLazyCell{HardwareDevice("dsc", RevColorSensorV3::class.java).get()}
 
     fun setDepositClawPosition(position: Double){

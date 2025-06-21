@@ -40,30 +40,30 @@ object LiftHardware : SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val leftCenter by OpModeLazyCell{SuperMotor("l1")
+    val leftCenter by OpModeLazyCell{SuperMotor("lift 4")
         .setMode(RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .get()}
 
-    val leftSide by OpModeLazyCell{SuperMotor("l2")
+    val leftSide by OpModeLazyCell{SuperMotor("lift 3")
         .setMode(RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .get()}
 
-    val rightCenter by OpModeLazyCell{SuperMotor("l3")
+    val rightCenter by OpModeLazyCell{SuperMotor("lift 2")
         .setMode(RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .setDirection(DcMotorSimple.Direction.REVERSE)
         .get()}
 
-    val rightSide by OpModeLazyCell{SuperMotor("l4")
+    val rightSide by OpModeLazyCell{SuperMotor("lift 1")
         .setMode(RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .setDirection(DcMotorSimple.Direction.REVERSE)
         .get()}
 
     val encoder: Encoder by OpModeLazyCell{
-        Encoder("l4", DcMotorSimple.Direction.REVERSE)
+        Encoder("lift 1", DcMotorSimple.Direction.REVERSE)
     }
 
     val magneticLimit: DigitalChannel by OpModeLazyCell {
@@ -73,15 +73,15 @@ object LiftHardware : SDKSubsystem() {
     }
 
     fun setPower(power: Double) {
-        leftCenter.setPower(power)
-        leftSide.setPower(power)
-        rightSide.setPower(-power)
-        rightCenter.setPower(-power)
+        leftCenter.setPower(-power)
+        leftSide.setPower(-power)
+        rightSide.setPower(power)
+        rightCenter.setPower(power)
     }
 
-    fun runToPosition(){
+    fun runToPosition(target: Double){
         setPower(PDController(p,d).calculate(
-            getPose().toDouble(), targetPosition.toDouble()) + g)
+            getPose().toDouble(), target) + g)
     }
 
     fun getPose(): Int{

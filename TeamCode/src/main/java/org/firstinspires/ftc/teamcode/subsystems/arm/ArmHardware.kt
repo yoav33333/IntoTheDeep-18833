@@ -11,6 +11,7 @@ import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.util.HardwareDevice
 import java.lang.annotation.Inherited
+import java.util.function.DoubleSupplier
 
 object ArmHardware: SDKSubsystem(){
     override var dependency: Dependency<*> = Subsystem.DEFAULT_DEPENDENCY and
@@ -21,31 +22,34 @@ object ArmHardware: SDKSubsystem(){
     @MustBeDocumented
     @Inherited
     annotation class Attach
-    val armServo by OpModeLazyCell{ HardwareDevice("flip servo", Servo::class.java).get() }
+    val armServoRight by OpModeLazyCell{ HardwareDevice("deposit arm r", Servo::class.java).get() }
+    val armServoLeft by OpModeLazyCell{ HardwareDevice("deposit arm l", Servo::class.java).get() }
+    val extensionServo by OpModeLazyCell{ HardwareDevice("deposit extention", Servo::class.java).get() }
 
     fun setArmPosition(position: Double) {
-        armServo.position = position
+        armServoRight.position = position
+        armServoLeft.position = position
     }
 
 
-    fun setArmPositionCommand(position: Double) =
-        Lambda("ArmPosition: {}".format(position))
+    fun setArmPositionCommand(position: DoubleSupplier) =
+        Lambda("ArmPosition: {}".format(position.asDouble))
             .setInit {
-                setArmPosition(position)
+                setArmPosition(position.asDouble)
             }
             .setRunStates(Wrapper.OpModeState.ACTIVE, Wrapper.OpModeState.INIT)
-//    fun setExtensionPosition(position: Double) {
-//        extensionServo.position = position
-//    }
+    fun setExtensionPosition(position: Double) {
+        extensionServo.position = position
+    }
 
-//    fun setExtendingArmPosition(armPosition: Double? = null, extensionPosition: Double? = null):Lambda
-//    = Lambda("ExtendingArmPosition")
-//    .setInit{
-//        if (armPosition !=null){
-//            setArmPosition(armPosition)
-//        }
-//        if (extensionPosition !=null){
-//            setExtensionPosition(extensionPosition)
-//        }
-//    }.setRunStates(Wrapper.OpModeState.ACTIVE, Wrapper.OpModeState.INIT)
+    fun setExtendingArmPosition(armPosition: DoubleSupplier? = null, extensionPosition: DoubleSupplier? = null):Lambda
+    = Lambda("ArmPosition: {}, ExtensionPosition: {}".format(armPosition, extensionPosition))
+    .setInit{
+        if (armPosition !=null){
+            setArmPosition(armPosition.asDouble)
+        }
+        if (extensionPosition !=null){
+            setExtensionPosition(extensionPosition.asDouble)
+        }
+    }.setRunStates(Wrapper.OpModeState.ACTIVE, Wrapper.OpModeState.INIT)
 }

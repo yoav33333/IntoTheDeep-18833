@@ -12,10 +12,12 @@ import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawHardware
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawHardware.setDepositClawPosition
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawVariables.closedClawPosition
 import org.firstinspires.ftc.teamcode.subsystems.robot.GameElement
-import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.slamSeq
+//import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.slamSeq
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotVariables.gameElement
+import kotlin.math.round
 
 object DepositClawCommands {
+    @JvmStatic
     val closeDepositClaw = Lambda("CloseClaw")
         .setInit {
             setDepositClawPosition(DepositClawVariables.closedClawPosition)
@@ -51,9 +53,8 @@ object DepositClawCommands {
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {
-            if (getDepositClawPosition() == closedClawPosition) {
-                if (gameElement == GameElement.SPECIMEN) slamSeq.schedule()
-                else openDepositClaw.schedule()
+            if (round(getDepositClawPosition()) == round(closedClawPosition)) {
+                openDepositClaw.schedule()
             } else {
                 closeDepositClaw.schedule()
             }

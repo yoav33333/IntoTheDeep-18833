@@ -18,13 +18,13 @@ class Encoder(name: String,
 
     var direction = direction
         set(value) {
-            motor.direction = value
+//            motor.direction = value
             field = value
         }
     var offset = startingPose
-    fun getPose() = motor.currentPosition+offset
+    fun getPose() = (motor.currentPosition*( if (direction == DcMotorSimple.Direction.FORWARD) 1 else -1))+offset
     fun setPose(value: Int) {
-        offset = value - motor.currentPosition
+        offset = value - (motor.currentPosition*( if (direction == DcMotorSimple.Direction.FORWARD) 1 else -1))
     }
 
 }

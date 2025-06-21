@@ -38,20 +38,20 @@ object DriveHardware:SDKSubsystem() {
     @Inherited
     annotation class Attach
 
-    val leftFront by OpModeLazyCell{SuperMotor("dfl")
+    val leftFront by OpModeLazyCell{SuperMotor("drive 1")
         .setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .get()}
-    val leftBack by OpModeLazyCell{SuperMotor("drl")
+    val leftBack by OpModeLazyCell{SuperMotor("drive 2")
         .setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .get()}
-    val rightFront by OpModeLazyCell{SuperMotor("dfr")
+    val rightFront by OpModeLazyCell{SuperMotor("drive 4")
         .setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .setDirection(DcMotorSimple.Direction.REVERSE)
         .get()}
-    val rightBack by OpModeLazyCell{SuperMotor("drr")
+    val rightBack by OpModeLazyCell{SuperMotor("drive 3")
         .setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         .setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         .setDirection(DcMotorSimple.Direction.REVERSE)
@@ -60,8 +60,9 @@ object DriveHardware:SDKSubsystem() {
         .setOrientationOnRobot(RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD))
         .get()}
 
-    val getPureIMUHeading = { imu.robotYawPitchRollAngles.yaw }
-    val getIMUHeading = { imu.robotYawPitchRollAngles.yaw + imuAngleOffset }
+    fun getPureIMUHeading() =  imu.robotYawPitchRollAngles.yaw
+    fun getIMUHeading() = imu.robotYawPitchRollAngles.yaw + imuAngleOffset
+
     fun setIMUHeading(heading: Double) {
         imuAngleOffset = heading - getIMUHeading()
     }
@@ -90,32 +91,30 @@ object DriveHardware:SDKSubsystem() {
         this.rightBack.power = -rightBack
     }
 
-    fun drive(robotCentric: Boolean = false) {
-        val y = -gamepad1.leftStickY.state // Remember, Y stick value is reversed
-        val x = gamepad1.leftStickX.state
-        val rx = gamepad1.rightStickX.state
+    fun drive(x: Double, y: Double, rotation: Double, robotCentric: Boolean = false) {
+//        val y = gamepad1.leftStickY.state // Remember, Y stick value is reversed
+//        val x = gamepad1.leftStickX.state
+//        val rx = gamepad1.rightStickX.state
 
-
-
-        val botHeading = getIMUHeading()
+        val botHeading = Math.toRadians(getIMUHeading())
         var rotX = 0.0
         var rotY = 0.0
-//        if (robotCentric) {
+        if (!robotCentric) {
             // Rotate the movement direction counter to the bot's rotation
             rotX = x * cos(-botHeading) - y * sin(-botHeading)
             rotY = x * sin(-botHeading) + y * cos(-botHeading)
-//        }
+        }
         rotX = rotX * 1.1 // Counteract imperfect strafing
 
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
-        val denominator = max(abs(rotY) + abs(rotX) + abs(rx), 1.0)
-        val frontLeftPower = (rotY + rotX + rx) / denominator
-        val backLeftPower = (rotY - rotX + rx) / denominator
-        val frontRightPower = (rotY - rotX - rx) / denominator
-        val backRightPower = (rotY + rotX - rx) / denominator
+        val denominator = max(abs(rotY) + abs(rotX) + abs(rotation), 1.0)
+        val frontLeftPower = (rotY + rotX + rotation) / denominator
+        val backLeftPower = (rotY - rotX + rotation) / denominator
+        val frontRightPower = (rotY - rotX - rotation) / denominator
+        val backRightPower = (rotY + rotX - rotation) / denominator
         setPower(frontLeftPower, backLeftPower, frontRightPower, backRightPower)
 
     }

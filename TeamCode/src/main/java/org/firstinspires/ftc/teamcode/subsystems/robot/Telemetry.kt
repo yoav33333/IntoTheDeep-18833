@@ -11,6 +11,8 @@ import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem
 import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawHardware
+import org.firstinspires.ftc.teamcode.subsystems.drive.DriveHardware
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawHardware
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.getPose
@@ -48,10 +50,13 @@ object Telemetry: SDKSubsystem() {
         lastRunTime = FeatureRegistrar.activeOpMode.runtime
         dashboardTelemetry.addData("offset", LiftVariables.offset)
         dashboardTelemetry.addData("sensor", magneticLimit.state)
+        dashboardTelemetry.addData("dist", DepositClawHardware.getDistance())
         dashboardTelemetry.addData("leftCenter", LiftHardware.leftCenter.power)
         dashboardTelemetry.addData("leftSide", LiftHardware.leftSide.power)
         dashboardTelemetry.addData("rightSide", LiftHardware.rightSide.power)
         dashboardTelemetry.addData("rightCenter", LiftHardware.rightCenter.power)
+        dashboardTelemetry.addData("yaw", DriveHardware.getIMUHeading())
+        dashboardTelemetry.addData("yaw p", DriveHardware.getPureIMUHeading())
         dashboardTelemetry.addData("leftCenterPose", LiftHardware.leftCenter.currentPosition)
         dashboardTelemetry.addData("leftSidePose", LiftHardware.leftSide.currentPosition)
         dashboardTelemetry.addData("rightSidePose", LiftHardware.rightSide.currentPosition)
@@ -60,6 +65,8 @@ object Telemetry: SDKSubsystem() {
         dashboardTelemetry.addData("pose", getPose())
         dashboardTelemetry.addData("target", targetPosition)
         dashboardTelemetry.addData("error", targetPosition - getPose())
+        dashboardTelemetry.addData("extendo", RobotVariables.extendo)
+        dashboardTelemetry.addData("claw", IntakeClawHardware.intakeClaw.position)
 
 
       dashboardTelemetry.addData("lift state", LiftVariables.liftState.name)

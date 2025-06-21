@@ -43,7 +43,6 @@ object Robot: Feature{
 
     fun initRobotCommands(){
         if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) {
-            macro.reset()
             macro.schedule()
         }
         else{
@@ -51,8 +50,14 @@ object Robot: Feature{
         }
     }
 
-    override fun preUserInitHook(opMode: Wrapper) {
+    override fun preUserStartHook(opMode: Wrapper) {
         initRobotState()
         initRobotCommands()
+    }
+
+    override fun postUserInitHook(opMode: Wrapper) {
+        if (activeOpModeWrapper.opModeType == OpModeMeta.Flavor.TELEOP) {
+            macro.reset()
+        }
     }
 }

@@ -10,17 +10,16 @@ object AntonyCommands {
         .setInit { setPattern(AntonyVariables.default) }
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setFinish { false }
-        .setRequirements(AntonyHardware)
 
     val setEndGame = Lambda("setEndGame")
         .setInit { setPattern(AntonyVariables.endGame) }
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setFinish { false }
-        .setRequirements(AntonyHardware)
+        .setEnd { setDefault.schedule() }
 
     val setLowBattery = Lambda("setLowBattery")
         .setInit { setPattern(AntonyVariables.lowBattery) }
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setFinish { false }
-        .setRequirements(AntonyHardware)
+        .setEnd { setDefault.schedule() }
 }

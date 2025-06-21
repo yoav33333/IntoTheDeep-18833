@@ -13,15 +13,18 @@ import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.getPose
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.magneticLimit
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.setPower
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.basketState
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.closedPose
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.highBasketPose
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.highChamberPoseDown
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.highChamberPoseUp
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.liftState
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.lockedTargetPosition
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.lowBasketPose
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.targetPosition
 
 import org.firstinspires.ftc.teamcode.subsystems.robot.GameElement
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotVariables
+import java.util.function.IntSupplier
 import kotlin.math.abs
 
 object LiftCommands {
@@ -31,8 +34,10 @@ object LiftCommands {
             liftState = LiftState.AUTO
         }
         .setExecute{
-            if (liftState == LiftState.AUTO) {
-                LiftHardware.runToPosition()
+            when (liftState) {
+                LiftState.AUTO -> LiftHardware.runToPosition(targetPosition.toDouble())
+                LiftState.LOCKED -> LiftHardware.runToPosition(lockedTargetPosition.toDouble())
+                LiftState.MANUAL -> setPower(Mercurial.gamepad2.rightStickY.state)
             }
         }
         .setFinish{false}
@@ -41,32 +46,32 @@ object LiftCommands {
     val manualControl = Lambda("manualLiftControl")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{ liftState = LiftState.MANUAL}
-        .setExecute{
-            setPower(Mercurial.gamepad2.rightStickY.state)
-        }
         .setFinish{
             abs(Mercurial.gamepad2.rightStickY.state) <0.2
         }
-        .setEnd{ liftState = LiftState.AUTO
+        .setEnd{
+            setPower(0.0)
+            liftState = LiftState.AUTO
         targetPosition = getPose()
         }
 
 
 
     val resetHeight = Lambda("resetHeight")
-        .setInit { LiftHardware.setPose(getPose()) }
+        .setInit { LiftHardware.setPose(0) }
 
-    fun goToPreset(goal: Int) = Lambda("goToPreset")
+    fun goToPreset(goal: IntSupplier) = Lambda("goToPreset")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit { targetPosition = goal }
+        .setInit { targetPosition = goal.asInt }
 
     val switchBasket = Lambda("SWB")
         .setInit{
-            if (basketState == BasketState.HIGH) {
-                basketState = BasketState.LOW
-            } else {
-                basketState = BasketState.HIGH
-            }
+            basketState =
+                if (basketState == BasketState.HIGH) {
+                    BasketState.LOW
+                } else {
+                    BasketState.HIGH
+                }
             avoidBasket.schedule()
             goToBasket.schedule()
             Sequential(
@@ -78,27 +83,38 @@ object LiftCommands {
 
     val goToBasket = Lambda("GTB")
         .setInit{
-            if (basketState == BasketState.HIGH) {
-                goToHighBasket.schedule()
+            when (basketState){
+                BasketState.HIGH -> goToHighBasket
+                BasketState.LOW -> goToLowBasket
             }
-            else{
-                goToLowBasket.schedule()
-            }
+//            if (basketState == BasketState.HIGH) {
+//                goToHighBasket.schedule()
+//            }
+//            else{
+//                goToLowBasket.schedule()
+//            }
         }
 
     @JvmStatic
-    val closeSlides = Lambda("close slides")
-        .setRunStates(Wrapper.OpModeState.ACTIVE)
-        .setInit{
-            liftState = LiftState.DISABLED
-            targetPosition = 0
-            liftState = LiftState.DISABLED
-            setPower(-1.0)
+    val closeSlides = goToPreset { closedPose }
+        .addInit{
+            liftState = LiftState.LOCKED
+            lockedTargetPosition = closedPose
+            targetPosition = closedPose
         }
-        .setFinish{!magneticLimit.state}
-        .setEnd{ liftState = LiftState.AUTO
-            setPower(0.0)
-        }
+//        .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
+//        .setInit{
+//            liftState = LiftState.DISABLED
+//            targetPosition = 0
+//            liftState = LiftState.DISABLED
+////            if (!magneticLimit.state) {
+//                setPower(-1.0)
+////            }
+//        }
+//        .setFinish{!magneticLimit.state}
+//        .setEnd{ liftState = LiftState.AUTO
+//            setPower(0.0)
+//        }
 
     @JvmStatic val enablePID = Lambda("enablePID")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -107,33 +123,30 @@ object LiftCommands {
         }
 
     @JvmStatic
-    val goToHighBasket = goToPreset(highBasketPose)
+    val goToHighBasket = goToPreset { highBasketPose }
         .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
 
     @JvmStatic
-    val goToLowBasket = goToPreset(lowBasketPose)
+    val goToLowBasket = goToPreset { lowBasketPose }
         .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
-    val up = Lambda("up")
-        .setInit{
-            targetPosition += 19000
-        }
+
     @JvmStatic
-    val goToHighChamberUp = goToPreset(highChamberPoseUp)
+    val goToHighChamberUp = goToPreset { highChamberPoseUp }
         .addInit {
             RobotVariables.gameElement = GameElement.SPECIMEN
             quickRC { true }.schedule()
         }
 
     @JvmStatic
-    val goToHighChamberDown = goToPreset(highChamberPoseDown)
+    val goToHighChamberDown = goToPreset { highChamberPoseDown }
         .addInit {
             RobotVariables.gameElement = GameElement.SPECIMEN
             quickRC { true }.schedule()
 
         }
 
-    val down = Lambda("down")
-        .setInit{ targetPosition-=10000}
+//    val down = Lambda("down")
+//        .setInit{ targetPosition-=10000}
 
 
 }
