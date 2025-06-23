@@ -83,7 +83,7 @@ object LiftHardware : SDKSubsystem() {
         setPower(PDController(p,d).calculate(
             getPose().toDouble(), target) + g)
     }
-
+    @JvmStatic
     fun getPose(): Int{
         return encoder.getPose()
     }

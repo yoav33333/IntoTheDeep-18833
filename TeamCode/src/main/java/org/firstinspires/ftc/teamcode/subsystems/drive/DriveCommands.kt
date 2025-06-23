@@ -16,7 +16,7 @@ object DriveCommands {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit{maxPower = 1.0}
         .setExecute{
-            drive(x.asDouble,y.asDouble,rotation.asDouble,
+            drive(
             gamepad1.leftTrigger.state + gamepad1.rightTrigger.state>0.1
         )}
         .setFinish{false}

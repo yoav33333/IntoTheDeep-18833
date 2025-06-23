@@ -64,7 +64,7 @@ object DriveHardware:SDKSubsystem() {
     fun getIMUHeading() = imu.robotYawPitchRollAngles.yaw + imuAngleOffset
 
     fun setIMUHeading(heading: Double) {
-        imuAngleOffset = heading - getIMUHeading()
+        imuAngleOffset = heading - getPureIMUHeading()
     }
     fun setOrientationOnRobot(orientationOnRobot: RevHubOrientationOnRobot) {
         imu.initialize(IMU.Parameters(orientationOnRobot))
@@ -91,30 +91,30 @@ object DriveHardware:SDKSubsystem() {
         this.rightBack.power = -rightBack
     }
 
-    fun drive(x: Double, y: Double, rotation: Double, robotCentric: Boolean = false) {
-//        val y = gamepad1.leftStickY.state // Remember, Y stick value is reversed
-//        val x = gamepad1.leftStickX.state
-//        val rx = gamepad1.rightStickX.state
+    fun drive(robotCentric: Boolean = false) {
+        val y = -ySupplier.asDouble // Remember, Y stick value is reversed
+        val x = xSupplier.asDouble
+        val rx = headingSupplier.asDouble
 
-        val botHeading = Math.toRadians(getIMUHeading())
+        val botHeading = -Math.toRadians(getIMUHeading())
         var rotX = 0.0
         var rotY = 0.0
-        if (!robotCentric) {
+//        if (robotCentric) {
             // Rotate the movement direction counter to the bot's rotation
             rotX = x * cos(-botHeading) - y * sin(-botHeading)
             rotY = x * sin(-botHeading) + y * cos(-botHeading)
-        }
+//        }
         rotX = rotX * 1.1 // Counteract imperfect strafing
 
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
-        val denominator = max(abs(rotY) + abs(rotX) + abs(rotation), 1.0)
-        val frontLeftPower = (rotY + rotX + rotation) / denominator
-        val backLeftPower = (rotY - rotX + rotation) / denominator
-        val frontRightPower = (rotY - rotX - rotation) / denominator
-        val backRightPower = (rotY + rotX - rotation) / denominator
+        val denominator = max(abs(rotY) + abs(rotX) + abs(rx), 1.0)
+        val frontLeftPower = (rotY + rotX + rx) / denominator
+        val backLeftPower = (rotY - rotX + rx) / denominator
+        val frontRightPower = (rotY - rotX - rx) / denominator
+        val backRightPower = (rotY + rotX - rx) / denominator
         setPower(frontLeftPower, backLeftPower, frontRightPower, backRightPower)
 
     }

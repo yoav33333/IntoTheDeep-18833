@@ -15,12 +15,14 @@ import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.setPower
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.basketState
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.closedPose
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.highBasketPose
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.highChamberPose
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.highChamberPoseDown
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.highChamberPoseUp
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.liftState
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.lockedTargetPosition
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.lowBasketPose
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.targetPosition
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.wallPose
 
 import org.firstinspires.ftc.teamcode.subsystems.robot.GameElement
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotVariables
@@ -84,8 +86,8 @@ object LiftCommands {
     val goToBasket = Lambda("GTB")
         .setInit{
             when (basketState){
-                BasketState.HIGH -> goToHighBasket
-                BasketState.LOW -> goToLowBasket
+                BasketState.HIGH -> goToHighBasket.schedule()
+                BasketState.LOW -> goToLowBasket.schedule()
             }
 //            if (basketState == BasketState.HIGH) {
 //                goToHighBasket.schedule()
@@ -136,6 +138,13 @@ object LiftCommands {
             RobotVariables.gameElement = GameElement.SPECIMEN
             quickRC { true }.schedule()
         }
+    @JvmStatic
+    val goToHighChamber = goToPreset { highChamberPose }
+        .addInit {
+            RobotVariables.gameElement = GameElement.SPECIMEN
+            quickRC { true }.schedule()
+        }
+    val goToWall = goToPreset { wallPose }
 
     @JvmStatic
     val goToHighChamberDown = goToPreset { highChamberPoseDown }

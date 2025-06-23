@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.subsystems.arm
 
 import dev.frozenmilk.dairy.core.wrapper.Wrapper
 import dev.frozenmilk.mercurial.commands.Lambda
+import dev.frozenmilk.mercurial.commands.groups.Parallel
 import dev.frozenmilk.mercurial.commands.groups.Sequential
 import dev.frozenmilk.mercurial.commands.util.IfElse
 import dev.frozenmilk.mercurial.commands.util.Wait
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.armServoLeft
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setArmPositionCommand
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setExtendingArmPosition
@@ -14,6 +16,8 @@ import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositHighArm
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.armTarget
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.avoidBasketExtensionPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.avoidBasketPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.chamberArmPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.chamberExtensionPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.closeExtensionPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositExtensionPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositHighExtensionPosition
@@ -21,6 +25,11 @@ import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.openExtensionP
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.slamArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.transferArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.transferExtensionPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.wallArmPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.wallExtensionPosition
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.enablePID
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.goToHighChamber
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.goToWall
 
 object ArmCommands {
     val moveToTransfer = Sequential(
@@ -29,11 +38,13 @@ object ArmCommands {
     val moveArmToTransfer = setArmPositionCommand { transferArmPosition }
     @JvmStatic val avoidBasket = setExtendingArmPosition({ avoidBasketPosition },
         { avoidBasketExtensionPosition })
-    val moveToDeposit = setExtendingArmPosition({ depositArmPosition }, { depositExtensionPosition })
+    @JvmStatic val moveToDeposit = setExtendingArmPosition({ depositArmPosition }, { depositExtensionPosition })
     val moveToDepositHigh = setExtendingArmPosition(
         { depositHighArmPosition },
         { depositHighExtensionPosition })
     val moveToSlam = setExtendingArmPosition({ slamArmPosition })
+    val moveToWall = setExtendingArmPosition({ wallArmPosition }, { wallExtensionPosition})
+    val moveToChamber = setExtendingArmPosition({ chamberArmPosition}, { chamberExtensionPosition})
 
     val smartDeposit = IfElse(
         { armTarget == ArmTarget.HIGH },

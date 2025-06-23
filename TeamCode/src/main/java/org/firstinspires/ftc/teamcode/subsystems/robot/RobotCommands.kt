@@ -13,13 +13,18 @@ import org.firstinspires.ftc.teamcode.commands.util.WaitUntil
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.avoidBasket
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.closeExtension
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveArmToTransfer
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToChamber
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToSlam
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToTransfer
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToWall
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.openExtension
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.smartDeposit
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.armServoLeft
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.wallArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.closeDepositClaw
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.closeWhenSampleInPlace
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.openDepositClaw
+import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.quickRC
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.closeExtendo
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.openExtendo
 
@@ -33,6 +38,8 @@ import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.r
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.closeSlides
 //import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.down
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.enablePID
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.goToHighChamber
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.goToWall
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.getPose
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables
@@ -41,8 +48,10 @@ import org.firstinspires.ftc.teamcode.subsystems.robot.RobotVariables.transferSt
 
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.closeIntakeArm
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.openIntakeArm
+import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.pitchWall
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.postTransferSequence
 import kotlin.math.abs
+import kotlin.math.round
 
 object RobotCommands {
     val doTransfer = Lambda("doTransfer")
@@ -71,7 +80,7 @@ object RobotCommands {
             Wait(0.3),
             closeExtension
         )
-
+    @JvmStatic
     val openCommandAuto =
         Sequential(
             Parallel(
@@ -81,15 +90,15 @@ object RobotCommands {
                 RunNonBlocking(closeSlides)
             ),
             openExtendo,
-            Wait(0.5),
+            Wait(0.4),
             moveToTransfer
         )
 
-    val reset = Parallel(
+    @JvmStatic val reset = Parallel(
         closeExtendo,
         closeIntakeArm,
     )
-
+    @JvmStatic
     val closeCommand =
         Parallel(
             closeExtension,
@@ -99,7 +108,7 @@ object RobotCommands {
             moveArmToTransfer,
             closeIntakeArm,
             openDepositClaw,
-            RunNonBlocking(closeSlides),
+            closeSlides,
             Sequential(
                 IfElse(
                     { transferState == TransferState.TRANSFER },
@@ -112,8 +121,8 @@ object RobotCommands {
                         ),
                         closeWhenSampleInPlace.raceWith(Wait(1.5)),
                         closeDepositClaw,
-                        openIntakeClaw,
                         Wait(0.1),
+                        openIntakeClaw,
                         enablePID,
                         RunNonBlocking(smartDeposit),
                         postTransferSequence,
@@ -134,6 +143,11 @@ object RobotCommands {
         doTransfer,
         InstantCommand{ macro.schedule() }
     )
+    val partialNoTransfer = Parallel(
+        setPartialOpen,
+        doNothing,
+        InstantCommand{ macro.schedule() }
+    )
 
     val fullOpenTransfer = Parallel(
         setFullOpen,
@@ -147,6 +161,23 @@ object RobotCommands {
         InstantCommand{ macro.schedule() }
     )
 
+    val wallToChamber =
+        IfElse(
+            { abs(armServoLeft.position - wallArmPosition)>0.1 },
+            Parallel(
+                pitchWall,
+                openDepositClaw,
+                enablePID,
+                moveToWall,
+                goToWall
+            ),
+            Parallel(
+                enablePID,
+                moveToChamber,
+                goToHighChamber,
+                quickRC()
+            )
+        )
 //    @JvmStatic
 //    val slamSeq = Sequential(moveToSlam, Wait(0.0), down, Wait(0.15), openDepositClaw)
 

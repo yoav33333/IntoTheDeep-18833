@@ -28,7 +28,9 @@ import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.doTransfer
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.fullOpenNoTransfer
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.fullOpenTransfer
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.macro
+import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.partialNoTransfer
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.partialTransfer
+import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.wallToChamber
 
 import kotlin.math.abs
 @TeleOp
@@ -39,7 +41,7 @@ class TerribleTeleop: NewMegiddoOpMode() {
         Mercurial.gamepad2.y.onTrue(changeClawIntakePos)
         Mercurial.gamepad2.b.onTrue(fullOpenNoTransfer)
         Mercurial.gamepad2.leftStickButton.onTrue(resetAngleClaw)
-        Mercurial.gamepad2.a.onTrue(partialTransfer)
+        Mercurial.gamepad2.a.onTrue(wallToChamber)
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
         Mercurial.gamepad2.x.onTrue(fullOpenTransfer)

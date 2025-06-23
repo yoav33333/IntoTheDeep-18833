@@ -17,12 +17,15 @@ import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.intakePosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.pitchPushPosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.postTransferPosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.transferPosition
+import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.wallPosition
 
 object V4bCommands {
     val pitchTransfer = Lambda("angleTransfer")
         .setInit {
             setPitchPosition { transferPosition }
         }
+    val pitchWall =  Lambda("pitchWall")
+        .setInit{ setPitchPosition{ wallPosition}}
     val pitchPostTransfer = Lambda("anglePostTransfer")
         .setInit {
             setPitchPosition { postTransferPosition }

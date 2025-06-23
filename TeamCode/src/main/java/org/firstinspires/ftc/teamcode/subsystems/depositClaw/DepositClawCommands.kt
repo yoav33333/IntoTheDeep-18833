@@ -23,7 +23,7 @@ object DepositClawCommands {
             setDepositClawPosition(DepositClawVariables.closedClawPosition)
         }
         .setRunStates(Wrapper.OpModeState.ACTIVE, Wrapper.OpModeState.INIT)
-
+    @JvmStatic
     val openDepositClaw = Lambda("OpenClaw")
         .setInit {
             setDepositClawPosition(DepositClawVariables.openedClawPosition)
@@ -72,6 +72,6 @@ object DepositClawCommands {
         }
     @JvmStatic
     fun quickRC(supplier: () -> Boolean = {true}) = Sequential(WaitUntil(supplier),
-        semiCloseClaw, Wait(0.3), semiCloseClaw)
+        semiCloseClaw, Wait(0.3), closeDepositClaw)
 
 }

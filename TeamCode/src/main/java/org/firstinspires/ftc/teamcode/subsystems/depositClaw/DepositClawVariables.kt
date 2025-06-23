@@ -5,9 +5,9 @@ import com.acmerobotics.dashboard.config.Config
 @Config
 object DepositClawVariables {
     /*claw*/
-    @JvmField var closedClawPosition = 0.0
+    @JvmField var closedClawPosition = 0.32
     @JvmField var openedClawPosition = 1.0
-    @JvmField var semiClosedClawPosition = 0.4
+    @JvmField var semiClosedClawPosition = 0.35
     /*color sensor*/
     @JvmField var minDistance = 35
 }
