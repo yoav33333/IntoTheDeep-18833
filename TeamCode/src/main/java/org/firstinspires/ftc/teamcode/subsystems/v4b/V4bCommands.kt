@@ -49,7 +49,7 @@ object V4bCommands {
         .setInit {
             setArmPosition { armInPosition }
         }
-
+    @JvmStatic
     val extendoPush = Lambda("eps")
         .setInit{
             setArmPosition { armPushPosition }

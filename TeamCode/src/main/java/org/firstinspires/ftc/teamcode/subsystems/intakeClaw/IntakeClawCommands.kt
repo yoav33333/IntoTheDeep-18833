@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawHardware.i
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawHardware.setIntakeClawPosition
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawHardware.setRotationPosition
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawVariables.closedClawPosition
+import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawVariables.leftRotation
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawVariables.openedClawPosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.moveArmOut
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.moveArmOutIntake
@@ -44,13 +45,11 @@ object IntakeClawCommands {
         .setInit {
             setRotationPosition { if (getRotationPosition() >= 0.0) getRotationPosition() - 0.125 else 0.0 }
         }
-
+    @JvmStatic
+    val turnLeft = Lambda("turnLeft")
+        .setInit{ setRotationPosition { leftRotation } }
     val closingClawSeq = Sequential(
-//        RunNonBlocking( moveArmOutIntake ),
-//        Wait(0.05),
         closeIntakeClaw,
-//        Wait(0.1),
-//        RunNonBlocking(moveArmOut)
     )
 
     val changeClawIntakePos = Lambda("changeClawPos")
@@ -62,20 +61,5 @@ object IntakeClawCommands {
                 openIntakeClaw.schedule()
             }
         }
-
-
-//    Lambda("changeClawPos")
-//        .setRunStates(Wrapper.OpModeState.ACTIVE)
-//        .setInit {
-//            if (intakeClaw.position == IntakeClawVariables.closedClawPosition) {
-//                openIntakeClaw.schedule()
-//                return@setInit
-//            }
-//            else {
-//                closingClawSeq.schedule()
-//            }
-//        }
-//        .setFinish{true}
-
 
 }

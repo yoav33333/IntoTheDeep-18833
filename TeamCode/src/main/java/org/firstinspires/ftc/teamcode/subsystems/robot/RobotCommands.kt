@@ -47,6 +47,7 @@ import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.closedPose
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotVariables.transferState
 
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.closeIntakeArm
+import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.extendoPush
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.openIntakeArm
 //import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.pitchWall
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.postTransferSequence
@@ -60,7 +61,7 @@ object RobotCommands {
 
     val doNothing = Lambda("doNothing")
         .setInit{transferState = TransferState.DO_NOTHING}
-
+    @JvmStatic
     val openCommand =
         Sequential(
             Parallel(
@@ -139,6 +140,12 @@ object RobotCommands {
         )
 
     val macro = SuperAdvancing(closeCommand, openCommand)
+    @JvmStatic
+    val openPushCommand = Parallel(
+        openExtendo,
+        extendoPush
+    )
+
     @JvmStatic
     val closeNoTransfer =
         Parallel(
