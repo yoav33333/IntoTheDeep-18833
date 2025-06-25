@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.armInPosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.armOutPosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.armPushPosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.armUpPosition
+import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.armWallPosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.intakePosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.pitchPushPosition
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bVariables.postTransferPosition
@@ -24,8 +25,10 @@ object V4bCommands {
         .setInit {
             setPitchPosition { transferPosition }
         }
-    val pitchWall =  Lambda("pitchWall")
-        .setInit{ setPitchPosition{ wallPosition}}
+    val v4bWall =  Lambda("pitchWall")
+        .setInit{
+            setPitchPosition{ wallPosition}
+        setArmPosition{armWallPosition}}
     val pitchPostTransfer = Lambda("anglePostTransfer")
         .setInit {
             setPitchPosition { postTransferPosition }

@@ -46,11 +46,11 @@ object IntakeClawCommands {
         }
 
     val closingClawSeq = Sequential(
-        RunNonBlocking( moveArmOutIntake ),
-        Wait(0.05),
+//        RunNonBlocking( moveArmOutIntake ),
+//        Wait(0.05),
         closeIntakeClaw,
-        Wait(0.1),
-        RunNonBlocking(moveArmOut)
+//        Wait(0.1),
+//        RunNonBlocking(moveArmOut)
     )
 
     val changeClawIntakePos = Lambda("changeClawPos")

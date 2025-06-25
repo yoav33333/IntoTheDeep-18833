@@ -3,7 +3,11 @@ package org.firstinspires.ftc.teamcode.opModes.auto;
 
 
 import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getAvoidBasket;
+import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getMoveToChamber;
 import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getMoveToDeposit;
+import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getMoveToSlam;
+import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getOpenExtension;
+import static org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.getCloseDepositClaw;
 import static org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.getOpenDepositClaw;
 import static org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.getCloseIntakeClaw;
 import static org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.getResetAngleClaw;
@@ -20,6 +24,7 @@ import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.commands.util.InstantCommand;
 import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
 
 import org.firstinspires.ftc.teamcode.commands.util.RunNonBlocking;
@@ -41,9 +46,9 @@ public class java4sample extends AutoBaseJava {
     public Pose basketPose3 = new Pose(-56.9, 57.3, Math.toRadians(-45));
     public Pose basketPose4 = new Pose(-55.5, 58.3, Math.toRadians(-45));
 //    public Pose basketPose5 = new Pose(-55.9, 56.1, Math.toRadians(-45));
-    public Pose pickup1Pose = new Pose(-54.0, 48.8, 0);
-    public Pose pickup2Pose = new Pose(-54.9, 57.8, Math.toRadians(0));
-    public Pose pickup3Pose = new Pose(-52.7, 59.6, Math.toRadians(21));
+    public Pose pickup1Pose = new Pose(-52.0, 48.8, 0);
+    public Pose pickup2Pose = new Pose(-52.2, 57.8, Math.toRadians(0));
+    public Pose pickup3Pose = new Pose(-50.7, 59.6, Math.toRadians(21));
 //    public Pose pickup4Pose = new Pose(-58.7, 30, Math.toRadians(270));
     public Pose parkPose = new Pose(-4, 19, Math.toRadians(90));
     public Pose parkControl = new Pose(-9, 52, Math.toRadians(0));
@@ -74,8 +79,11 @@ public class java4sample extends AutoBaseJava {
         new Parallel(
             getResetAngleClaw(),
             getCloseIntakeClaw(),
-            getAvoidBasket(),
-            getResetAngleClaw()
+            getCloseDepositClaw(),
+            new Sequential(
+                getOpenExtension(),
+                getAvoidBasket()
+            )
         ).schedule();
 
 
@@ -107,13 +115,12 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.35),
             getCloseIntakeClaw(),
             new Wait(0.1),
-            new WaitUntil(()->getPose()<3000),
+            new WaitUntil(()->getPose()<targetPosition + 3000),
             getCloseCommand(),
             getGoToHighBasket(),
-            new WaitUntil(() -> getPose()>20000),
             followPath(scorePickup1),
             new WaitUntil(() -> targetPosition-2500<getPose()),
-                new Wait(0.3),
+            new Wait(0.3),
             getOpenDepositClaw(),
             new Wait(0.1),
             followPath(pickup2),
@@ -122,10 +129,9 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.35),
             getCloseIntakeClaw(),
             new Wait(0.1),
-            new WaitUntil(()->getPose()<2000),
+            new WaitUntil(()->getPose()<targetPosition + 3000),
             getCloseCommand(),
             getGoToHighBasket(),
-            new WaitUntil(() -> getPose()>20000),
             followPath(scorePickup2),
             new WaitUntil(() -> targetPosition-3000<getPose()),
             new Wait(0.3),
@@ -137,10 +143,8 @@ public class java4sample extends AutoBaseJava {
             new Wait(0.3),
             getCloseIntakeClaw(),
             new Wait(0.1),
-            new WaitUntil(()->getPose()<2000),
             getCloseCommand(),
             getGoToHighBasket(),
-            new WaitUntil(() -> getPose()>20000),
             followPath(scorePickup3),
             new WaitUntil(() -> targetPosition-3000<getPose()),
             new Wait(0.3),
@@ -150,12 +154,12 @@ public class java4sample extends AutoBaseJava {
                 followPath(park),
                 new Sequential(
                     new WaitUntil(()->follower.getCurrentTValue()>0.3)
-//                    linearSlides.getTouchBar(),
-//                    getArmIn()
                 )
             ),
 
-            finishAuto
+            finishAuto,
+            new InstantCommand(()->targetPosition-=9000),
+            getMoveToSlam()
         ).schedule();
     }
     @Override

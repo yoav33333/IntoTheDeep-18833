@@ -16,6 +16,7 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveCommands.driveCommand
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.headingSupplier
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.imuAngleOffset
+import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.maxPower
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.robotCentricSupplier
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.xSupplier
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.ySupplier
@@ -99,22 +100,22 @@ object DriveHardware:SDKSubsystem() {
         val botHeading = -Math.toRadians(getIMUHeading())
         var rotX = 0.0
         var rotY = 0.0
-//        if (robotCentric) {
+        if (!robotCentric) {
             // Rotate the movement direction counter to the bot's rotation
             rotX = x * cos(-botHeading) - y * sin(-botHeading)
             rotY = x * sin(-botHeading) + y * cos(-botHeading)
-//        }
-        rotX = rotX * 1.1 // Counteract imperfect strafing
+        }
+        rotX *= 1.1 // Counteract imperfect strafing
 
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
-        val denominator = max(abs(rotY) + abs(rotX) + abs(rx), 1.0)
-        val frontLeftPower = (rotY + rotX + rx) / denominator
-        val backLeftPower = (rotY - rotX + rx) / denominator
-        val frontRightPower = (rotY - rotX - rx) / denominator
-        val backRightPower = (rotY + rotX - rx) / denominator
+        val denominator = max((abs(rotY) + abs(rotX) + abs(rx))* maxPower, 1.0)
+        val frontLeftPower = (rotY + rotX + rx)* maxPower / denominator
+        val backLeftPower = (rotY - rotX + rx)* maxPower / denominator
+        val frontRightPower = (rotY - rotX - rx)* maxPower / denominator
+        val backRightPower = (rotY + rotX - rx)* maxPower / denominator
         setPower(frontLeftPower, backLeftPower, frontRightPower, backRightPower)
 
     }

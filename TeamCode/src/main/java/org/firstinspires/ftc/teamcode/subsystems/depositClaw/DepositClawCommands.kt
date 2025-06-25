@@ -59,7 +59,7 @@ object DepositClawCommands {
                 closeDepositClaw.schedule()
             }
         }
-
+    @JvmStatic
     val closeWhenSampleInPlace = Lambda("closeWhenSampleInPlace")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit {

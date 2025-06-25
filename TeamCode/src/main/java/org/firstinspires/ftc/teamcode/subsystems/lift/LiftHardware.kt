@@ -87,7 +87,7 @@ object LiftHardware : SDKSubsystem() {
     fun getPose(): Int{
         return encoder.getPose()
     }
-
+    @JvmStatic
     fun setPose(pose: Int){
         encoder.setPose(pose)
     }

@@ -6,11 +6,12 @@ import com.acmerobotics.dashboard.config.Config
 object V4bVariables {
     /*arm*/
     @JvmField var armOutPosition = 0.0
-    @JvmField var armOutPositionAuto = 0.19
-    @JvmField var armOutPositionTele = 0.19
+    @JvmField var armOutPositionAuto = 0.23
+    @JvmField var armOutPositionTele = 0.23
     @JvmField var armInPosition = 0.45
     @JvmField var armPushPosition = 0.0
     @JvmField var armUpPosition = 0.15
+    @JvmField var armWallPosition = 0.6
     /*pitch*/
     @JvmField var transferPosition = 0.38
     @JvmField var wallPosition = 0.0

@@ -21,11 +21,11 @@ object LiftVariables {
     @JvmField var lowBasketPose = 40000
     @JvmField var closedPose = 26000
     @JvmField var lowChamberPose = 0
-    @JvmField var highBasketPose = 53000
+    @JvmField var highBasketPose = 57000
     @JvmField var highChamberPoseUp = 31500
     @JvmField var highChamberPoseDown = 45000
     @JvmField var highChamberPose = 38000
-    @JvmField var wallPose = 0
+    @JvmField var wallPose = 500
 
 }
 enum class LiftState{

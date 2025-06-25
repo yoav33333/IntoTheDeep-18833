@@ -42,8 +42,10 @@ object ArmCommands {
     val moveToDepositHigh = setExtendingArmPosition(
         { depositHighArmPosition },
         { depositHighExtensionPosition })
+    @JvmStatic
     val moveToSlam = setExtendingArmPosition({ slamArmPosition })
     val moveToWall = setExtendingArmPosition({ wallArmPosition }, { wallExtensionPosition})
+    @JvmStatic
     val moveToChamber = setExtendingArmPosition({ chamberArmPosition}, { chamberExtensionPosition})
 
     val smartDeposit = IfElse(
@@ -54,7 +56,7 @@ object ArmCommands {
 
     val closeExtension = Lambda("closeExtension")
         .setInit{setExtensionPosition( closeExtensionPosition)}
-
+    @JvmStatic
     val openExtension = Lambda("openExtension")
         .setInit{setExtensionPosition(openExtensionPosition)}
 

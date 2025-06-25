@@ -48,8 +48,9 @@ import org.firstinspires.ftc.teamcode.subsystems.robot.RobotVariables.transferSt
 
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.closeIntakeArm
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.openIntakeArm
-import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.pitchWall
+//import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.pitchWall
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.postTransferSequence
+import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.v4bWall
 import kotlin.math.abs
 import kotlin.math.round
 
@@ -119,13 +120,14 @@ object RobotCommands {
                                 openExtension
                             )
                         ),
-                        closeWhenSampleInPlace.raceWith(Wait(1.5)),
+                        closeWhenSampleInPlace.raceWith(Wait(0.8)),
                         closeDepositClaw,
-                        Wait(0.1),
+                        Wait(0.07),
                         openIntakeClaw,
+                        Wait(0.1),
                         enablePID,
                         RunNonBlocking(smartDeposit),
-                        postTransferSequence,
+//                        postTransferSequence,
                         WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(LiftVariables.targetPosition>500 && abs(
                             LiftVariables.targetPosition- LiftHardware.getPose()
                         ) < RobotVariables.deltaToReopenAfterSwitch) || (RobotVariables.gameElement == GameElement.SPECIMEN && LiftHardware.getPose() >1000) )},
@@ -137,7 +139,13 @@ object RobotCommands {
         )
 
     val macro = SuperAdvancing(closeCommand, openCommand)
-
+    @JvmStatic
+    val closeNoTransfer =
+        Parallel(
+            setPartialOpen,
+            doTransfer,
+            InstantCommand{ closeCommand.schedule() }
+        )
     val partialTransfer = Parallel(
         setPartialOpen,
         doTransfer,
@@ -160,23 +168,29 @@ object RobotCommands {
         doNothing,
         InstantCommand{ macro.schedule() }
     )
-
+    @JvmStatic
+    val wallSeq = Parallel(
+        v4bWall,
+        openDepositClaw,
+        enablePID,
+        moveToWall,
+        goToWall
+    )
+    @JvmStatic
+    val chamberSeq =
+        Sequential(
+            closeDepositClaw,
+            Wait(0.1),
+            enablePID,
+            moveToChamber,
+            goToHighChamber,
+            quickRC()
+        )
     val wallToChamber =
         IfElse(
             { abs(armServoLeft.position - wallArmPosition)>0.1 },
-            Parallel(
-                pitchWall,
-                openDepositClaw,
-                enablePID,
-                moveToWall,
-                goToWall
-            ),
-            Parallel(
-                enablePID,
-                moveToChamber,
-                goToHighChamber,
-                quickRC()
-            )
+            wallSeq,
+            chamberSeq
         )
 //    @JvmStatic
 //    val slamSeq = Sequential(moveToSlam, Wait(0.0), down, Wait(0.15), openDepositClaw)

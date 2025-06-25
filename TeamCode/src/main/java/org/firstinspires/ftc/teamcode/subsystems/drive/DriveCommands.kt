@@ -6,6 +6,8 @@ import dev.frozenmilk.dairy.pasteurized.Pasteurized.gamepad2
 import dev.frozenmilk.mercurial.commands.Lambda
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveHardware.drive
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveHardware.setIMUHeading
+import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.highGear
+import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.lowPGear
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.maxPower
 import java.util.function.BooleanSupplier
 import java.util.function.DoubleSupplier
@@ -27,5 +29,9 @@ object DriveCommands {
 
     val resetHeading = setHeading(0.0)
 
+    val runLowGear = Lambda("lowGear")
+        .setInit{ maxPower = lowPGear}
+        .setEnd{ maxPower = highGear}
+        .setFinish{false}
 
 }

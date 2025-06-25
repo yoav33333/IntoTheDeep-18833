@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.toggleArmTarget
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.changeClawPos
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.quickRC
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveCommands.resetHeading
+import org.firstinspires.ftc.teamcode.subsystems.drive.DriveCommands.runLowGear
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.manualMove
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.openExtendo
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.setFullOpen
@@ -39,9 +40,9 @@ class TerribleTeleop: NewMegiddoOpMode() {
         /*operator controls*/
         Mercurial.gamepad2.options.onTrue(moveToTransfer)
         Mercurial.gamepad2.y.onTrue(changeClawIntakePos)
-        Mercurial.gamepad2.b.onTrue(fullOpenNoTransfer)
+        Mercurial.gamepad2.a.onTrue(partialNoTransfer)
         Mercurial.gamepad2.leftStickButton.onTrue(resetAngleClaw)
-        Mercurial.gamepad2.a.onTrue(wallToChamber)
+        Mercurial.gamepad2.b.onTrue(wallToChamber)
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
         Mercurial.gamepad2.x.onTrue(fullOpenTransfer)
@@ -55,6 +56,8 @@ class TerribleTeleop: NewMegiddoOpMode() {
             .onTrue(manualControl)
 
         /*drive controls*/
+        BoundBooleanSupplier(EnhancedBooleanSupplier{Mercurial.gamepad1.rightTrigger.state > 0.2})
+            .whileTrue(runLowGear)
         Mercurial.gamepad1.rightBumper.onTrue(switchBasket)
         Mercurial.gamepad1.rightStickButton.onTrue(changeClawPos)
         Mercurial.gamepad1.dpadUp.onTrue( resetHeading)
