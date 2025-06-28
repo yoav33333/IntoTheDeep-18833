@@ -96,7 +96,7 @@ object LiftHardware : SDKSubsystem() {
     override fun postUserInitHook(opMode: Wrapper) {
 
         BoundBooleanSupplier(EnhancedBooleanSupplier { !magneticLimit.state })
-            .whileTrue(LiftCommands.resetHeight)
+            .onTrue(LiftCommands.resetHeight)
         setPose(LiftVariables.startingPose)
 
     }

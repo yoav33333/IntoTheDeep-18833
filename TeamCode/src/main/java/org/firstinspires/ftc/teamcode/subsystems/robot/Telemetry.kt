@@ -39,16 +39,22 @@ object Telemetry: SDKSubsystem() {
         )
     }
     var lastRunTime = 0.0
+    var startTime = 0.0
+    var overTime = 0.0
 
     override fun postUserStartHook(opMode: Wrapper) {
         lastRunTime = 0.0
+        startTime = FeatureRegistrar.activeOpMode.runtime
     }
     override fun postUserLoopHook(opMode: Wrapper) {
         dashboardTelemetry.addData("current Control", BulkReads.modules[0].getCurrent(CurrentUnit.AMPS))
         dashboardTelemetry.addData("current Expention", BulkReads.modules[1].getCurrent(CurrentUnit.AMPS))
         dashboardTelemetry.addData("delta time", FeatureRegistrar.activeOpMode.runtime - lastRunTime)
         lastRunTime = FeatureRegistrar.activeOpMode.runtime
-        dashboardTelemetry.addData("offset", LiftVariables.offset)
+        dashboardTelemetry.addData("offset", LiftHardware.encoder.offset)
+        dashboardTelemetry.addData("runtime", FeatureRegistrar.activeOpMode.runtime)
+        dashboardTelemetry.addData("!time", FeatureRegistrar.activeOpMode.runtime- startTime)
+        dashboardTelemetry.addData("!overtime", FeatureRegistrar.activeOpMode.runtime- startTime -30)
         dashboardTelemetry.addData("sensor", magneticLimit.state)
         dashboardTelemetry.addData("dist", DepositClawHardware.getDistance())
         dashboardTelemetry.addData("leftCenter", LiftHardware.leftCenter.power)
@@ -67,9 +73,7 @@ object Telemetry: SDKSubsystem() {
         dashboardTelemetry.addData("error", targetPosition - getPose())
         dashboardTelemetry.addData("extendo", RobotVariables.extendo)
         dashboardTelemetry.addData("claw", IntakeClawHardware.intakeClaw.position)
-
-
-      dashboardTelemetry.addData("lift state", LiftVariables.liftState.name)
+        dashboardTelemetry.addData("lift state", LiftVariables.liftState.name)
         dashboardTelemetry.update()
     }
 }

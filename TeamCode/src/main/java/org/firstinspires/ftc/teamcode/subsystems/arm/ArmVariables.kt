@@ -14,13 +14,14 @@ object ArmVariables {
     @JvmField var wallExtensionPosition = 0.75
     @JvmField var chamberExtensionPosition = 0.75
     /*arm*/
-    @JvmField var transferArmPosition = 0.81
-    @JvmField var depositArmPosition = 0.2
-    @JvmField var depositHighArmPosition = 0.2
-    @JvmField var slamArmPosition = 0.0
-    @JvmField var avoidBasketPosition = 0.35
-    @JvmField var wallArmPosition = 0.69
-    @JvmField var chamberArmPosition = 0.01
+    @JvmField var transferArmPosition = 0.931
+    @JvmField var depositArmPosition = 0.29
+    @JvmField var depositHighArmPosition = 0.29
+    @JvmField var slamArmPosition = 0.08
+    @JvmField var avoidBasketPosition = 0.39
+    @JvmField var armLowBasket = 0.19
+    @JvmField var wallArmPosition = 0.74
+    @JvmField var chamberArmPosition = 0.08
     @JvmField var armTarget = ArmTarget.LOW
 }
 enum class ArmTarget{

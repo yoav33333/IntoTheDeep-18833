@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.headingSup
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.imuAngleOffset
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.maxPower
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.robotCentricSupplier
+import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.startingAngle
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.xSupplier
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables.ySupplier
 import org.firstinspires.ftc.teamcode.util.SuperIMU
@@ -100,11 +101,11 @@ object DriveHardware:SDKSubsystem() {
         val botHeading = -Math.toRadians(getIMUHeading())
         var rotX = 0.0
         var rotY = 0.0
-        if (!robotCentric) {
+//        if (!robotCentric) {
             // Rotate the movement direction counter to the bot's rotation
             rotX = x * cos(-botHeading) - y * sin(-botHeading)
             rotY = x * sin(-botHeading) + y * cos(-botHeading)
-        }
+//        }
         rotX *= 1.1 // Counteract imperfect strafing
 
 
@@ -126,6 +127,7 @@ object DriveHardware:SDKSubsystem() {
         setRunMode()
         setOrientationOnRobot(RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD))
         driveCommand(xSupplier, ySupplier, headingSupplier, robotCentricSupplier).schedule()
+        setIMUHeading(startingAngle)
     }
 
 

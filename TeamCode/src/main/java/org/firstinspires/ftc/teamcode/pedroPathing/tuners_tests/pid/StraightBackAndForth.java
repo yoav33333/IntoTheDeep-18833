@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests.pid;
 
+import static org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.getCloseCommand;
+import static org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.getReset;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -90,7 +93,7 @@ public class StraightBackAndForth extends OpMode {
     }
     @Override
     public void start(){
-//        closeCommandAuto().schedule();
+        getReset().schedule();
 
     }
     /**

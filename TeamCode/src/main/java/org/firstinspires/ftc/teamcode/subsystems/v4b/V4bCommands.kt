@@ -25,6 +25,7 @@ object V4bCommands {
         .setInit {
             setPitchPosition { transferPosition }
         }
+    @JvmStatic
     val v4bWall =  Lambda("pitchWall")
         .setInit{
             setPitchPosition{ wallPosition}

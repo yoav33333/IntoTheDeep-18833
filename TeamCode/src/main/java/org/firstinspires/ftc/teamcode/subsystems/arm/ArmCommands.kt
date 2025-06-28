@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setArmPositionCommand
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setExtendingArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.setExtensionPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.armLowBasket
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositHighArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.armTarget
@@ -44,10 +45,11 @@ object ArmCommands {
         { depositHighExtensionPosition })
     @JvmStatic
     val moveToSlam = setExtendingArmPosition({ slamArmPosition })
+    @JvmStatic
     val moveToWall = setExtendingArmPosition({ wallArmPosition }, { wallExtensionPosition})
     @JvmStatic
     val moveToChamber = setExtendingArmPosition({ chamberArmPosition}, { chamberExtensionPosition})
-
+    val moveToLowBasket = setArmPositionCommand{ armLowBasket}
     val smartDeposit = IfElse(
         { armTarget == ArmTarget.HIGH },
         moveToDepositHigh,

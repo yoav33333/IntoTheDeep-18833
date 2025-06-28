@@ -41,14 +41,14 @@ public class java4sample extends AutoBaseJava {
     public java4sample() {super(Side.basket);}
 
     public Pose startPose = this.startingPoseBasket;
-    public Pose basketPose1 = new Pose(-58, 55, Math.toRadians(-45));
-    public Pose basketPose2 = new Pose(-56.9, 56.7, Math.toRadians(-45));
-    public Pose basketPose3 = new Pose(-56.9, 57.3, Math.toRadians(-45));
-    public Pose basketPose4 = new Pose(-55.5, 58.3, Math.toRadians(-45));
+    public Pose basketPose1 = new Pose(-59.9, 55, Math.toRadians(-45));
+    public Pose basketPose2 = new Pose(-56.9, 54.7, Math.toRadians(-45));
+    public Pose basketPose3 = new Pose(-56.9, 55.3, Math.toRadians(-45));
+    public Pose basketPose4 = new Pose(-55.5, 56.3, Math.toRadians(-45));
 //    public Pose basketPose5 = new Pose(-55.9, 56.1, Math.toRadians(-45));
-    public Pose pickup1Pose = new Pose(-52.0, 48.8, 0);
-    public Pose pickup2Pose = new Pose(-52.2, 57.8, Math.toRadians(0));
-    public Pose pickup3Pose = new Pose(-50.7, 59.6, Math.toRadians(21));
+    public Pose pickup1Pose = new Pose(-50.0, 49.1, 0);
+    public Pose pickup2Pose = new Pose(-50.2, 60.0, Math.toRadians(0));
+    public Pose pickup3Pose = new Pose(-49.1, 59.6, Math.toRadians(21));
 //    public Pose pickup4Pose = new Pose(-58.7, 30, Math.toRadians(270));
     public Pose parkPose = new Pose(-4, 19, Math.toRadians(90));
     public Pose parkControl = new Pose(-9, 52, Math.toRadians(0));
@@ -82,6 +82,7 @@ public class java4sample extends AutoBaseJava {
             getCloseDepositClaw(),
             new Sequential(
                 getOpenExtension(),
+                new Wait(0.3),
                 getAvoidBasket()
             )
         ).schedule();
@@ -166,7 +167,7 @@ public class java4sample extends AutoBaseJava {
     public void myStop() {
         follower.breakFollowing();
         runFollower.cancel();
-
-        LiftVariables.startingPose = getPose();
+        finishAuto.schedule();
+//        LiftVariables.startingPose = getPose();
     }
 }

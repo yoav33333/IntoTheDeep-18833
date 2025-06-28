@@ -6,6 +6,7 @@ import dev.frozenmilk.mercurial.commands.Lambda
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoHardware.extendoServoL
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoHardware.extendoServoR
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoHardware.setPosition
+import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoVariables.extendoSpeed
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoVariables.extendoState
 
 
@@ -14,8 +15,8 @@ object ExtendoCommands {
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setExecute {
             if (extendoServoL.position - Mercurial.gamepad2.leftStickY.state / 50.0 > 0.3) {
-                extendoServoL.position -= Mercurial.gamepad2.leftStickY.state / 50.0
-                extendoServoR.position -= Mercurial.gamepad2.leftStickY.state / 50.0
+                extendoServoL.position -= Mercurial.gamepad2.leftStickY.state * extendoSpeed
+                extendoServoR.position -= Mercurial.gamepad2.leftStickY.state * extendoSpeed
             }
         }
         .setFinish { false }

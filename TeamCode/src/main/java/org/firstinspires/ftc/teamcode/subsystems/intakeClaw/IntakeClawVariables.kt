@@ -4,8 +4,10 @@ import com.acmerobotics.dashboard.config.Config
 
 @Config
 object IntakeClawVariables {
-    @JvmField var closedClawPosition = 0.52
+    @JvmField var closedClawPosition = 0.28
     @JvmField var openedClawPosition = 0.0
     @JvmField var centeredRotation = 0.28
-    @JvmField var leftRotation = 0.0
+    @JvmField var rotationSpeed = 0.13
+    @JvmField var leftRotation = 0.7
+    @JvmField var flipRotation = centeredRotation
 }

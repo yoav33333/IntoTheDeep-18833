@@ -104,6 +104,10 @@ object LiftCommands {
             lockedTargetPosition = closedPose
             targetPosition = closedPose
         }
+
+    @JvmStatic
+    val goToLowBasket = goToPreset { closedPose }
+
 //        .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
 //        .setInit{
 //            liftState = LiftState.DISABLED
@@ -128,9 +132,9 @@ object LiftCommands {
     val goToHighBasket = goToPreset { highBasketPose }
         .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
 
-    @JvmStatic
-    val goToLowBasket = goToPreset { lowBasketPose }
-        .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
+//    @JvmStatic
+//    val goToLowBasket = goToPreset { lowBasketPose }
+//        .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
 
     @JvmStatic
     val goToHighChamberUp = goToPreset { highChamberPoseUp }
@@ -144,6 +148,7 @@ object LiftCommands {
             RobotVariables.gameElement = GameElement.SPECIMEN
             quickRC { true }.schedule()
         }
+    @JvmStatic
     val goToWall = goToPreset { wallPose }
 
     @JvmStatic

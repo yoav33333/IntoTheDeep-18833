@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
+import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.getPose;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
@@ -10,9 +12,11 @@ import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables;
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables;
+import org.firstinspires.ftc.teamcode.subsystems.robot.Telemetry;
 
 
 import java.util.ArrayList;
@@ -20,7 +24,7 @@ import java.util.ArrayList;
 import dev.frozenmilk.mercurial.commands.Lambda;
 
 public class AutoBaseJava extends NewMegiddoOpMode {
-    private Telemetry telemetryA;
+//    private Telemetry telemetryA;
 
     public enum Side{
         basket,
@@ -35,7 +39,7 @@ public class AutoBaseJava extends NewMegiddoOpMode {
     protected Follower follower;
     @Override
     public void preInit(){
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 //        Constants.setConstants(FConstants.class, LConstants.class);
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
@@ -89,13 +93,14 @@ public class AutoBaseJava extends NewMegiddoOpMode {
 //                }
 //                flag = true;
                 follower.update();
-                follower.telemetryDebug(telemetryA);
+                follower.telemetryDebug(Telemetry.INSTANCE.getDashboardTelemetry());
             });
     public Lambda finishAuto = new Lambda("finishAuto")
         .setInit(()-> {
             follower.breakFollowing();
             follower.update();
-//            linearSlides.setStartingPose(linearSlides.getPose());
+            LiftVariables.startingPose = getPose();
+            DriveVariables.startingAngle = follower.getPose().getHeading();
 
         });
 
@@ -131,7 +136,7 @@ public class AutoBaseJava extends NewMegiddoOpMode {
                 .setInit(() -> follower.turnToDegrees(angle))
                 .setExecute(() ->{
                     follower.update();
-                    follower.telemetryDebug(telemetryA);
+                    follower.telemetryDebug(Telemetry.INSTANCE.getDashboardTelemetry());
 
                 })
                 .setFinish(()-> ((!follower.isBusy() ) || follower.isRobotStuck()))
@@ -144,7 +149,7 @@ public class AutoBaseJava extends NewMegiddoOpMode {
                 .setInit(() -> follower.turnDegrees(degrees, false))
                 .setExecute(() ->{
                     follower.update();
-                    follower.telemetryDebug(telemetryA);
+                    follower.telemetryDebug(Telemetry.INSTANCE.getDashboardTelemetry());
 
                 })
                 .setFinish(()-> ((!follower.isBusy() && !follower.isTurning()) || follower.isRobotStuck()))
@@ -161,15 +166,35 @@ public class AutoBaseJava extends NewMegiddoOpMode {
             .setInit(()-> {
                 follower.setMaxPower(1);
                 follower.followPath(makeLinePath(follower.getPose(),
-                 new Pose(follower.getPose().getX()-50, follower.getPose().getY(),
-                0)));
+                        new Pose(follower.getPose().getX()-50, follower.getPose().getY(),
+                                0)));
             })
             .setExecute(() ->{
                 follower.update();
-                follower.telemetryDebug(telemetryA);
+                follower.telemetryDebug(Telemetry.INSTANCE.getDashboardTelemetry());
 
             })
             .setFinish(()-> ((!follower.isBusy() ) || follower.isRobotStuck()));
+
+    public Lambda FastX(double x) {
+        return new Lambda("slowF")
+                .setEnd((interrupted)-> {
+                    follower.breakFollowing();
+                    follower.setMaxPower(1.0);
+                })
+                .setInit(()-> {
+                    follower.setMaxPower(1);
+                    follower.followPath(makeLinePath(follower.getPose(),
+                            new Pose(follower.getPose().getX()+x, follower.getPose().getY(),
+                                    0)));
+                })
+                .setExecute(() ->{
+                    follower.update();
+                    follower.telemetryDebug(Telemetry.INSTANCE.getDashboardTelemetry());
+
+                })
+                .setFinish(()-> ((!follower.isBusy() ) || follower.isRobotStuck()));
+    }
 
     public PathChain makeLinePath(Pose startingPose, Pose endingPose){
         return new PathBuilder().addPath(
@@ -185,6 +210,16 @@ public class AutoBaseJava extends NewMegiddoOpMode {
                 .addPath(new BezierLine(new Point((startingPose.getX() + endingPose.getX())/2,
                         (startingPose.getY() + endingPose.getY())/2), new Point(endingPose)))
                 .setConstantHeadingInterpolation(endingPose.getHeading())
+                .build();
+    }
+
+    public PathChain makeLinePathThanForwardX(Pose startingPose, Pose endingPose, double x){
+        return new PathBuilder().addPath(
+                    new BezierLine(new Point(startingPose), new Point(endingPose)))
+                .setLinearHeadingInterpolation(startingPose.getHeading(), endingPose.getHeading())
+                .addPath(
+                        new BezierLine(new Point(endingPose), new Point(endingPose.getX() + x,endingPose.getY() ))
+                ).setConstantHeadingInterpolation(endingPose.getHeading())
                 .build();
     }
     public PathChain makeLinePathConst(Pose startingPose, Pose endingPose){

@@ -11,9 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawHardware
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawHardware.isInRange
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawHardware.setDepositClawPosition
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawVariables.closedClawPosition
-import org.firstinspires.ftc.teamcode.subsystems.robot.GameElement
 //import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.slamSeq
-import org.firstinspires.ftc.teamcode.subsystems.robot.RobotVariables.gameElement
 import kotlin.math.round
 
 object DepositClawCommands {
@@ -21,6 +19,12 @@ object DepositClawCommands {
     val closeDepositClaw = Lambda("CloseClaw")
         .setInit {
             setDepositClawPosition(DepositClawVariables.closedClawPosition)
+        }
+        .setRunStates(Wrapper.OpModeState.ACTIVE, Wrapper.OpModeState.INIT)
+    @JvmStatic
+    val fullyCloseDepositClaw = Lambda("fullyCloseClaw")
+        .setInit {
+            setDepositClawPosition(DepositClawVariables.fullyClosedClawPosition)
         }
         .setRunStates(Wrapper.OpModeState.ACTIVE, Wrapper.OpModeState.INIT)
     @JvmStatic

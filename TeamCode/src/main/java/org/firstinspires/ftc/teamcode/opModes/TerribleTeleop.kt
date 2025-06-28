@@ -4,7 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import dev.frozenmilk.dairy.core.util.supplier.logical.EnhancedBooleanSupplier
 import dev.frozenmilk.mercurial.Mercurial
 import dev.frozenmilk.mercurial.bindings.BoundBooleanSupplier
+import dev.frozenmilk.mercurial.commands.groups.Sequential
+import dev.frozenmilk.mercurial.commands.util.IfElse
+import dev.frozenmilk.mercurial.commands.util.Wait
+import org.firstinspires.ftc.teamcode.commands.util.WaitUntil
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.avoidBasket
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToDeposit
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToLowBasket
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToTransfer
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.toggleArmTarget
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.changeClawPos
@@ -22,8 +28,11 @@ import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.r
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.closeSlides
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.goToBasket
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.goToHighChamberUp
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.goToLowBasket
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.manualControl
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.switchBasket
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftState
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.liftState
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.doNothing
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.doTransfer
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.fullOpenNoTransfer
@@ -46,8 +55,29 @@ class TerribleTeleop: NewMegiddoOpMode() {
         Mercurial.gamepad2.leftBumper.onTrue(rotateClawL)
         Mercurial.gamepad2.rightBumper.onTrue(rotateClawR)
         Mercurial.gamepad2.x.onTrue(fullOpenTransfer)
-        Mercurial.gamepad2.dpadUp.onTrue(goToBasket)
-        Mercurial.gamepad2.dpadDown.onTrue(goToHighChamberUp)
+        Mercurial.gamepad2.dpadUp.onTrue(
+            Sequential(
+                IfElse(
+                    {liftState != LiftState.AUTO}
+                    ,Sequential(
+                        WaitUntil{liftState == LiftState.AUTO },
+                    ),
+                    Wait(0.0)),
+                moveToDeposit,
+                goToBasket
+            )
+        )
+        Mercurial.gamepad2.dpadDown.onTrue(
+            Sequential(
+                IfElse(
+                    {liftState != LiftState.AUTO}
+                    ,Sequential(
+                        WaitUntil{liftState == LiftState.AUTO },
+                        Wait(0.5)),
+                    Wait(0.0)),
+                moveToLowBasket,
+                goToLowBasket)
+        )
         Mercurial.gamepad2.leftStickButton.onTrue(closeSlides.with(avoidBasket))
         Mercurial.gamepad2.share.onTrue(quickRC())
         BoundBooleanSupplier(EnhancedBooleanSupplier { abs(Mercurial.gamepad2.leftStickY.state) > 0.3 })

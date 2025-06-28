@@ -14,15 +14,16 @@ import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.avoidBasket
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.closeExtension
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveArmToTransfer
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToChamber
-import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToSlam
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToTransfer
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.moveToWall
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.openExtension
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.smartDeposit
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmHardware.armServoLeft
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.wallArmPosition
+import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.closeDepositClaw
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.closeWhenSampleInPlace
+import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.fullyCloseDepositClaw
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.openDepositClaw
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.quickRC
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.closeExtendo
@@ -33,6 +34,7 @@ import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.setFull
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.setPartialOpen
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoState
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoVariables.extendoState
+import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.flip
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.openIntakeClaw
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.resetAngleClaw
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.closeSlides
@@ -44,16 +46,15 @@ import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.getPose
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.closedPose
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.targetPosition
 import org.firstinspires.ftc.teamcode.subsystems.robot.RobotVariables.transferState
+import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.armUp
 
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.closeIntakeArm
-import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.extendoPush
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.openIntakeArm
 //import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.pitchWall
-import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.postTransferSequence
 import org.firstinspires.ftc.teamcode.subsystems.v4b.V4bCommands.v4bWall
 import kotlin.math.abs
-import kotlin.math.round
 
 object RobotCommands {
     val doTransfer = Lambda("doTransfer")
@@ -105,7 +106,7 @@ object RobotCommands {
         Parallel(
             closeExtension,
             InstantCommand{RobotVariables.extendo = "close"},
-            resetAngleClaw,
+            flip,
             closeExtendo,
             moveArmToTransfer,
             closeIntakeArm,
@@ -117,24 +118,29 @@ object RobotCommands {
                     Sequential(
                         RunNonBlocking(
                             Sequential(
-                                Wait(0.15),
+                                Wait(0.2),
                                 openExtension
                             )
                         ),
                         closeWhenSampleInPlace.raceWith(Wait(0.8)),
                         closeDepositClaw,
-                        Wait(0.07),
+                        Wait(0.05),
                         openIntakeClaw,
                         Wait(0.1),
                         enablePID,
                         RunNonBlocking(smartDeposit),
 //                        postTransferSequence,
+                        Wait(0.6),
+                        fullyCloseDepositClaw,
                         WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(LiftVariables.targetPosition>500 && abs(
                             LiftVariables.targetPosition- LiftHardware.getPose()
                         ) < RobotVariables.deltaToReopenAfterSwitch) || (RobotVariables.gameElement == GameElement.SPECIMEN && LiftHardware.getPose() >1000) )},
 
                     ),
-                    Wait(0.0))
+                    Wait(0.0),
+
+
+                )
             )
 
         )
@@ -143,7 +149,7 @@ object RobotCommands {
     @JvmStatic
     val openPushCommand = Parallel(
         openExtendo,
-        extendoPush
+        armUp
     )
 
     @JvmStatic
@@ -184,10 +190,34 @@ object RobotCommands {
         goToWall
     )
     @JvmStatic
+    val wallSeqSimple = Parallel(
+        openDepositClaw,
+        enablePID,
+        moveToWall,
+        goToWall
+    )
+    @JvmStatic
     val chamberSeq =
         Sequential(
             closeDepositClaw,
-            Wait(0.1),
+            Wait(0.04),
+            enablePID,
+            moveToChamber,
+            goToHighChamber,
+            quickRC()
+        )
+    @JvmStatic
+    val up =
+    Sequential(
+        RunNonBlocking(
+            InstantCommand { targetPosition +=10000}
+        ),
+//        Wait(0.1)
+    )
+    @JvmStatic
+    val chamberSeqNoDelay =
+        Sequential(
+            closeDepositClaw,
             enablePID,
             moveToChamber,
             goToHighChamber,
