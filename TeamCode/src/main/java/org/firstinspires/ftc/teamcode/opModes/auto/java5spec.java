@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
+import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables;
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware;
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables;
 import org.firstinspires.ftc.teamcode.subsystems.robot.BulkReads;
@@ -325,6 +326,8 @@ public class java5spec extends AutoBaseJava {
     }
     @Override
     public void myStop(){
+        LiftVariables.startingPose = getPose();
+        DriveVariables.startingAngle = -follower.getPose().getHeading();
 //        LiftVariables.startingPose = getPose();
         finishAuto.schedule();
     }

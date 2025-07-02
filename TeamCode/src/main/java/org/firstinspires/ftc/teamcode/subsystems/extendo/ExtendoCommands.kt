@@ -8,13 +8,14 @@ import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoHardware.extendo
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoHardware.setPosition
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoVariables.extendoSpeed
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoVariables.extendoState
+import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoVariables.openPosition
 
 
 object ExtendoCommands {
     val manualMove = Lambda("moveManual")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setExecute {
-            if (extendoServoL.position - Mercurial.gamepad2.leftStickY.state / 50.0 > 0.3) {
+            if (extendoServoL.position - Mercurial.gamepad2.leftStickY.state * extendoSpeed > openPosition) {
                 extendoServoL.position -= Mercurial.gamepad2.leftStickY.state * extendoSpeed
                 extendoServoR.position -= Mercurial.gamepad2.leftStickY.state * extendoSpeed
             }

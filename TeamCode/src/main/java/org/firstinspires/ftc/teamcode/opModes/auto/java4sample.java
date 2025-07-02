@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.opModes.AutoBaseJava;
 
 import org.firstinspires.ftc.teamcode.commands.util.RunNonBlocking;
 import org.firstinspires.ftc.teamcode.commands.util.WaitUntil;
+import org.firstinspires.ftc.teamcode.subsystems.drive.DriveVariables;
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables;
 
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
@@ -104,10 +105,10 @@ public class java4sample extends AutoBaseJava {
                         new WaitUntil(()->(targetPosition>500 && targetPosition-10000<getPose())),
                         getMoveToDeposit()
                     )),
-            new WaitUntil(() -> getPose()>20000),
+            new WaitUntil(() -> getPose()>10000),
             followPath(scorePreload),
             new WaitUntil(() -> targetPosition-2500<getPose()),
-            new Wait(0.3),
+            new Wait(0.2),
             getOpenDepositClaw(),
             new Wait(0.1),
             followPath(pickup1),
@@ -127,7 +128,7 @@ public class java4sample extends AutoBaseJava {
             followPath(pickup2),
             new WaitUntil(()->follower.getCurrentTValue()>0.5),
             getOpenCommandAuto(),
-            new Wait(0.35),
+            new Wait(0.3),
             getCloseIntakeClaw(),
             new Wait(0.1),
             new WaitUntil(()->getPose()<targetPosition + 3000),
@@ -135,7 +136,7 @@ public class java4sample extends AutoBaseJava {
             getGoToHighBasket(),
             followPath(scorePickup2),
             new WaitUntil(() -> targetPosition-3000<getPose()),
-            new Wait(0.3),
+            new Wait(0.2),
             getOpenDepositClaw(),
             new Wait(0.10),
             followPath(pickup3),
@@ -143,12 +144,12 @@ public class java4sample extends AutoBaseJava {
             getOpenCommandAuto(),
             new Wait(0.3),
             getCloseIntakeClaw(),
-            new Wait(0.1),
+            new Wait(0.05),
             getCloseCommand(),
             getGoToHighBasket(),
             followPath(scorePickup3),
             new WaitUntil(() -> targetPosition-3000<getPose()),
-            new Wait(0.3),
+            new Wait(0.2),
             getOpenDepositClaw(),
             new Wait(0.1),
             new Parallel(
@@ -168,6 +169,8 @@ public class java4sample extends AutoBaseJava {
         follower.breakFollowing();
         runFollower.cancel();
         finishAuto.schedule();
+        LiftVariables.startingPose = getPose();
+        DriveVariables.startingAngle = -follower.getPose().getHeading();
 //        LiftVariables.startingPose = getPose();
     }
 }
