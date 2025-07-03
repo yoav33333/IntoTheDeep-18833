@@ -12,9 +12,10 @@ object ArmVariables {
     @JvmField var depositHighExtensionPosition = 0.75
     @JvmField var avoidBasketExtensionPosition = 0.75
     @JvmField var wallExtensionPosition = 0.75
+    @JvmField var semiWallExtensionPosition = 0.55
     @JvmField var chamberExtensionPosition = 0.75
     /*arm*/
-    @JvmField var transferArmPosition = 0.931
+    @JvmField var transferArmPosition = 0.938
     @JvmField var depositArmPosition = 0.29
     @JvmField var depositHighArmPosition = 0.29
     @JvmField var slamArmPosition = 0.08

@@ -128,13 +128,16 @@ object RobotCommands {
                         openIntakeClaw,
                         Wait(0.1),
                         enablePID,
-                        RunNonBlocking(smartDeposit),
+                        RunNonBlocking(Parallel(
+                            RunNonBlocking(smartDeposit),
 //                        postTransferSequence,
-                        Wait(0.6),
-                        fullyCloseDepositClaw,
-                        WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(LiftVariables.targetPosition>500 && abs(
-                            LiftVariables.targetPosition- LiftHardware.getPose()
-                        ) < RobotVariables.deltaToReopenAfterSwitch) || (RobotVariables.gameElement == GameElement.SPECIMEN && LiftHardware.getPose() >1000) )},
+                            Wait(0.6),
+                            fullyCloseDepositClaw,
+                            WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(LiftVariables.targetPosition>500 && abs(
+                                LiftVariables.targetPosition- LiftHardware.getPose()
+                            ) < RobotVariables.deltaToReopenAfterSwitch) || (RobotVariables.gameElement == GameElement.SPECIMEN && LiftHardware.getPose() >1000) )},
+
+                            ))
 
                     ),
                     Wait(0.0),

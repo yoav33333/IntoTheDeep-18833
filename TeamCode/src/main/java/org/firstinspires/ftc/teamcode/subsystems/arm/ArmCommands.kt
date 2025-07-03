@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.closeExtension
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositExtensionPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.depositHighExtensionPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.openExtensionPosition
+import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.semiWallExtensionPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.slamArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.transferArmPosition
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.transferExtensionPosition
@@ -47,6 +48,8 @@ object ArmCommands {
     val moveToSlam = setExtendingArmPosition({ slamArmPosition })
     @JvmStatic
     val moveToWall = setExtendingArmPosition({ wallArmPosition }, { wallExtensionPosition})
+    @JvmStatic
+    val moveSemiToWall = setExtendingArmPosition({ wallArmPosition }, { semiWallExtensionPosition})
     @JvmStatic
     val moveToChamber = setExtendingArmPosition({ chamberArmPosition}, { chamberExtensionPosition})
     val moveToLowBasket = setArmPositionCommand{ armLowBasket}
