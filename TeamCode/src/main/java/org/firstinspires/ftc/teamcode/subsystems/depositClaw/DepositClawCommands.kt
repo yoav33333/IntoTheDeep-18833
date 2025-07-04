@@ -53,6 +53,19 @@ object DepositClawCommands {
         }
         return false
     }
+    fun checkIfSampleInPlaceNoClose(): Boolean {
+        if (Pasteurized.gamepad2.a.onTrue){
+//            intakeSeq.cancel()
+//            intakeSeq.schedule()
+            //TODO: add a new intake sequence
+        }
+
+        if (isInRange()) {
+//            closeDepositClaw.schedule()
+            return true
+        }
+        return false
+    }
 
     val changeClawPos = Lambda("changeClawPos")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
@@ -73,6 +86,17 @@ object DepositClawCommands {
         }
         .setFinish {
             checkIfSampleInPlace()
+        }
+    @JvmStatic
+    val dontCloseWhenSampleInPlace = Lambda("closeWhenSampleInPlace")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit {
+            openDepositClaw.schedule()
+        }
+        .setExecute {
+        }
+        .setFinish {
+            checkIfSampleInPlaceNoClose()
         }
     @JvmStatic
     fun quickRC(supplier: () -> Boolean = {true}) = Sequential(WaitUntil(supplier),

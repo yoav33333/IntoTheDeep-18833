@@ -19,7 +19,7 @@ object LiftVariables {
     @JvmField var lockedTargetPosition = 0
     /*presets*/
     @JvmField var lowBasketPose = 40000
-    @JvmField var closedPose = 28500
+    @JvmField var closedPose = 27500
     @JvmField var lowChamberPose = 0
     @JvmField var highBasketPose = 56000
     @JvmField var highChamberPoseUp = 31500

@@ -53,7 +53,7 @@ public class java4sample extends AutoBaseJava {
 //    public Pose basketPose5 = new Pose(-55.9, 56.1, Math.toRadians(-45));
     public Pose pickup1Pose = new Pose(-50.0, 49.1, 0);
     public Pose pickup2Pose = new Pose(-50.2, 59.7, Math.toRadians(0));
-    public Pose pickup3Pose = new Pose(-49.1, 60.6, Math.toRadians(25));
+    public Pose pickup3Pose = new Pose(-49.1, 60.6, Math.toRadians(24));
 //    public Pose pickup4Pose = new Pose(-58.7, 30, Math.toRadians(270));
     public Pose parkPose = new Pose(-4, 19, Math.toRadians(90));
     public Pose parkControl = new Pose(-9, 52, Math.toRadians(0));

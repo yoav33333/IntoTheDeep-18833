@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.subsystems.arm.ArmVariables.wallArmPositio
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.closeDepositClaw
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.closeWhenSampleInPlace
+import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.dontCloseWhenSampleInPlace
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.fullyCloseDepositClaw
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.openDepositClaw
 import org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.quickRC
@@ -35,6 +36,7 @@ import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoCommands.setPart
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoState
 import org.firstinspires.ftc.teamcode.subsystems.extendo.ExtendoVariables.extendoState
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.flip
+import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.fullCloseIntakeClaw
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.openIntakeClaw
 import org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCommands.resetAngleClaw
 import org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.closeSlides
@@ -66,6 +68,7 @@ object RobotCommands {
     val openCommand =
         Sequential(
             Parallel(
+                openDepositClaw,
                 InstantCommand{RobotVariables.extendo = "open"},
                 avoidBasket,
                 resetAngleClaw,
@@ -104,13 +107,13 @@ object RobotCommands {
     @JvmStatic
     val closeCommand =
         Parallel(
+            openDepositClaw,
             closeExtension,
             InstantCommand{RobotVariables.extendo = "close"},
             flip,
             closeExtendo,
             moveArmToTransfer,
             closeIntakeArm,
-            openDepositClaw,
             closeSlides,
             Sequential(
                 IfElse(
@@ -118,13 +121,16 @@ object RobotCommands {
                     Sequential(
                         RunNonBlocking(
                             Sequential(
-                                Wait(0.2),
+                                Wait(0.1),
+//                                fullCloseIntakeClaw,
+                                Wait(0.1),
                                 openExtension
                             )
                         ),
-                        closeWhenSampleInPlace.raceWith(Wait(0.8)),
+                        dontCloseWhenSampleInPlace.raceWith(Wait(0.8)),
+                        Wait(0.1),
                         closeDepositClaw,
-                        Wait(0.05),
+                        Wait(0.1),
                         openIntakeClaw,
                         Wait(0.1),
                         enablePID,

@@ -36,6 +36,11 @@ object IntakeClawCommands {
     val closeIntakeClaw = Lambda("closeClaw")
         .setRunStates(Wrapper.OpModeState.ACTIVE)
         .setInit { setIntakeClawPosition(IntakeClawVariables.closedClawPosition) }
+
+    @JvmStatic
+    val fullCloseIntakeClaw = Lambda("closeClaw")
+        .setRunStates(Wrapper.OpModeState.ACTIVE)
+        .setInit { setIntakeClawPosition(IntakeClawVariables.fullClosedClawPosition) }
     @JvmStatic
     val resetAngleClaw = Lambda("resetAngleClaw")
         .setInit { setRotationPosition { IntakeClawVariables.centeredRotation } }

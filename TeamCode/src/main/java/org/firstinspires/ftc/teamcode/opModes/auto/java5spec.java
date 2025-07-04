@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opModes.auto;
 
 
 import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getAvoidBasket;
+import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getMoveSemiToWall;
 import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getMoveToWall;
 import static org.firstinspires.ftc.teamcode.subsystems.arm.ArmCommands.getOpenExtension;
 import static org.firstinspires.ftc.teamcode.subsystems.depositClaw.DepositClawCommands.getCloseDepositClaw;
@@ -55,7 +56,7 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @Autonomous
 public class java5spec extends AutoBaseJava {
     public java5spec() {super(Side.chamber);}
-    public static double offset = -6.9;
+    public static double offset = -4.9;
     public MultipleTelemetry tele = new MultipleTelemetry(telemetry,
             FtcDashboard.getInstance().getTelemetry());
     @Override
@@ -143,19 +144,33 @@ public class java5spec extends AutoBaseJava {
 //        park = makeLinePath(basketScore, parkPose);
 //        clawSubsystem.getClawRotationServo().setPosition(0.5);
         new Parallel(
-            getResetAngleClaw(),
-            getCloseDepositClaw(),
-            new Sequential(
-                getOpenExtension(),
-                getReset(),
-                new Wait(0.3),
-                getMoveToWall(),
-                getV4bWall(),
-                getGoToWall(),
-                new Wait(0.5),
-                getCloseIntakeClaw()
-            )
+                getResetAngleClaw(),
+                getCloseDepositClaw(),
+                new Sequential(
+//                        getOpenExtension(),
+                        getMoveSemiToWall(),
+                        getReset(),
+                        new Wait(0.3),
+                        getV4bWall(),
+                        getGoToWall(),
+                        new Wait(0.5),
+                        getCloseIntakeClaw()
+                )
         ).schedule();
+//        new Parallel(
+//            getResetAngleClaw(),
+//            getCloseDepositClaw(),
+//            new Sequential(
+//                getOpenExtension(),
+//                getReset(),
+//                new Wait(0.3),
+//                getMoveToWall(),
+//                getV4bWall(),
+//                getGoToWall(),
+//                new Wait(0.5),
+//                getCloseIntakeClaw()
+//            )
+//        ).schedule();
         LiftHardware.setPose(0);
         targetPosition = 0;
         follower.setMaxPower(power);
@@ -166,6 +181,7 @@ public class java5spec extends AutoBaseJava {
 
 
         new Sequential(
+            getGoToWall(),
             new RunNonBlocking(getChamberSeqNoDelay()),
             new Wait(0.04),
             new WaitUntil(()->targetPosition/2<getPose()),
