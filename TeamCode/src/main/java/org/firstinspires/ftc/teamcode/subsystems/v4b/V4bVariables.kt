@@ -13,7 +13,7 @@ object V4bVariables {
     @JvmField var armUpPosition = 0.3
     @JvmField var armWallPosition = 0.75
     /*pitch*/
-    @JvmField var transferPosition = 0.37
+    @JvmField var transferPosition = 0.35
     @JvmField var wallPosition = 0.0
     @JvmField var postTransferPosition = 0.5
     @JvmField var intakePosition = 1.0

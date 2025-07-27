@@ -138,12 +138,14 @@ object RobotCommands {
                             RunNonBlocking(smartDeposit),
 //                        postTransferSequence,
                             Wait(0.6),
-                            fullyCloseDepositClaw,
+//                            fullyCloseDepositClaw,
+//                            closeExtension,
                             WaitUntil{(abs(Mercurial.gamepad2.rightStickY.state) >0.2 ||(LiftVariables.targetPosition>500 && abs(
                                 LiftVariables.targetPosition- LiftHardware.getPose()
                             ) < RobotVariables.deltaToReopenAfterSwitch) || (RobotVariables.gameElement == GameElement.SPECIMEN && LiftHardware.getPose() >1000) )},
 
-                            ))
+                            )),
+
 
                     ),
                     Wait(0.0),

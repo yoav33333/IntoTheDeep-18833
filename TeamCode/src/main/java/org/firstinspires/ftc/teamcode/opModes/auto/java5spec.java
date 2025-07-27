@@ -16,6 +16,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.getEna
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.getGoToHighChamber;
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.getGoToHighChamberUp;
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.getGoToWall;
+import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.getPIDCommand;
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.getPose;
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.targetPosition;
 import static org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.getChamberSeq;
@@ -56,7 +57,7 @@ import dev.frozenmilk.mercurial.commands.util.Wait;
 @Autonomous
 public class java5spec extends AutoBaseJava {
     public java5spec() {super(Side.chamber);}
-    public static double offset = -4.9;
+    public static double offset = -5.0;
     public MultipleTelemetry tele = new MultipleTelemetry(telemetry,
             FtcDashboard.getInstance().getTelemetry());
     @Override
@@ -77,20 +78,20 @@ public class java5spec extends AutoBaseJava {
     }
     Pose startPose = this.startingPoseChamber;
     Pose chamberPose1 = new Pose(-36.8, -3, Math.toRadians(180));
-    Pose chamberPose2 = new Pose(-32.0+offset, 2-7, Math.toRadians(180));
-    Pose chamberPose3 = new Pose(-32.0+offset, 2-7, Math.toRadians(180));
-    Pose chamberPose4 = new Pose(-32.0+offset, 2-7, Math.toRadians(180));
-    Pose chamberPose5 = new Pose(-32.0+offset, 2-7, Math.toRadians(180));
-    Pose dragPose1 = new Pose(-35, -28.0, Math.toRadians(-48));
+    Pose chamberPose2 = new Pose(-32.0+offset, 4-7, Math.toRadians(180));
+    Pose chamberPose3 = new Pose(-32.0+offset, 4-7, Math.toRadians(180));
+    Pose chamberPose4 = new Pose(-32.0+offset, 4-7, Math.toRadians(180));
+    Pose chamberPose5 = new Pose(-32.0+offset, 4-7, Math.toRadians(180));
+    Pose dragPose1 = new Pose(-35, -28.9, Math.toRadians(-48));
     Pose dragPose2 = new Pose(-34, -38.0, Math.toRadians(-60));
     Pose dragPose3 = new Pose(-34, -46.7, Math.toRadians(-60));
     Pose dragPoseTurn1 = new Pose(-40.2, -26, Math.toRadians(-65-75));
     Pose dragPoseTurn2 = new Pose(-40.3, -37.2, Math.toRadians(-65-75));
     Pose dragPoseTurn3 = new Pose(-45, -47.5, Math.toRadians(-65-65));
-    Pose pickup1Pose = new Pose(-57-0.6, -39, Math.toRadians(180));
-    Pose pickup2Pose = new Pose(-57-0.6, -37, Math.toRadians(180));
-    Pose pickup3Pose = new Pose(-57-0.6, -37, Math.toRadians(180));
-    Pose pickup4Pose = new Pose(-57-0.6, -37, Math.toRadians(180));
+    Pose pickup1Pose = new Pose(-59+0.2, -39, Math.toRadians(180));
+    Pose pickup2Pose = new Pose(-57+0.2, -37, Math.toRadians(180));
+    Pose pickup3Pose = new Pose(-57+0.2, -37, Math.toRadians(180));
+    Pose pickup4Pose = new Pose(-57+0.2, -37, Math.toRadians(180));
 //    public Pose pickup12Pose = new Pose(-59, -40, Math.toRadians(180));
     public Pose parkPose = new Pose(-47, -31, Math.toRadians(180+40));
 
@@ -144,18 +145,18 @@ public class java5spec extends AutoBaseJava {
 //        park = makeLinePath(basketScore, parkPose);
 //        clawSubsystem.getClawRotationServo().setPosition(0.5);
         new Parallel(
-                getResetAngleClaw(),
-                getCloseDepositClaw(),
-                new Sequential(
+            getResetAngleClaw(),
+            getCloseDepositClaw(),
+            new Sequential(
 //                        getOpenExtension(),
-                        getMoveSemiToWall(),
-                        getReset(),
-                        new Wait(0.3),
-                        getV4bWall(),
-                        getGoToWall(),
-                        new Wait(0.5),
-                        getCloseIntakeClaw()
-                )
+                getMoveSemiToWall(),
+                getReset(),
+                new Wait(0.3),
+                getV4bWall(),
+                getGoToWall(),
+                new Wait(0.5),
+                getCloseIntakeClaw()
+            )
         ).schedule();
 //        new Parallel(
 //            getResetAngleClaw(),
@@ -178,23 +179,26 @@ public class java5spec extends AutoBaseJava {
 
     @Override
     public void myStart() {
-
+        getPIDCommand().cancel();
+        getPIDCommand().schedule();
 
         new Sequential(
             getGoToWall(),
             new RunNonBlocking(getChamberSeqNoDelay()),
-            new Wait(0.04),
-            new WaitUntil(()->targetPosition/2<getPose()),
+//            new Wait(0.04),
+            new WaitUntil(()->targetPosition/3<getPose()),
             new InstantCommand(()-> FollowerConstants.drivePIDFCoefficients.P *= 2),
-            followPath(scorePreload).raceWith(new Wait(2.1)),
+            followPath(scorePreload).raceWith(new Wait(0.8)),
             new InstantCommand(()-> FollowerConstants.drivePIDFCoefficients.P /= 2),
             new Parallel(
                 new RunNonBlocking(new Sequential(
                     getOpenDepositClaw(),
-                    new WaitUntil(()->follower.getCurrentTValue()>0.6),
+                    new WaitUntil(()->follower.getCurrentTValue()>0.4),
                     getOpenPushCommand(),
-                    getArmUp(),
+//                    getArmUp(),
                     getTurnLeft(),
+                    new WaitUntil(()->follower.getCurrentTValue()>0.9||follower.getCurrentTValue()<0.1),
+                    getExtendoPush(),
                     new RunNonBlocking(getGoToWall())
 //                    new RunNonBlocking(getWallSeqSimple())
                 )),
@@ -202,13 +206,14 @@ public class java5spec extends AutoBaseJava {
                     new Sequential(
                         new WaitUntil(()->follower.getCurrentTValue()>0.95),
                         getExtendoPush()
-//                        getAvoidBasket()
+//                        getAvoidBasket() 
                     )
                 )),
-                followPath(getToDrag1)
+                followPath(getToDrag1).raceWith(new Wait(0.9))
             ),
+            getExtendoPush(),
             new InstantCommand(()-> FollowerConstants.headingPIDFCoefficients.P *= 2),
-            followPath(turnDrag1).raceWith(new Wait(0.3)),
+            followPath(turnDrag1).raceWith(new Wait(0.4)),
             new InstantCommand(()-> FollowerConstants.headingPIDFCoefficients.P /= 2),
             getArmUp(),
             new RunNonBlocking(new Sequential(
@@ -258,7 +263,7 @@ public class java5spec extends AutoBaseJava {
                 )
             ),
             getGoToHighChamber(),
-            followPath(scorePickup1).raceWith(new Wait(2.1)),
+            followPath(scorePickup1).raceWith(new Wait(1.5)),
             getUp(),
 //            getOpenDepositClaw(),
             new Parallel(
@@ -282,7 +287,7 @@ public class java5spec extends AutoBaseJava {
 //                new Wait(0.1)
             ),
             getGoToHighChamber(),
-            followPath(scorePickup2).raceWith(new Wait(2.1)),
+            followPath(scorePickup2).raceWith(new Wait(1.5)),
             getUp(),
 //            getOpenDepositClaw(),
             new Parallel(
@@ -305,7 +310,7 @@ public class java5spec extends AutoBaseJava {
                 )
             ),
             getGoToHighChamber(),
-            followPath(scorePickup3).raceWith(new Wait(2.1)),
+            followPath(scorePickup3).raceWith(new Wait(1.5)),
             getUp(),
 //            getOpenDepositClaw(),
             new Parallel(
@@ -328,7 +333,7 @@ public class java5spec extends AutoBaseJava {
                 )
             ),
             getGoToHighChamber(),
-            followPath(scorePickup4).raceWith(new Wait(2.1)),
+            followPath(scorePickup4).raceWith(new Wait(1.5)),
             getUp(),
 //            getOpenDepositClaw(),
 

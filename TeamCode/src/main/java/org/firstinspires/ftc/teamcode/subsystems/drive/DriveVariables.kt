@@ -12,7 +12,7 @@ object DriveVariables {
     /*drive*/
     @JvmField var maxPower = 1.0
     @JvmField var highGear = 1.0
-    @JvmField var lowPGear = 0.4
+    @JvmField var lowPGear = 0.3
     @JvmField var zaleskiSpeed = 0.5
     @JvmField var xSupplier = DoubleSupplier{ Pasteurized.gamepad1.leftStickX.state }
     @JvmField var ySupplier = DoubleSupplier{ (Pasteurized.gamepad1.leftStickY.state) }

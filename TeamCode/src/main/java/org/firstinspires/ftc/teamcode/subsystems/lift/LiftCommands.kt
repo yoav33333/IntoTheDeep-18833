@@ -30,6 +30,7 @@ import java.util.function.IntSupplier
 import kotlin.math.abs
 
 object LiftCommands {
+    @JvmStatic
     val PIDCommand = Lambda("LiftPIDCommand")
         .setRunStates(Wrapper.OpModeState.ACTIVE, Wrapper.OpModeState.INIT)
         .setInit{
@@ -86,7 +87,7 @@ object LiftCommands {
     val goToBasket = Lambda("GTB")
         .setInit{
             when (basketState){
-                BasketState.HIGH -> goToHighBasket.schedule()
+                BasketState.HIGH -> goToHighBasketTele.schedule()
                 BasketState.LOW -> goToLowBasket.schedule()
             }
 //            if (basketState == BasketState.HIGH) {
@@ -130,6 +131,9 @@ object LiftCommands {
 
     @JvmStatic
     val goToHighBasket = goToPreset { highBasketPose }
+        .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
+    @JvmStatic
+    val goToHighBasketTele = goToPreset { highBasketPose }
         .addInit{RobotVariables.gameElement = GameElement.SAMPLE}
 
 //    @JvmStatic

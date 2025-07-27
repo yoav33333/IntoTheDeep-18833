@@ -16,7 +16,9 @@ import static org.firstinspires.ftc.teamcode.subsystems.intakeClaw.IntakeClawCom
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.getEnablePID;
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.getGoToHighBasket;
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.getGoToWall;
+import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftCommands.getPIDCommand;
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.getPose;
+import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftHardware.setPose;
 import static org.firstinspires.ftc.teamcode.subsystems.lift.LiftVariables.targetPosition;
 import static org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.getCloseCommand;
 import static org.firstinspires.ftc.teamcode.subsystems.robot.RobotCommands.getOpenCommandAuto;
@@ -51,8 +53,8 @@ public class java4sample extends AutoBaseJava {
     public Pose basketPose3 = new Pose(-56.9, 55.3, Math.toRadians(-45));
     public Pose basketPose4 = new Pose(-55.5, 56.3, Math.toRadians(-45));
 //    public Pose basketPose5 = new Pose(-55.9, 56.1, Math.toRadians(-45));
-    public Pose pickup1Pose = new Pose(-50.0, 49.1, 0);
-    public Pose pickup2Pose = new Pose(-50.2, 59.7, Math.toRadians(0));
+    public Pose pickup1Pose = new Pose(-50.0, 50.1, 0);
+    public Pose pickup2Pose = new Pose(-50.2, 60.2, Math.toRadians(0));
     public Pose pickup3Pose = new Pose(-49.1, 60.6, Math.toRadians(24));
 //    public Pose pickup4Pose = new Pose(-58.7, 30, Math.toRadians(270));
     public Pose parkPose = new Pose(-4, 19, Math.toRadians(90));
@@ -90,21 +92,22 @@ public class java4sample extends AutoBaseJava {
                         getReset(),
                         new Wait(0.3),
                         getV4bWall(),
-                        getGoToWall(),
+//                        getGoToWall(),
                         new Wait(0.5),
                         getCloseIntakeClaw()
                 )
         ).schedule();
 
 
-
+        setPose(0);
     }
 
 
     @Override
     public void myStart() {
 
-
+        getPIDCommand().cancel();
+        getPIDCommand().schedule();
         new Sequential(
             new Parallel(new RunNonBlocking(getAvoidBasket()),
             getEnablePID(),
